@@ -1,8 +1,9 @@
 {
-  "name": "env-config",
+  "name": "env-var-config",
   "version": "1.0.0",
   "description": "A module for reading configuration values from environment variables and loading them into configuration files.",
   "main": "index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
