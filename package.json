@@ -1,8 +1,8 @@
 {
   "name": "env-var-config",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "A module for reading configuration values from environment variables and loading them into configuration files.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
