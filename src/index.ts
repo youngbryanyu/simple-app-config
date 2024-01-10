@@ -1,4 +1,4 @@
-import EnvConfig from "./envConfig";
+import EnvVarConfig from "./env-var-config";
 
-export {EnvConfig};
-export default EnvConfig;
+/* Set the default export */
+export default EnvVarConfig;
