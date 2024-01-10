@@ -40,4 +40,9 @@ const convertToBoolean = (value: string): boolean => {
   throw new TypeConversionError(value, "boolean");
 }
 
-export default { convertToNumber, convertToBoolean }
+/* Export functions */
+const TypeConverterUtil = { 
+  convertToNumber, 
+  convertToBoolean 
+}
+export = TypeConverterUtil;
