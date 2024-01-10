@@ -2,7 +2,7 @@
   "name": "env-var-config",
   "version": "0.0.0",
   "description": "A module for loading configuration data from environment variables.",
-  "repository": "https://github.com/yyu2002/env-var-config",
+  "repository": "https://github.com/youngbryanyu/env-var-config",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
