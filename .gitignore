@@ -1,5 +1,6 @@
 # ignore .env files
 .env
+.env.dev
 
 # ignore node_modules
 node_modules
