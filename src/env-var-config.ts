@@ -28,7 +28,7 @@ interface ConfigOptions {
   /**
    * Specify whether or not to perform logging.
    */
-  disableLogs?: boolean;
+  enableLogs?: boolean;
 }
 
 /**
@@ -93,6 +93,11 @@ class EnvVarConfig {
       LoggerUtil.setLogger(configOptions.logger);
     }
 
+    /* Disable logs if specified */
+    if (configOptions.enableLogs === false) {
+      LoggerUtil.setLoggingEnabled(false);
+    }
+
     /* Determine the file path of a .env file and load it if it exists */
     const filePath = EnvVarConfig.determineFilePath();
     if (fs.existsSync(filePath)) {
@@ -113,31 +118,25 @@ class EnvVarConfig {
    * @returns The file path to use when loading a .env file.
    */
   private static determineFilePath(): string {
-    LoggerUtil.info(`Determining file path to use for .env...`);
-
     /* Get the environment from NODE_ENV */
     let env = process.env.NODE_ENV;
-    LoggerUtil.info(`Environment retrieved from NODE_ENV is: ${env}`);
 
     /* Use a custom file path if specified and it exists */
     const customFilePath = EnvVarConfig.configOptions.filePath;
     if (customFilePath && fs.existsSync(customFilePath)) {
-      LoggerUtil.info(`Using custom file path of .env file: ${customFilePath}`);
       return customFilePath;
     }
 
     /* If no environment variable is specified set it to the default */
     if (env === undefined) {
-      LoggerUtil.info(`NODE_ENV is undefined. Assuming default environment of: ${EnvVarConfig.DEFAULT_ENV}`);
       env = this.DEFAULT_ENV;
     }
 
     /* Find a file path mapping to the NODE_ENV based on specified custom mappings */
     if (EnvVarConfig.configOptions.envToFilePathMappings) {
-      const customFilePath = EnvVarConfig.configOptions.envToFilePathMappings[env];
-      if (customFilePath && fs.existsSync(customFilePath)) {
-        LoggerUtil.info(`Using file path of .env found in custom mappings: ${customFilePath}`);
-        return customFilePath;
+      const customMappingFilePath = EnvVarConfig.configOptions.envToFilePathMappings[env];
+      if (customMappingFilePath && fs.existsSync(customMappingFilePath)) {
+        return customMappingFilePath;
       }
     }
 
@@ -147,7 +146,6 @@ class EnvVarConfig {
       if (NAMES.includes(env)) {
         for (const filePath of FILE_PATHS) {
           if (fs.existsSync(filePath)) {
-            LoggerUtil.info(`Using file path of .env found in common mappings: ${customFilePath}`);
             return filePath;
           }
         }
@@ -155,7 +153,6 @@ class EnvVarConfig {
     }
 
     /* Fall back to the default file path */
-    LoggerUtil.info(`Falling back to default file path of .env: ${EnvVarConfig.DEFAULT_FILE_PATH}`);
     return EnvVarConfig.DEFAULT_FILE_PATH;
   }
 
