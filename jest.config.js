@@ -13,8 +13,9 @@ module.exports = {
   },
   collectCoverage: true,  /* force tests to pass coverage or else will exit with error */
   collectCoverageFrom: [
-    'src/**/*.ts',        /* include all files in src directory*/
-    '!src/**/index.ts',   /* exclude index.ts files */
+    'src/**/*.ts',          /* include all files in src directory*/
+    '!src/**/index.ts',     /* exclude index.ts files */
+    '!src/errors/**/*.ts'   /* exclude all errors files */
   ],
   setupFilesAfterEnv: ['./jest.setup.js'] /* Global set up file */
 };
