@@ -64,6 +64,16 @@ const COMMON_ENV_MAPPINGS: { [key: string]: { NAMES: string[]; FILE_PATHS: strin
 }
 
 /**
+ * Enums for data types that can be read and converted from environment variable strings.
+ */
+enum PrimitiveTypes {
+  String = 'string',
+  Number = 'number',
+  Boolean = 'boolean',
+  Date = 'date'
+}
+
+/**
  * Configures the module based on the optional configuration options and defaults:
  * - Attaches a logger if specified or falls back to console.
  * - Determines the location of a .env file to read and attempts to load the environment variables from it if it exists.
@@ -148,7 +158,7 @@ function getValue(key: string): string | undefined {
 }
 
 /**
- * Gets the specified environment variable and returns it as a string.
+ * Gets the specified environment variable and returns it as a plain string with no type conversions.
  * @param key The name of the environment variable.
  * @returns The value of the environment variable as a string.
  * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
@@ -171,11 +181,8 @@ function getString(key: string): string {
  * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
  */
 function getNumber(key: string): number {
-  /* Check if value is undefined */
-  const value = getValue(key);
-  if (value === undefined) {
-    throw new UndefinedEnvVarError(key);
-  }
+  /* Get environment variable value as string */
+  const value = getString(key);
 
   /* Convert value to number and return it */
   return typeConverter.convertToNumber(value);
@@ -188,14 +195,25 @@ function getNumber(key: string): number {
  * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
  */
 function getBoolean(key: string): boolean {
-  /* Check if value is undefined */
-  const value = getValue(key);
-  if (value === undefined) {
-    throw new UndefinedEnvVarError(key);
-  }
+  /* Get environment variable value as string */
+  const value = getString(key);
 
   /* Convert value to boolean and return it */
   return typeConverter.convertToBoolean(value);
+}
+
+/**
+ * Gets the specified environment variable and returns it as a date.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as a date.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getDate(key: string): Date {
+  /* Get environment variable value as string */
+  const value = getString(key);
+
+  /* Convert value to date and return it */
+  return typeConverter.convertToDate(value);
 }
 
 /**
@@ -203,9 +221,10 @@ function getBoolean(key: string): boolean {
  */
 const EnvVarConfig = {
   config,
-  getValue,
   getString,
   getNumber,
-  getBoolean
+  getBoolean,
+  getDate,
+  PrimitiveTypes
 };
 export = EnvVarConfig;

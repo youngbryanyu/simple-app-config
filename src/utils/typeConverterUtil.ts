@@ -1,4 +1,5 @@
 /* Class for converting strings from environment variable values into other data types */
+import { PrimitiveTypes } from "../env-var-config";
 import { TypeConversionError } from "../errors/typeConversionError";
 
 /**
@@ -11,7 +12,7 @@ const convertToNumber = (value: string): number => {
   /* Check if value can be strictly converted to an number */
   const num = Number(value);
   if (isNaN(num)) {
-    throw new TypeConversionError(value, "number");
+    throw new TypeConversionError(value, PrimitiveTypes.Number);
   }
 
   return num;
@@ -37,12 +38,36 @@ const convertToBoolean = (value: string): boolean => {
   }
 
   /* Throw error if value isn't truthy or falsy */
-  throw new TypeConversionError(value, "boolean");
+  throw new TypeConversionError(value, PrimitiveTypes.Boolean);
+}
+
+/**
+ * Converts a string into a date.
+ * @param value The input value to convert into a date.
+ * @returns The value after being converted to a date.
+ * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Date in this case).
+ */
+const convertToDate = (value: string): Date => {
+  /* Check if input value is a number (for Unix timestamps) */
+  const num = Number(value);
+  if (!isNaN(num)) {
+    return new Date(num);
+  }
+
+  /* Check if input value itself can be converted to a date */
+  const date = new Date(value);
+  if (date.toJSON() !== null) {
+    return date;
+  }
+
+  /* Throw error if value cannot be converted to a date */
+  throw new TypeConversionError(value, PrimitiveTypes.Date);
 }
 
 /* Export functions */
 const TypeConverterUtil = { 
   convertToNumber, 
-  convertToBoolean 
+  convertToBoolean,
+  convertToDate,
 }
 export = TypeConverterUtil;
