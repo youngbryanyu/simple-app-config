@@ -88,7 +88,7 @@ describe('Type Converter Util Tests', () => {
 
   /* Convert to date tests */
   describe('Convert To Date Tests', () => {
-    /* Test when converting to a date is possible as a unix timestamp*/
+    /* Test when converting to a date is possible as a unix timestamp */
     it('Should successfully convert a unix timestamp to a date.', () => {
       /* Spy on the function under test */
       jest.spyOn(TypeConverterUtil, 'convertToDate');
@@ -127,6 +127,37 @@ describe('Type Converter Util Tests', () => {
       /* Call function and compare against expected */
       expect(() => TypeConverterUtil.convertToDate(value)).toThrow(TypeConversionError);
       expect(TypeConverterUtil.convertToDate).toHaveBeenCalled();
+    });
+  });
+
+  /* Convert to regex tests */
+  describe('Convert To RegExp Tests', () => {
+    /* Test when converting to a regexp is possible */
+    it('Should successfully convert a RegExp.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToRegex');
+
+      /* Set up and call function */
+      const value = '[0-9]';
+      const regex = TypeConverterUtil.convertToRegex(value);
+
+      /* Compare against expected */
+      expect(TypeConverterUtil.convertToRegex).toHaveBeenCalled();
+      expect(regex.test('9')).toBeTruthy();
+    });
+
+    /* Test when converting to a regexp is not possible */
+    it('Should throw an error if the value cannot be converted to a RegExp.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToRegex');
+
+
+      /* Set up */
+      const value = '\\';
+
+      /* Call function and compare against expected */
+      expect(() => TypeConverterUtil.convertToRegex(value)).toThrow(TypeConversionError);
+      expect(TypeConverterUtil.convertToRegex).toHaveBeenCalled()
     });
   });
 });

@@ -1,5 +1,5 @@
 /* Class for converting strings from environment variable values into other data types */
-import { PrimitiveTypes } from "../env-var-config";
+import { ObjectTypes, PrimitiveTypes } from "../env-var-config";
 import { TypeConversionError } from "../errors/typeConversionError";
 
 /**
@@ -61,7 +61,23 @@ const convertToDate = (value: string): Date => {
   }
 
   /* Throw error if value cannot be converted to a date */
-  throw new TypeConversionError(value, PrimitiveTypes.Date);
+  throw new TypeConversionError(value, ObjectTypes.Date);
+}
+
+/**
+ * Converts a string into a regex.
+ * @param value The input value to convert into a regex.
+ * @returns The value after being converted to a regex.
+ * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (RegExp in this case).
+ */
+const convertToRegex = (value: string): RegExp => {
+  /* Try to convert value to regex */
+  try {
+    return new RegExp(value);
+  } catch (error) {
+    /* Throw error if value cannot be converted to a date */
+    throw new TypeConversionError(value, ObjectTypes.RegExp);
+  }
 }
 
 /* Export functions */
@@ -69,5 +85,6 @@ const TypeConverterUtil = {
   convertToNumber, 
   convertToBoolean,
   convertToDate,
+  convertToRegex,
 }
 export = TypeConverterUtil;

@@ -1,9 +1,9 @@
 /* Environment variable configuration loader. */
 import dotenv from 'dotenv';
-import { UndefinedEnvVarError } from './errors/undefinedEnvVarError';
-import typeConverter from './utils/typeConverterUtil';
 import { Logger } from 'ts-log';
 import fs from 'fs';
+import { UndefinedEnvVarError } from './errors/undefinedEnvVarError';
+import typeConverter from './utils/typeConverterUtil';
 import LoggerUtil from './utils/loggerUtil';
 
 /**
@@ -64,14 +64,29 @@ const COMMON_ENV_MAPPINGS: { [key: string]: { NAMES: string[]; FILE_PATHS: strin
 }
 
 /**
- * Enums for data types that can be read and converted from environment variable strings.
+ * Enums for primitive types that can be read and converted from environment variable strings.
  */
 enum PrimitiveTypes {
   String = 'string',
   Number = 'number',
   Boolean = 'boolean',
-  Date = 'date'
 }
+
+/**
+ * Enums for object types that can be read and converted from environment variable strings.
+ */
+enum ObjectTypes {
+  Date = 'Date',
+  Array = 'Array',
+  Map = 'Map',
+  Set = 'Set',
+  RegExp = 'RegExp'
+}
+
+/**
+ * Cache for environment variables to speed up retrieval due to system calls being slower than retrieving from memory.
+ */
+const cache: Map<string, string | undefined> = new Map();
 
 /**
  * Configures the module based on the optional configuration options and defaults:
@@ -149,12 +164,62 @@ function determineFilePath(configOptions: ConfigOptions): string {
 }
 
 /**
- * Returns the value corresponding the to environment variable with name {@link key} in the environment variables.
- * @param key Name of the target environment variable.
+ * Clears the existing cache and refreshes the cache with the most up-to-date environment variables in process.env.
+ */
+function refreshCache() {
+  /* Clear the cache */
+  cache.clear();
+
+  /* Load all existing environment variables in the cache */
+  for (const key in process.env) {
+    cache.set(key, process.env[key]);
+  }
+}
+
+/**
+ * Sets a new value to an environment variable and uses write-through to update the value in the cache.
+ * @param key Key or name of the environment variable.
+ * @param value The name value to set the environment variable to.
+ */
+function setValue(key: string, value: string) {
+  /* Update value in process.env */
+  process.env[key] = value;
+
+  /* Write-through to cache */
+  cache.set(key, value);
+}
+
+/**
+ * Deletes an environment variable and removes it from the cache.
+ * @param key Key or name of the environment variable.
+ */
+function deleteValue(key: string) {
+  /* Update value in process.env */
+  delete process.env[key];
+
+  /* Delete from cache */
+  cache.delete(key);
+}
+
+/**
+ * Returns the value corresponding the to environment variable with name {@link key} in the environment variables. 
+ * Checks the {@link cache} first and then process.env if there is a cache miss. Will lazy load the value into
+ * the in-memory cache if there is a miss.
+ * @param key Key or name name of the environment variable.
  * @returns the value corresponding the to environment variable with name {@link key} in the environment variables.
  */
 function getValue(key: string): string | undefined {
-  return process.env[key];
+  /* Check if cache contains the environment variable */
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+
+  /* Lazy load value from process.env into cache */
+  const value = process.env[key];
+  cache.set(key, value);
+
+  /* Return the value */
+  return value;
 }
 
 /**
@@ -217,6 +282,20 @@ function getDate(key: string): Date {
 }
 
 /**
+ * Gets the specified environment variable and returns it as a regex.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as a regex.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getRegex(key: string): RegExp {
+  /* Get environment variable value as string */
+  const value = getString(key);
+
+  /* Convert value to date and return it */
+  return typeConverter.convertToRegex(value);
+}
+
+/**
  * Export functions to expose for public use.
  */
 const EnvVarConfig = {
@@ -225,6 +304,11 @@ const EnvVarConfig = {
   getNumber,
   getBoolean,
   getDate,
-  PrimitiveTypes
+  getRegex,
+  PrimitiveTypes,
+  ObjectTypes,
+  refreshCache,
+  setValue,
+  deleteValue
 };
 export = EnvVarConfig;
