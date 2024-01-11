@@ -10,7 +10,7 @@ export class TypeConversionError extends EnvConfigError {
    * @param value The value of the environment variable being converted.
    * @param targetType The target type being converted to.
    */
-  constructor(value: string, targetType: string) {
+  constructor(value: string, targetType: string ) {
     super(`The string with value ${value} cannot be converted to type ${targetType}.`);
     this.name = "TypeConversionError";
     Object.setPrototypeOf(this, TypeConversionError.prototype);

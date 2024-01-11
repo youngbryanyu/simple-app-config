@@ -133,7 +133,7 @@ describe('Type Converter Util Tests', () => {
   /* Convert to regex tests */
   describe('Convert To RegExp Tests', () => {
     /* Test when converting to a regexp is possible */
-    it('Should successfully convert a RegExp.', () => {
+    it('Should successfully convert the input to a RegExp.', () => {
       /* Spy on the function under test */
       jest.spyOn(TypeConverterUtil, 'convertToRegex');
 
@@ -147,7 +147,7 @@ describe('Type Converter Util Tests', () => {
     });
 
     /* Test when converting to a regexp is not possible */
-    it('Should throw an error if the value cannot be converted to a RegExp.', () => {
+    it('Should throw an error if the input cannot be converted to a RegExp.', () => {
       /* Spy on the function under test */
       jest.spyOn(TypeConverterUtil, 'convertToRegex');
 
@@ -158,6 +158,39 @@ describe('Type Converter Util Tests', () => {
       /* Call function and compare against expected */
       expect(() => TypeConverterUtil.convertToRegex(value)).toThrow(TypeConversionError);
       expect(TypeConverterUtil.convertToRegex).toHaveBeenCalled()
+    });
+  });
+
+  /* Convert to object tests */
+  describe('Convert To Object Tests', () => {
+    /* Test when converting to a regexp is possible */
+    it('Should successfully convert the input to an Object.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToObject');
+
+      /* Set up and call function */
+      const value = '{"key1" :   "value1", "key2": [1, 2, 3]}';
+      const result = TypeConverterUtil.convertToObject(value);
+
+      /* Compare against expected */
+      expect(TypeConverterUtil.convertToObject).toHaveBeenCalled();
+      expect(Object.keys(result)[0]).toBe("key1");
+      expect(Object.keys(result)[1]).toBe("key2");
+      expect(Object.values(result)[0]).toBe("value1");
+      expect(JSON.stringify(Object.values(result)[1])).toBe('[1,2,3]');
+    });
+
+    /* Test when converting to a regexp is not possible */
+    it('Should throw an error if the input cannot be converted to an Object .', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToObject');
+
+      /* Set up */
+      const value = '\\';
+
+      /* Call function and compare against expected */
+      expect(() => TypeConverterUtil.convertToObject(value)).toThrow(TypeConversionError);
+      expect(TypeConverterUtil.convertToObject).toHaveBeenCalled()
     });
   });
 });

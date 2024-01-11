@@ -3,8 +3,9 @@ import dotenv from 'dotenv';
 import { Logger } from 'ts-log';
 import fs from 'fs';
 import { UndefinedEnvVarError } from './errors/undefinedEnvVarError';
-import typeConverter from './utils/typeConverterUtil';
+import { convertToArray, convertToBoolean, convertToDate, convertToMap, convertToNumber, convertToObject, convertToRegex, convertToSet } from './utils/typeConverterUtil';
 import LoggerUtil from './utils/loggerUtil';
+import { DataTypes } from './enums';
 
 /**
  * Interface representing the optional configuration options for {@link EnvVarConfig}.
@@ -61,26 +62,6 @@ const COMMON_ENV_MAPPINGS: { [key: string]: { NAMES: string[]; FILE_PATHS: strin
     NAMES: ['prod', 'production'],
     FILE_PATHS: ['.env.prod', '.env.production']
   }
-}
-
-/**
- * Enums for primitive types that can be read and converted from environment variable strings.
- */
-enum PrimitiveTypes {
-  String = 'string',
-  Number = 'number',
-  Boolean = 'boolean',
-}
-
-/**
- * Enums for object types that can be read and converted from environment variable strings.
- */
-enum ObjectTypes {
-  Date = 'Date',
-  Array = 'Array',
-  Map = 'Map',
-  Set = 'Set',
-  RegExp = 'RegExp'
 }
 
 /**
@@ -204,7 +185,7 @@ function deleteValue(key: string) {
 /**
  * Returns the value corresponding the to environment variable with name {@link key} in the environment variables. 
  * Checks the {@link cache} first and then process.env if there is a cache miss. Will lazy load the value into
- * the in-memory cache if there is a miss.
+ * the in-memory cache if there is a miss. Caches undefined environment variables as well.
  * @param key Key or name name of the environment variable.
  * @returns the value corresponding the to environment variable with name {@link key} in the environment variables.
  */
@@ -250,7 +231,7 @@ function getNumber(key: string): number {
   const value = getString(key);
 
   /* Convert value to number and return it */
-  return typeConverter.convertToNumber(value);
+  return convertToNumber(value);
 }
 
 /**
@@ -264,7 +245,7 @@ function getBoolean(key: string): boolean {
   const value = getString(key);
 
   /* Convert value to boolean and return it */
-  return typeConverter.convertToBoolean(value);
+  return convertToBoolean(value);
 }
 
 /**
@@ -278,7 +259,7 @@ function getDate(key: string): Date {
   const value = getString(key);
 
   /* Convert value to date and return it */
-  return typeConverter.convertToDate(value);
+  return convertToDate(value);
 }
 
 /**
@@ -292,7 +273,63 @@ function getRegex(key: string): RegExp {
   const value = getString(key);
 
   /* Convert value to date and return it */
-  return typeConverter.convertToRegex(value);
+  return convertToRegex(value);
+}
+
+/**
+ * Gets the specified environment variable and returns it as a regex.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as a regex.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getObject(key: string): object {
+  /* Get environment variable value as string */
+  const value = getString(key);
+
+  /* Convert value to date and return it */
+  return convertToObject(value);
+}
+
+/**
+ * Gets the specified environment variable and returns it as an array.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as an array.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getArray<T>(key: string, type: DataTypes): Array<T> {
+  /* Get environment variable value as string */
+  const value = getString(key);
+  
+  /* Convert value to array and return it */
+  return convertToArray(value, type);
+}
+
+/**
+ * Gets the specified environment variable and returns it as an array.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as an array.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getSet<T>(key: string, type: DataTypes): Set<T> {
+  /* Get environment variable value as string */
+  const value = getString(key);
+  
+  /* Convert value to array and return it */
+  return convertToSet(value, type);
+}
+
+/**
+ * Gets the specified environment variable and returns it as an array.
+ * @param key The name of the environment variable.
+ * @returns The value of the environment variable as an array.
+ * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
+ */
+function getMap<K, V>(key: string, keyType: DataTypes, valueType: DataTypes): Map<K, V> {
+  /* Get environment variable value as string */
+  const value = getString(key);
+  
+  /* Convert value to array and return it */
+  return convertToMap(value, keyType, valueType);
 }
 
 /**
@@ -305,8 +342,11 @@ const EnvVarConfig = {
   getBoolean,
   getDate,
   getRegex,
-  PrimitiveTypes,
-  ObjectTypes,
+  getObject,
+  getArray,
+  getSet,
+  getMap,
+  DataTypes,
   refreshCache,
   setValue,
   deleteValue
