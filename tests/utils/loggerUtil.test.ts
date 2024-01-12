@@ -4,14 +4,6 @@ import {LoggerUtil} from '../../src/utils/loggerUtil'
 
 /* Logger util tests */
 describe('Logger util tests', () => {
-
-  /**
-   * Setup before all tests
-   */
-  beforeAll(() => {
-
-  });
-
   /* Setup before each test */
   beforeEach(() => {
     jest.restoreAllMocks();
