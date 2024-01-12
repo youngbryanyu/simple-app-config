@@ -276,7 +276,7 @@ describe('Type Converter Util Tests', () => {
       /* Set up and call function */
       const value = '["100", "Wed Dec 31 1969", "100000"]';
       const result: Array<Date> = TypeConverterUtil.convertToArray(value, NestableDataTypes.Date);
-
+      
       /* Compare against expected */
       expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
       expect(result[0] instanceof Date).toBeTruthy();

@@ -193,7 +193,7 @@ export function deleteValue(key: string) {
  * @param key Key or name name of the environment variable.
  * @returns the value corresponding the to environment variable with name {@link key} in the environment variables.
  */
-export function getValue(key: string): string | undefined {
+function getValue(key: string): string | undefined {
   /* Check if cache contains the environment variable */
   if (cache.has(key)) {
     return cache.get(key);
@@ -268,7 +268,7 @@ export function getDate(key: string): Date {
  * @param key The name of the environment variable.
  * @returns The value of the environment variable as a RegExp.
  */
-export function getRegex(key: string): RegExp {
+export function getRegExp(key: string): RegExp {
   /* Get environment variable value as string */
   const value = getString(key);
 
