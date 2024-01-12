@@ -5,7 +5,7 @@ import { TypeConversionError } from "../errors/typeConversionError";
 /**
  * Conversion functions of types that can be nested within Arrays, Sets, and Maps.
  */
-export const nestableConversionFunctions = {
+const nestableConversionFunctions = {
   [NestableDataTypes.String as string]: (val: unknown) => String(val),
   [NestableDataTypes.Number as string]: convertToNumber,
   [NestableDataTypes.Boolean as string]: convertToBoolean,
