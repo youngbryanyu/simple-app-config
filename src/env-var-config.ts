@@ -319,7 +319,7 @@ export function getSet<T>(key: string, type?: NestableDataTypes): Set<T> {
 
 /**
  * Gets the specified environment variable and returns it as a Map. 
- * If the keyType and valueType are ommitted the keys and values will default to type string when conversion occurs.
+ * If the keyType and valueType are ommitted the keys and will default to type string when conversion occurs.
  * @param key The name of the environment variable.
  * @returns The value of the environment variable as a Map.
  */

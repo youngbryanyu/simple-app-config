@@ -23,8 +23,8 @@ let enableLogs: boolean = true;
  * Sets the implementation of the logger to use.
  * @param logger The logger implementation to use.
  */
-function setLogger(logger: Logger): void {
-  logger = logger;
+function setLogger(loggerImplementation: Logger): void {
+  logger = loggerImplementation;
 }
 
 /**
@@ -45,6 +45,7 @@ function info(message: string): void {
   }
 }
 
+/* Export the logger util */
 export const LoggerUtil = {
   setLogger,
   setLoggingEnabled,
