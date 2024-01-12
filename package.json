@@ -12,12 +12,20 @@
     "lint": "eslint .",
     "test": "jest --verbose"
   },
-  "keywords": ["environment", "env", "environment-variables", ".env", "env-var-config", "env config", "application configuration", "configuration"],
+  "keywords": [
+    "environment",
+    "env",
+    "environment-variables",
+    ".env",
+    "env-var-config",
+    "env config",
+    "application configuration",
+    "configuration"
+  ],
   "author": "Young Yu",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.3.1",
-    "ts-log": "^2.2.5"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

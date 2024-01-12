@@ -1,14 +1,14 @@
 /**
- * A generic env-config error.
+ * A generic error when using env-var-config.
  */
-export class EnvConfigError extends Error {
+export class EnvVarConfigError extends Error {
   /**
-   * Constructor for {@link EnvConfigError}.
+   * Constructor for {@link EnvVarConfigError}.
    * @param message A custom error message.
    */
   constructor(message: string) {
     super(message);
-    this.name = "EnvConfigError";
-    Object.setPrototypeOf(this, EnvConfigError.prototype);
+    this.name = "EnvVarConfigError";
+    Object.setPrototypeOf(this, EnvVarConfigError.prototype);
   }
 }

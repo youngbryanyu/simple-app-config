@@ -1,4 +1,36 @@
-import EnvVarConfig from "./env-var-config";
+import { 
+  config,
+  getString, 
+  getNumber, 
+  getBoolean, 
+  getDate, 
+  getRegex, 
+  getObject, 
+  getArray, 
+  getSet, 
+  getMap, 
+  refreshCache,
+  setValue,
+  deleteValue
+} from "./env-var-config";
+import { NestableDataTypes } from "./enums";
 
-/* Export EnvVarConfig */
-export = EnvVarConfig;
+/* Wrap functions to export in EnvVarConfig namespace */
+const EnvVarConfig = {
+  config,
+  getString,
+  getNumber,
+  getBoolean,
+  getDate,
+  getRegex,
+  getObject,
+  getArray,
+  getSet,
+  getMap,
+  refreshCache,
+  setValue,
+  deleteValue
+}
+
+/* Export EnvVarConfig and Nestable Data Types */
+export { EnvVarConfig, NestableDataTypes as DataTypes };

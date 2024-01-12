@@ -1,10 +1,16 @@
 /* Class representing a logger interface to attach a logger. */
-import { Logger } from 'ts-log';
+
+/**
+ * Represents a generic logger that could be a simple console .
+ */
+export interface Logger {
+  info(message?: string, ...optionalParams: unknown[]): void;
+}
 
 /**
  * The logger util class.
  */
-class LoggerUtil {
+export class LoggerUtil {
   /**
    * The implementation of the logger interface to use.
    * @default console
@@ -34,26 +40,6 @@ class LoggerUtil {
   }
 
   /**
-   * Performs logging of verbose level error if logging is enabled.
-   * @param message Message to log.
-   */
-  public static trace(message: string): void {
-    if (LoggerUtil.enableLogs) {
-      LoggerUtil.logger.trace(message);
-    }
-  }
-
-  /**
-   * Performs logging of verbose level 'debug' if logging is enabled.
-   * @param message Message to log.
-   */
-  public static debug(message: string): void {
-    if (LoggerUtil.enableLogs) {
-      LoggerUtil.logger.debug(message);
-    }
-  }
-
-  /**
    * Performs logging of verbose level 'info' if logging is enabled.
    * @param message Message to log.
    */
@@ -62,26 +48,4 @@ class LoggerUtil {
       LoggerUtil.logger.info(message);
     }
   }
-
-  /**
-   * Performs logging of verbose level 'warn' if logging is enabled.
-   * @param message Message to log.
-   */
-  public static warn(message: string): void {
-    if (LoggerUtil.enableLogs) {
-      LoggerUtil.logger.warn(message);
-    }
-  }
-
-  /**
-   * Performs logging of verbose level 'warn' if logging is enabled.
-   * @param message 
-   */
-  public static error(message: string): void {
-    if (LoggerUtil.enableLogs) {
-      LoggerUtil.logger.error(message);
-    }
-  }
 }
-
-export default LoggerUtil;

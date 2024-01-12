@@ -1,14 +1,20 @@
 /**
- * Enums for data types used in converting environment variables.
+ * Enums for data types that can be nested in Arrays, Sets, and Maps during type conversion form environment variables.
  */
-export enum DataTypes {
+export enum NestableDataTypes {
   String = 'string',
   Number = 'number',
   Boolean = 'boolean',
-  Object = 'object',
   Date = 'Date',
+  RegExp = 'RegExp',
+  Object = 'object',
+}
+
+/**
+ * Enums for data types that cannot be nested in Arrays, Sets, and Maps during type conversion form environment variables.
+ */
+export enum NonNestableDataTypes {
   Array = 'Array',
   Map = 'Map',
-  Set = 'Set',
-  RegExp = 'RegExp'
+  Set = 'Set'
 }

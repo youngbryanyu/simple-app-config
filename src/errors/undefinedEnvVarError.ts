@@ -1,9 +1,10 @@
-import { EnvConfigError } from "./envConfigError";
+import { EnvVarConfigError } from "./envConfigError";
 
 /**
- * An error extending {@link EnvConfigError} that should be thrown when an environment variable is undefined, but is being accessed.
+ * An error extending {@link EnvVarConfigError} that should be thrown when an environment variable is undefined, but is being 
+ * accessed.
  */
-export class UndefinedEnvVarError extends EnvConfigError {
+export class UndefinedEnvVarError extends EnvVarConfigError {
   /**
    * Constructor for {@link UndefinedEnvVarError}.
    * @param message A custom error message.
