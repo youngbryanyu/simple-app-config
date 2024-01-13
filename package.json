@@ -1,8 +1,8 @@
 {
-  "name": "simple-config",
+  "name": "simple-app-config",
   "version": "0.0.0",
   "description": "A module for loading configuration data from environment variables.",
-  "repository": "https://github.com/youngbryanyu/simple-config",
+  "repository": "https://github.com/youngbryanyu/simple-app-config",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
