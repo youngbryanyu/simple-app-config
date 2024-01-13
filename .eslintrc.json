@@ -16,9 +16,10 @@
       "sourceType": "module"
   },
   "ignorePatterns": [
-    "dist/",               /* Ignore JS files */
-    "tests/"              /* Ignore Test files */
-  ], 
+    "dist/",               /* Ignore JS artifact/build files */
+    "tests/",              /* Ignore Test files */
+    "**/**.js"             /* Ignore javascript files */
+  ],    
   "rules": {
     /* Add custom rules here */
   }

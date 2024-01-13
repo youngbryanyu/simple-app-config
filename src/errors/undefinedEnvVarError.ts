@@ -1,4 +1,4 @@
-import { EnvVarConfigError } from "./envConfigError";
+import { EnvVarConfigError } from "./envVarConfigError";
 
 /**
  * An error extending {@link EnvVarConfigError} that should be thrown when an environment variable is undefined, but is being 
@@ -10,7 +10,7 @@ export class UndefinedEnvVarError extends EnvVarConfigError {
    * @param message A custom error message.
    */
   constructor(key: string) {
-    super(`The environment variable ${key} is undefined.`);
+    super(`The environment variable '${key}' is undefined.`);
     this.name = "UndefinedEnvVarError";
     Object.setPrototypeOf(this, UndefinedEnvVarError.prototype);
   }

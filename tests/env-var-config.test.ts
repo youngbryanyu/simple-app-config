@@ -23,8 +23,8 @@ describe('env-var-config Tests', () => {
   describe('config Tests', () => {
     /* Test successfully configuring the module with logger and valid file path */
     it('Should successfully configure the module with a logger and valid .env file path', () => {
-      /* Spy on the EnvVarConfig.config function */
-      jest.spyOn(EnvVarConfig, 'config');
+      /* Spy on the EnvVarConfig.configure function */
+      jest.spyOn(EnvVarConfig, 'configure');
 
       /* Spy on fs.existSync and mock */
       jest.spyOn(fs, 'existsSync').mockImplementation(() => { return true });
@@ -33,18 +33,18 @@ describe('env-var-config Tests', () => {
       jest.spyOn(dotenv, 'config');
 
       /* Call the function */
-      EnvVarConfig.config({ logger: console, enableLogs: false });
+      EnvVarConfig.configure();
 
       /* Compare against expected */
-      expect(EnvVarConfig.config).toHaveBeenCalled();
+      expect(EnvVarConfig.configure).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalled();
       expect(dotenv.config).toHaveBeenCalled();
     });
 
     /* Test successfully configuring the module with an invalid file path */
     it('Should successfully configure the module with an invalid .env file path', () => {
-      /* Spy on the EnvVarConfig.config function */
-      jest.spyOn(EnvVarConfig, 'config');
+      /* Spy on the EnvVarConfig.configure function */
+      jest.spyOn(EnvVarConfig, 'configure');
 
       /* Spy on fs.existSync and mock */
       jest.spyOn(fs, 'existsSync').mockImplementation(() => { return false });
@@ -53,18 +53,18 @@ describe('env-var-config Tests', () => {
       jest.spyOn(dotenv, 'config');
 
       /* Call the function */
-      EnvVarConfig.config();
+      EnvVarConfig.configure();
 
       /* Compare against expected */
-      expect(EnvVarConfig.config).toHaveBeenCalled();
+      expect(EnvVarConfig.configure).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalled();
       expect(dotenv.config).not.toHaveBeenCalled();
     });
 
     /* Test successfully configuring the module with a custom file path */
     it('Should successfully configure the module with a custom .env file path', () => {
-      /* Spy on the EnvVarConfig.config function */
-      jest.spyOn(EnvVarConfig, 'config');
+      /* Spy on the EnvVarConfig.configure function */
+      jest.spyOn(EnvVarConfig, 'configure');
 
       /* Spy on fs.existSync and mock */
       jest.spyOn(fs, 'existsSync').mockImplementation(() => { return true });
@@ -76,18 +76,18 @@ describe('env-var-config Tests', () => {
       process.env['ENV_FILE_ROOT'] = '.env'
 
       /* Call the function */
-      EnvVarConfig.config();
+      EnvVarConfig.configure();
 
       /* Compare against expected */
-      expect(EnvVarConfig.config).toHaveBeenCalled();
+      expect(EnvVarConfig.configure).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalled();
       expect(dotenv.config).toHaveBeenCalled();
     });
 
     /* Test successfully configuring the module with a custom file path mapping */
     it('Should successfully configure the module with a custom environment file path mapping', () => {
-      /* Spy on the EnvVarConfig.config function */
-      jest.spyOn(EnvVarConfig, 'config');
+      /* Spy on the EnvVarConfig.configure function */
+      jest.spyOn(EnvVarConfig, 'configure');
 
       /* Spy on fs.existSync and mock */
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => { return false })
@@ -101,14 +101,10 @@ describe('env-var-config Tests', () => {
       process.env['ENV_FILE_ROOT'] = '.env'
 
       /* Call the function */
-      EnvVarConfig.config({
-        envFilePathMappings: {
-          "dev": ".env.dev"
-        }
-      });
+      EnvVarConfig.configure();
 
       /* Compare against expected */
-      expect(EnvVarConfig.config).toHaveBeenCalled();
+      expect(EnvVarConfig.configure).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalled();
       expect(dotenv.config).toHaveBeenCalled();
     });
@@ -119,16 +115,16 @@ describe('env-var-config Tests', () => {
     /* Test clearing the cache */
     it('Should clear the cache', () => {
       /* Set up spies and mocks */
-      jest.spyOn(EnvVarConfig, 'refreshCache');
-      EnvVarConfig.setValue('PORT', '8000');
+      jest.spyOn(EnvVarConfig, 'refreshEnvCache');
+      EnvVarConfig.setEnvValue('PORT', '8000');
       jest.spyOn(Map.prototype, 'clear');
       jest.spyOn(Map.prototype, 'set');
 
       /* Call function */
-      EnvVarConfig.refreshCache();
+      EnvVarConfig.refreshEnvCache();
 
       /* Compare against expected */
-      expect(EnvVarConfig.refreshCache).toHaveBeenCalled();
+      expect(EnvVarConfig.refreshEnvCache).toHaveBeenCalled();
       expect(Map.prototype.clear).toHaveBeenCalled();
       expect(Map.prototype.set).toHaveBeenCalled();
     });
@@ -139,16 +135,16 @@ describe('env-var-config Tests', () => {
     /* Test setting a value */
     it('Should set a value', () => {
       /* Set up spies and mocks */
-      jest.spyOn(EnvVarConfig, 'setValue');
+      jest.spyOn(EnvVarConfig, 'setEnvValue');
       jest.spyOn(Map.prototype, 'set');
 
       /* Call function */
-      EnvVarConfig.setValue('PORT', '8000');
+      EnvVarConfig.setEnvValue('PORT', '8000');
 
       /* Compare against expected */
-      expect(EnvVarConfig.setValue).toHaveBeenCalled();
+      expect(EnvVarConfig.setEnvValue).toHaveBeenCalled();
       expect(Map.prototype.set).toHaveBeenCalled();
-      expect(EnvVarConfig.getString('PORT')).toBe('8000');
+      expect(EnvVarConfig.getStringFromEnv('PORT')).toBe('8000');
     });
   });
 
@@ -157,16 +153,16 @@ describe('env-var-config Tests', () => {
     /* Test deleting a value */
     it('Should delete a value', () => {
       /* Set up spies and mocks */
-      jest.spyOn(EnvVarConfig, 'setValue');
+      jest.spyOn(EnvVarConfig, 'setEnvValue');
       jest.spyOn(Map.prototype, 'delete');
 
       /* Call function */
-      EnvVarConfig.setValue('PORT', '8000');
-      EnvVarConfig.deleteValue('PORT');
+      EnvVarConfig.setEnvValue('PORT', '8000');
+      EnvVarConfig.deleteEnvValue('PORT');
 
       /* Compare against expected */
-      expect(() => EnvVarConfig.getString('PORT')).toThrow(UndefinedEnvVarError);
-      expect(EnvVarConfig.setValue).toHaveBeenCalled();
+      expect(() => EnvVarConfig.getStringFromEnv('PORT')).toThrow(UndefinedEnvVarError);
+      expect(EnvVarConfig.setEnvValue).toHaveBeenCalled();
       expect(Map.prototype.delete).toHaveBeenCalled();
     });
   });
@@ -176,16 +172,16 @@ describe('env-var-config Tests', () => {
     /* Test getting a string value and its in cache */
     it('Should get a string value and should get it from the cache ', () => {
       /* Set up */
-      EnvVarConfig.setValue('PORT', '8000');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getString');
+      EnvVarConfig.setEnvValue('PORT', '8000');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getStringFromEnv');
       jest.spyOn(Map.prototype, 'get');
 
       /* Call function */
-      const result = EnvVarConfig.getString('PORT');
+      const result = EnvVarConfig.getStringFromEnv('PORT');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getString).toHaveBeenCalled();
+      expect(EnvVarConfig.getStringFromEnv).toHaveBeenCalled();
       expect(Map.prototype.get).toHaveBeenCalled();
       expect(typeof result).toBe('string');
       expect(result).toBe('8000');
@@ -195,15 +191,15 @@ describe('env-var-config Tests', () => {
     it('Should get a string value when its not in the cache', () => {
       /* Set up */
       process.env['PORT'] = '8000';
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getString');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getStringFromEnv');
       jest.spyOn(Map.prototype, 'get');
 
       /* Call function */
-      const result = EnvVarConfig.getString('PORT');
+      const result = EnvVarConfig.getStringFromEnv('PORT');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getString).toHaveBeenCalled();
+      expect(EnvVarConfig.getStringFromEnv).toHaveBeenCalled();
       expect(Map.prototype.get).toHaveBeenCalled();
       expect(typeof result).toBe('string');
       expect(result).toBe('8000');
@@ -212,12 +208,12 @@ describe('env-var-config Tests', () => {
     /* Test getting a string value and its undefined */
     it('Should throw and error when the environment variable is undefined ', () => {
       /* Set up */
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getString');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getStringFromEnv');
 
       /* Call function and Compare against expected */
-      expect(() => EnvVarConfig.getString('PORT')).toThrow(UndefinedEnvVarError);
-      expect(EnvVarConfig.getString).toHaveBeenCalled();
+      expect(() => EnvVarConfig.getStringFromEnv('PORT')).toThrow(UndefinedEnvVarError);
+      expect(EnvVarConfig.getStringFromEnv).toHaveBeenCalled();
     });
   });
 
@@ -226,15 +222,15 @@ describe('env-var-config Tests', () => {
     /* Test getting a number value */
     it('Should get a number value', () => {
       /* Set up */
-      EnvVarConfig.setValue('PORT', '8000');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getNumber');
+      EnvVarConfig.setEnvValue('PORT', '8000');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getNumberFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getNumber('PORT');
+      const result = EnvVarConfig.getNumberFromEnv('PORT');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getNumber).toHaveBeenCalled();
+      expect(EnvVarConfig.getNumberFromEnv).toHaveBeenCalled();
       expect(typeof result).toBe('number');
       expect(result).toBe(8000);
     });
@@ -245,15 +241,15 @@ describe('env-var-config Tests', () => {
     /* Test getting a boolean value */
     it('Should get a boolean value', () => {
       /* Set up */
-      EnvVarConfig.setValue('FLAG', 'F');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getBoolean');
+      EnvVarConfig.setEnvValue('FLAG', 'F');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getBooleanFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getBoolean('FLAG');
+      const result = EnvVarConfig.getBooleanFromEnv('FLAG');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getBoolean).toHaveBeenCalled();
+      expect(EnvVarConfig.getBooleanFromEnv).toHaveBeenCalled();
       expect(typeof result).toBe('boolean');
       expect(result).toBe(false);
     });
@@ -264,15 +260,15 @@ describe('env-var-config Tests', () => {
     /* Test getting a date value */
     it('Should get a Date value', () => {
       /* Set up */
-      EnvVarConfig.setValue('DATE', 'Wed Dec 31 1969');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getDate');
+      EnvVarConfig.setEnvValue('DATE', 'Wed Dec 31 1969');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getDateFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getDate('DATE');
+      const result = EnvVarConfig.getDateFromEnv('DATE');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getDate).toHaveBeenCalled();
+      expect(EnvVarConfig.getDateFromEnv).toHaveBeenCalled();
       expect(result instanceof Date).toBeTruthy();
       expect(result.toJSON()).toBe('1969-12-31T08:00:00.000Z');
     });
@@ -283,15 +279,15 @@ describe('env-var-config Tests', () => {
     /* Test getting a RegExp value */
     it('Should get a RegExp value', () => {
       /* Set up */
-      EnvVarConfig.setValue('REGEXP', '[0-9]');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getRegExp');
+      EnvVarConfig.setEnvValue('REGEXP', '[0-9]');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getRegExpFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getRegExp('REGEXP');
+      const result = EnvVarConfig.getRegExpFromEnv('REGEXP');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getRegExp).toHaveBeenCalled();
+      expect(EnvVarConfig.getRegExpFromEnv).toHaveBeenCalled();
       expect(result instanceof RegExp).toBeTruthy();
       expect(result.test('8')).toBeTruthy();
     });
@@ -302,15 +298,15 @@ describe('env-var-config Tests', () => {
     /* Test getting an object value */
     it('Should get an object value', () => {
       /* Set up */
-      EnvVarConfig.setValue('OBJECT', '{"cat": "dog"}');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getObject');
+      EnvVarConfig.setEnvValue('OBJECT', '{"cat": "dog"}');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getObjectFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getObject('OBJECT');
+      const result = EnvVarConfig.getObjectFromEnv('OBJECT');
 
       /* Compare against expected */
-      expect(EnvVarConfig.getObject).toHaveBeenCalled();
+      expect(EnvVarConfig.getObjectFromEnv).toHaveBeenCalled();
       expect(result instanceof Object).toBeTruthy();
       expect(Object.keys(result)[0]).toBe("cat");
       expect(Object.values(result)[0]).toBe("dog");
@@ -322,15 +318,15 @@ describe('env-var-config Tests', () => {
     /* Test getting an Array value */
     it('Should get an Array value', () => {
       /* Set up */
-      EnvVarConfig.setValue('ARRAY', '[1, 2, 3]');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getArray');
+      EnvVarConfig.setEnvValue('ARRAY', '[1, 2, 3]');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getArrayFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getArray('ARRAY', DataTypes.Number);
+      const result = EnvVarConfig.getArrayFromEnv('ARRAY', DataTypes.Number);
 
       /* Compare against expected */
-      expect(EnvVarConfig.getArray).toHaveBeenCalled();
+      expect(EnvVarConfig.getArrayFromEnv).toHaveBeenCalled();
       expect(result instanceof Array).toBeTruthy();
       expect(result[0]).toBe(1);
       expect(result[1]).toBe(2);
@@ -343,15 +339,15 @@ describe('env-var-config Tests', () => {
     /* Test getting an Set value */
     it('Should get an Set value', () => {
       /* Set up */
-      EnvVarConfig.setValue('SET', '[1, 2, 3]');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getSet');
+      EnvVarConfig.setEnvValue('SET', '[1, 2, 3]');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getSetFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getSet('SET', DataTypes.Number);
+      const result = EnvVarConfig.getSetFromEnv('SET', DataTypes.Number);
 
       /* Compare against expected */
-      expect(EnvVarConfig.getSet).toHaveBeenCalled();
+      expect(EnvVarConfig.getSetFromEnv).toHaveBeenCalled();
       expect(result instanceof Set).toBeTruthy();
       expect(result.has(1)).toBeTruthy();
       expect(result.has(2)).toBeTruthy();
@@ -364,15 +360,15 @@ describe('env-var-config Tests', () => {
     /* Test getting a Map value */
     it('Should get a Map value', () => {
       /* Set up */
-      EnvVarConfig.setValue('MAP', '{"cat": "5", "dog": "3"}');
-      EnvVarConfig.config();
-      jest.spyOn(EnvVarConfig, 'getMap');
+      EnvVarConfig.setEnvValue('MAP', '{"cat": "5", "dog": "3"}');
+      EnvVarConfig.configure();
+      jest.spyOn(EnvVarConfig, 'getMapFromEnv');
 
       /* Call function */
-      const result = EnvVarConfig.getMap('MAP', DataTypes.String, DataTypes.Number);
+      const result = EnvVarConfig.getMapFromEnv('MAP', DataTypes.String, DataTypes.Number);
 
       /* Compare against expected */
-      expect(EnvVarConfig.getMap).toHaveBeenCalled();
+      expect(EnvVarConfig.getMapFromEnv).toHaveBeenCalled();
       expect(result instanceof Map).toBeTruthy();
       expect(result.get('cat')).toBe(5);
       expect(result.get('dog')).toBe(3);

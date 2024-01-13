@@ -1,5 +1,6 @@
 /* Class for converting environment variable string values into other data types */
 import { NestableDataTypes, NonNestableDataTypes } from "../enums";
+import { UnsupportedTypeError } from "../errors/unSupportedTypeError";
 import { TypeConversionError } from "../errors/typeConversionError";
 
 /**
@@ -11,7 +12,21 @@ const nestableConversionFunctions = {
   [NestableDataTypes.Boolean as string]: convertToBoolean,
   [NestableDataTypes.Date as string]: convertToDate,
   [NestableDataTypes.RegExp as string]: convertToRegExp,
-  [NestableDataTypes.Object as string]: convertToObject
+  [NestableDataTypes.Object as string]: convertToObject, 
+}
+
+/**
+ * TODO:
+ * @param type 
+ * @param value 
+ * @returns 
+ */
+function convertValue<T>(type: string, value: string): T {
+  if (type in nestableConversionFunctions) {
+    return nestableConversionFunctions[type](value) as T;
+  } else {
+    throw new UnsupportedTypeError(type);
+  }
 }
 
 /**
@@ -125,20 +140,34 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
 
     /* Set each element to the desired type and return */
     for (const idx in array) {
-      /* Check if the element is already an object from the previous JSON.parse and trying to convert to object */
+      /* Check if the element is already the desired type from the previous JSON.parse  */
       const item = array[idx];
-      if (type === NestableDataTypes.Object && typeof item === NestableDataTypes.Object) {
+      let alreadyType = false;
+      for (const nestableType of Object.values(NestableDataTypes)) {
+        if (type === nestableType && typeof item === nestableType) {
+          alreadyType = true;
+          break;
+        }
+      }
+
+      /* Skip conversion if value is already desired type from JSON.parse */
+      if (alreadyType) {
         continue;
       }
 
       /* Set the element to its converted type */
-      array[idx] = (nestableConversionFunctions[type](item));
+      array[idx] = convertValue(type, item);
     }
     
     return array;
   } catch (error) {
-    /* Throw error if value cannot be converted to an Array */
-    throw new TypeConversionError(value, `${NonNestableDataTypes.Array}<${type}>`);
+    if (error instanceof UnsupportedTypeError) {
+      /* Throw error if the target conversion type is unsupported */
+      throw new UnsupportedTypeError(error.getType());
+    } else {
+      /* Throw error if value cannot be converted to an Array */
+      throw new TypeConversionError(value, `${NonNestableDataTypes.Array}<${type}>`);
+    }
   }
 }
 
@@ -157,8 +186,13 @@ function convertToSet<T>(value: string, type: string = NestableDataTypes.String)
     /* Initialize a new set with the array */
     return new Set(array);
   } catch (error) {
-    /* Throw error if value cannot be converted to a Set */
-    throw new TypeConversionError(value, `${NonNestableDataTypes.Set}<${type}>`);
+    if (error instanceof UnsupportedTypeError) {
+      /* Throw error if the target conversion type is unsupported */
+      throw new UnsupportedTypeError(error.getType());
+    } else {
+      /* Throw error if value cannot be converted to an Set */
+      throw new TypeConversionError(value, `${NonNestableDataTypes.Set}<${type}>`);
+    }
   }
 }
 
@@ -180,11 +214,11 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
       
       /* Convert the key to its target type. We don't need to check if key from the previous JSON.parse is already an object
       since keys must be strings in JSON, unlike Array elements. */
-      const convertedKey = nestableConversionFunctions[keyType](key);
+      const convertedKey = convertValue(keyType, key);
 
       /* Convert the value to its target type. We don't need to check if key from the previous JSON.parse is already an object
       since keys must be strings in JSON, unlike Array elements. */
-      const convertedVal = nestableConversionFunctions[valueType](String(val));
+      const convertedVal = convertValue(valueType, String(val));
 
       /* Set the key-value mapping in the map */
       map.set(convertedKey, convertedVal);
@@ -192,8 +226,13 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
 
     return map;
   } catch (error) {
-    /* Throw error if value cannot be converted to an Object */
-    throw new TypeConversionError(value, `${NonNestableDataTypes.Map}<${keyType}, ${valueType}>`);
+    if (error instanceof UnsupportedTypeError) {
+      /* Throw error if the target conversion type is unsupported */
+      throw new UnsupportedTypeError(error.getType());
+    } else {
+      /* Throw error if value cannot be converted to an Map */
+      throw new TypeConversionError(value, `${NonNestableDataTypes.Map}<${keyType}, ${valueType}>`);
+    }
   }
 }
 

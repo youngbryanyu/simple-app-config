@@ -1,4 +1,4 @@
-import { EnvVarConfigError } from "./envConfigError";
+import { EnvVarConfigError } from "./envVarConfigError";
 
 /**
  * An error extending {@link EnvVarConfigError} that should be thrown when an environment variable's value of type string is 
@@ -11,7 +11,7 @@ export class TypeConversionError extends EnvVarConfigError {
    * @param targetType The target that the input value is being converted to.
    */
   constructor(value: string, targetType: string ) {
-    super(`The string with value ${value} cannot be converted to type ${targetType}.`);
+    super(`The string with value '${value}' cannot be converted to type '${targetType}'`);
     this.name = "TypeConversionError";
     Object.setPrototypeOf(this, TypeConversionError.prototype);
   }

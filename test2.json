@@ -1,0 +1,6 @@
+{
+  "var1": "${MAP::MAP:bool:test}",
+  "var2": {
+    "test": "$ARRAY::ARRAY:number:number"
+  }
+}
