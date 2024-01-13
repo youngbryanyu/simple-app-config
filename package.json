@@ -2,7 +2,7 @@
   "name": "simple-config",
   "version": "0.0.0",
   "description": "A module for loading configuration data from environment variables.",
-  "repository": "https://github.com/youngbryanyu/env-var-config",
+  "repository": "https://github.com/youngbryanyu/simple-config",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
