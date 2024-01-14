@@ -1,5 +1,5 @@
-/* Class for converting string values into other data types */
-import { NestableDataTypes, NonNestableDataTypes } from "../enums";
+/* Functions for converting string values into other data types */
+import { NestableDataTypes, NonNestableDataTypes } from "../constants";
 import { TypeConversionError } from "../errors/typeConversionError";
 import { UnsupportedTypeError } from "../errors/unsupportedTypeError";
 

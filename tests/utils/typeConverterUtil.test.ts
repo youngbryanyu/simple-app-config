@@ -1,5 +1,5 @@
 /* Unit tests for the type converter util */
-import { NestableDataTypes } from '../../src/enums';
+import { NestableDataTypes } from '../../src/constants';
 import { TypeConversionError } from '../../src/errors/typeConversionError';
 import TypeConverterUtil from '../../src/utils/typeConverterUtil';
 
