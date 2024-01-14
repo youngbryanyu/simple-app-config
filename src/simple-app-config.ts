@@ -444,6 +444,7 @@ export class SimpleAppConfig {
   /**
    * Helper method to load a config file given a path. Performs the following in the listed order:
    * - Returns if the path doesn't exist or the file type is unsupported
+   * - Returns if the file is empty
    * - Reads the config file and parses it as a JSON object
    * - Processes the object into a Map. Nested configurations will be recursively parsed into nested maps.
    * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
@@ -456,8 +457,13 @@ export class SimpleAppConfig {
       return;
     }
 
-    /* Read the config file and parse it as JSON */
-    const configFile = fs.readFileSync(path, 'utf8');
+    /* Read file and return if file is empty */
+    const configFile = fs.readFileSync(path, 'utf8').trim();
+    if (configFile === '') {
+      return;
+    }
+
+    /* Parse the file as JSON */
     const config = JSON.parse(configFile);
 
     /* Process the config object into a map */
@@ -548,18 +554,24 @@ export class SimpleAppConfig {
   }
 
   /**
-   * Get a field from the config map containing processed fields from the config files.
+   * Get a field from the config map containing processed fields from the config files. Iteratively searches for nested 
+   * configuration values. Each level of the configuration key must be separated with a '.'
    * @param key The name of the field in the config file.
    * @returns The expanded and converted value in the config file.
    */
-  public static get<T>(key: string): T {
-    /* Throw error if the config value doesn't exist */
-    if (!SimpleAppConfig.configMap.has(key)) {
-      throw new UndefinedConfigValueError(key);
+  public static get<T>(key: string): T | undefined {
+    /* Iteratively search for nested configuration values */
+    let currentConfig: unknown = SimpleAppConfig.configMap;
+    for (const part of key.split('.')) {
+      if (currentConfig instanceof Map && currentConfig.has(part)) {
+        currentConfig = currentConfig.get(part);
+      } else {
+        throw new UndefinedConfigValueError(key);
+      }
     }
-
-    /* Get the config value from the config map and return it*/
-    return SimpleAppConfig.configMap.get(key) as T;
+  
+    /* Return the final nested config value */
+    return currentConfig as T;
   }
 
   /**
@@ -570,5 +582,3 @@ export class SimpleAppConfig {
 
 /* Configure module immediately upon import from dependent module */
 SimpleAppConfig.configure();
-
-
