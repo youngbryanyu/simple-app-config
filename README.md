@@ -1,5 +1,5 @@
 # simple-app-config
-A simple module for setting up application configuration using environment variables and config files based on the environment.
+A simple module for configuration management using environment variables and config files based on the environment.
 
 This module helps with the following things are kind of a pain:
 - Writing boilerplate code for fetching environment variables and converting them to common data types
