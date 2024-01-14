@@ -469,7 +469,7 @@ export class Config {
   /**
    * Clears the environment variable cache and updates the cache with the most up-to-date environment variables
    */
-  public static refreshEnvCache() {
+  public static refreshEnvCache(): void {
     /* Clear the cache */
     Config.envCache.clear();
 
@@ -484,7 +484,7 @@ export class Config {
    * @param key Key of the environment variable.
    * @param value The value to set the environment variable to.
    */
-  public static setEnvValue(key: string, value: string) {
+  public static setEnvValue(key: string, value: string): void {
     /* Update value in process.env */
     process.env[key] = value;
 
@@ -496,7 +496,7 @@ export class Config {
    * Deletes an environment variable and removes it from the cache.
    * @param key Key or name of the environment variable.
    */
-  public static deleteEnvValue(key: string) {
+  public static deleteEnvValue(key: string): void {
     /* Update value in process.env */
     delete process.env[key];
 
