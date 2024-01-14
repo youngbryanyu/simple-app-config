@@ -87,8 +87,8 @@ export class Config {
     }
 
     Config.setEnvironmentNames();         /* Set the names of the environment */
-    Config.setPaths();                    /* Set the .env and possible config paths */
     Config.determineEnvironment();        /* Determine environment */
+    Config.setPaths();                    /* Set the .env and possible config paths */
     Config.loadEnvFile();                 /* Load .env file */
     Config.refreshEnvCache();             /* Load all environment variables into cache */
     Config.loadConfigFile();              /* Load config file */
@@ -167,6 +167,7 @@ export class Config {
     for (const arg of process.argv) {
       if (arg.startsWith(COMMAND_LINE_ARGS.ENV)) {
         Config.environment = arg.split('=')[1].toLowerCase();
+        return;
       }
     }
 
@@ -174,6 +175,7 @@ export class Config {
     const environment = process.env[ENV_ARGS.ENV];
     if (environment !== undefined) {
       Config.environment = environment.toLowerCase();
+      return;
     }
   }
 
@@ -210,6 +212,7 @@ export class Config {
       const path = Config.envPaths.get(Config.environment) as string;
       if (Config.isValidEnvFile(path)) {
         dotenv.config({ path: path });
+        return;
       }
     }
   }
@@ -292,7 +295,7 @@ export class Config {
     /* Return false if config file is empty */
     const file = fs.readFileSync(filePath, 'utf8').trim();
     if (file === '') {
-      false;
+      return false;
     }
 
     /* Return true by default */
@@ -304,7 +307,7 @@ export class Config {
    */
   private static loadDefaultConfigFile(): void {
     for (const path of Config.defaultConfigPaths) {
-      if (Config.isValidEnvFile(path)) {
+      if (Config.isValidConfigFile(path)) {
         Config.loadConfigAndPopulate(path)
         return;
       }
@@ -370,9 +373,14 @@ export class Config {
    * @returns a Map of the key-value pairs in the JSON file.
    */
   private static convertJSONToMap<T>(config: unknown): T {
-    /* Check if input is an array */
+    /* Recursively convert each element of an array */
     if (Array.isArray(config)) {
       return config.map(item => Config.convertJSONToMap(item)) as T;
+    }
+
+    /* Handle primitive data types */
+    if (typeof config !== 'object' || config === null) {
+      return config as T;
     }
 
     /* Recursively process each key-value pair in the JSON object. Strings should be expanded. */
@@ -380,7 +388,7 @@ export class Config {
     Object.entries(config as Record<string, T>).forEach(([key, value]) => {
       if (typeof value === 'string') {
         processedConfig.set(key, Config.expandEnvVar(value));
-      } else {
+       } else {
         processedConfig.set(key, Config.convertJSONToMap(value));
       }
     });
@@ -647,4 +655,5 @@ export class Config {
 }
 
 /* Configure module immediately upon import from dependent module */
+process.env.NODE_ENV = 'production'
 Config.configure();

@@ -4,8 +4,8 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { UndefinedEnvVarError } from '../src/errors/undefinedEnvVarError';
 
-/* env-var-config tests */
-describe('env-var-config Tests', () => {
+/* simple-app-config tests */
+describe('simple-app-config Tests', () => {
   /* Setup before each test */
   beforeEach(() => {
     /* Delete all environment variables */
@@ -19,8 +19,8 @@ describe('env-var-config Tests', () => {
     jest.restoreAllMocks();
   });
 
-  /* Tests for refreshCache*/
-  describe('refreshCache Tests', () => {
+  /* Tests for refreshEnvCache*/
+  describe('refreshEnvCache Tests', () => {
     /* Test clearing the cache */
     it('Should clear the cache', () => {
       /* Set up spies and mocks */
@@ -39,8 +39,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for setValue */
-  describe('setValue Tests', () => {
+  /* Tests for setEnvValue */
+  describe('setEnvValue Tests', () => {
     /* Test setting a value */
     it('Should set a value', () => {
       /* Set up spies and mocks */
@@ -57,8 +57,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for deleteValue */
-  describe('deleteValue Tests', () => {
+  /* Tests for deleteEnvValue */
+  describe('deleteEnvValue Tests', () => {
     /* Test deleting a value */
     it('Should delete a value', () => {
       /* Set up spies and mocks */
@@ -76,8 +76,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getString */
-  describe('getString Tests', () => {
+  /* Tests for getStringFromEnv */
+  describe('getStringFromEnv Tests', () => {
     /* Test getting a string value and its in cache */
     it('Should get a string value and should get it from the cache ', () => {
       /* Set up */
@@ -126,8 +126,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getNumber */
-  describe('getNumber Tests', () => {
+  /* Tests for getNumberFromEnv */
+  describe('getNumberFromEnv Tests', () => {
     /* Test getting a number value */
     it('Should get a number value', () => {
       /* Set up */
@@ -145,8 +145,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getBoolean */
-  describe('getBoolean Tests', () => {
+  /* Tests for getBooleanFromEnv */
+  describe('getBooleanFromEnv Tests', () => {
     /* Test getting a boolean value */
     it('Should get a boolean value', () => {
       /* Set up */
@@ -164,8 +164,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getDate */
-  describe('getDate Tests', () => {
+  /* Tests for getDateFromEnv */
+  describe('getDateFromEnv Tests', () => {
     /* Test getting a date value */
     it('Should get a Date value', () => {
       /* Set up */
@@ -183,8 +183,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getRegExp */
-  describe('getRegExp Tests', () => {
+  /* Tests for getRegExpFromEnv */
+  describe('getRegExpFromEnv Tests', () => {
     /* Test getting a RegExp value */
     it('Should get a RegExp value', () => {
       /* Set up */
@@ -202,8 +202,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getObject */
-  describe('getObject Tests', () => {
+  /* Tests for getObjectFromEnv */
+  describe('getObjectFromEnv Tests', () => {
     /* Test getting an object value */
     it('Should get an object value', () => {
       /* Set up */
@@ -222,8 +222,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getArray */
-  describe('getArray Tests', () => {
+  /* Tests for getArrayFromEnv */
+  describe('getArrayFromEnv Tests', () => {
     /* Test getting an Array value */
     it('Should get an Array value', () => {
       /* Set up */
@@ -243,8 +243,8 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getSet */
-  describe('getSet Tests', () => {
+  /* Tests for getSetFromEnv */
+  describe('getSetFromEnv Tests', () => {
     /* Test getting an Set value */
     it('Should get an Set value', () => {
       /* Set up */
@@ -264,8 +264,28 @@ describe('env-var-config Tests', () => {
     });
   });
 
-  /* Tests for getMap */
-  describe('getMap Tests', () => {
+  /* Tests for getMapFromEnv */
+  describe('getMapFromEnv Tests', () => {
+    /* Test getting a Map value */
+    it('Should get a Map value', () => {
+      /* Set up */
+      Config.setEnvValue('MAP', '{"cat": "5", "dog": "3"}');
+      Config.configure();
+      jest.spyOn(Config, 'getMapFromEnv');
+
+      /* Call function */
+      const result = Config.getMapFromEnv('MAP', DataTypes.String, DataTypes.Number);
+
+      /* Compare against expected */
+      expect(Config.getMapFromEnv).toHaveBeenCalled();
+      expect(result instanceof Map).toBeTruthy();
+      expect(result.get('cat')).toBe(5);
+      expect(result.get('dog')).toBe(3);
+    });
+  });
+
+  /* Tests for get */
+  describe('get Tests', () => {
     /* Test getting a Map value */
     it('Should get a Map value', () => {
       /* Set up */

@@ -1,6 +1,7 @@
 /* Unit tests for the type converter util */
 import { NestableDataTypes } from '../../src/constants';
 import { TypeConversionError } from '../../src/errors/typeConversionError';
+import { UnsupportedTypeError } from '../../src/errors/unsupportedTypeError';
 import TypeConverterUtil from '../../src/utils/typeConverterUtil';
 
 /* Type converter util tests */
@@ -8,6 +9,39 @@ describe('Type Converter Util Tests', () => {
   /* Setup before each test */
   beforeEach(() => {
     jest.restoreAllMocks();
+  });
+
+  /* Convert to nestable value tests */
+  describe('Convert to Nestable Value Ttests', () => {
+    /* Test when converting to a number is possible */
+    it('Should successfully convert a value to a nestable type.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToNestableType');
+
+      /* Set up and call function */
+      const type = 'number'
+      const value = '5';
+      const result = TypeConverterUtil.convertToNestableType(type, value);
+
+      /* Compare against expected */
+      expect(TypeConverterUtil.convertToNestableType).toHaveBeenCalled();
+      expect(typeof result).toBe('number');
+      expect(result).toBe(5);
+    });
+
+    /* Test when converting to a type is not supported */
+    it('Should throw an error if the type to be converted to is not supported.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToNestableType');
+
+      /* Set up */
+      const type = 'NOT A TYPE'
+      const value = 'test';
+
+      /* Call function and compare against expected */
+      expect(() => TypeConverterUtil.convertToNestableType(type, value)).toThrow(UnsupportedTypeError);
+      expect(TypeConverterUtil.convertToNestableType).toHaveBeenCalled();
+    });
   });
 
   /* Convert to number tests */

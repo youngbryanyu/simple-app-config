@@ -22,7 +22,7 @@ const nestableConversionFunctions = {
  * @returns The value after being converted to the target type.
  * @throws {UnsupportedTypeError} Error thrown if the target type isn't one of the nestable types.
  */
-function convertValue<T>(type: string, value: string): T {
+function convertToNestableType<T>(type: string, value: string): T {
   if (type in nestableConversionFunctions) {
     return nestableConversionFunctions[type](value) as T;
   } else {
@@ -143,7 +143,7 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
       }
 
       /* Set the element to its converted type */
-      array[idx] = convertValue(type, item);
+      array[idx] = convertToNestableType(type, item);
     }
 
     return array;
@@ -197,12 +197,12 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
     Object.entries(object).forEach(([key, val]) => {
       /* Convert the key to its target type. We don't need to check if key from the previous JSON.parse is already an object
       since keys must be strings in JSON. */
-      const convertedKey = convertValue(keyType, key);
+      const convertedKey = convertToNestableType(keyType, key);
 
       /* Converted the value to its target type if its not already the desired type from JSON.parse */
       let convertedVal = val;
       if (typeof val !== valueType) {
-        convertedVal = convertValue(valueType, String(val));
+        convertedVal = convertToNestableType(valueType, String(val));
       }
 
       /* Set the key-value mapping in the map */
@@ -228,6 +228,7 @@ const TypeConverterUtil = {
   convertToObject,
   convertToArray,
   convertToSet,
-  convertToMap
+  convertToMap,
+  convertToNestableType
 }
 export default TypeConverterUtil;
