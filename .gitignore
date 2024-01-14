@@ -1,6 +1,7 @@
-# ignore .env files
+# ignore .env files used for testing
 .env
-.env.dev
+.env.development
+.env.production
 
 # ignore node_modules
 node_modules
@@ -10,3 +11,9 @@ dist
 
 # ignore coverage output
 coverage
+
+# ignore config file used for testing
+config
+
+# ignore testing packed npm modules
+simple-app-config-**.tgz

@@ -1,16 +1,15 @@
-import { EnvVarConfigError } from "./envVarConfigError";
+import { SimpleAppConfigError } from "./SimpleAppConfigError";
 
 /**
- * An error extending {@link EnvVarConfigError} that should be thrown when an environment variable's value of type string is 
- * being converted to a different data type, but the conversion failed.
+ * An error extending {@link SimpleAppConfigError} that should be thrown when type conversion failed.
  */
-export class TypeConversionError extends EnvVarConfigError {
+export class TypeConversionError extends SimpleAppConfigError {
   /**
-   * Constructor for {@link UndefinedEnvVarError}.
+   * Constructor for {@link TypeConversionError}.
    * @param value The string value of the environment variable being converted.
-   * @param targetType The target that the input value is being converted to.
+   * @param targetType The type that the input value is being converted to.
    */
-  constructor(value: string, targetType: string ) {
+  public constructor(value: string, targetType: string ) {
     super(`The string with value '${value}' cannot be converted to type '${targetType}'`);
     this.name = "TypeConversionError";
     Object.setPrototypeOf(this, TypeConversionError.prototype);

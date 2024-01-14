@@ -1,16 +1,17 @@
 /* Environment variable configuration loader. */
 import dotenv from 'dotenv';
 import fs from 'fs';
+import path from 'path';
 import { UndefinedEnvVarError } from './errors/undefinedEnvVarError';
 import TypeConverterUtil from './utils/typeConverterUtil';
 import { NestableDataTypes, NonNestableDataTypes } from './enums';
-import { UnsupportedTypeError } from './errors/unSupportedTypeError';
-import { InvalidEnvError } from './errors/invalidEnvError';
-import { MissingConfigFileError } from './errors/missingDefaultConfigFileError';
+import { UnsupportedTypeError } from './errors/unsupportedTypeError';
 import { UndefinedConfigValueError } from './errors/undefinedConfigValueError';
 
-// TODO: run configure at top-level module so things build upon import
-export class EnvVarConfig {
+/**
+ * SimpleAppConfig class
+ */
+export class SimpleAppConfig {
 
   /**
    * Command line arguments that can be specified with the application starts
@@ -22,11 +23,11 @@ export class EnvVarConfig {
   }
 
   /**
-   * Special environment variables that can be set to change configurations.
+   * Environment variables that can be set to change configurations
    */
   private static readonly ENV_VAR_ARGS = {
-    ENV_PATH: 'ENV_PATH',
-    CONFIG_PATH: 'CONFIG_PATH'
+    ENV_PATH: 'ENV_PATH',             /* The path to the .env file */
+    CONFIG_PATH: 'CONFIG_PATH'        /* The path to the config file */
   }
 
   /**
@@ -35,13 +36,18 @@ export class EnvVarConfig {
   private static readonly DEFAULT_CONFIG_PATH = 'config/default.json';
 
   /**
-    * The default environment if no environment is found from NODE_ENV.
-    */
+   * The default environment if no environment is specified.
+   */
   private static readonly DEFAULT_ENV = 'development';
 
   /**
-    * Mappings of common NODE_ENV environment names to common file paths for their corresponding .env files.
-    */
+   * The set of config file types that are supported
+   */
+  private static readonly supportedConfigFileTypes = new Set(['.json']);
+
+  /**
+   * Mappings of environment names to paths for .env and config files.
+   */
   private static readonly ENV_MAPPINGS: { [key: string]: { NAME: string; ENV_PATH: string, CONFIG_PATH: string } } = {
     DEV: {
       NAME: 'development',
@@ -71,46 +77,60 @@ export class EnvVarConfig {
   private static envCache: Map<string, string | undefined> = new Map();
 
   /**
-   * Map containing converted values from the config file
+   * Map containing converted (expanded) values from the config file
    */
   private static configMap: Map<string, unknown> = new Map();
 
+  /**
+   * Flag indicating whether configuration has already been performed
+   */
+  private static alreadyConfigured: boolean = false;
 
   /**
-   * Configures
+   * Configures the module:
+   * - Returns if the module has already been configured
+   * - Determines the environment.
+   * - Loads the .env file
+   * - Loads environment variables into the cache
+   * - Loads the config file
+   * - Loads the default config file
+   * - Sets already configured flag to true.
    */
-  public static configure() {
-    /* Determine environment from NODE_ENV */
-    const environment = EnvVarConfig.determineEnvironment();
-
-    /* Throw error if environment is invalid */
-    if (!EnvVarConfig.isValidEnvironment(environment)) {
-      throw new InvalidEnvError(environment);
+  public static configure(): void {
+    /* Check if the application is already configured */
+    if (SimpleAppConfig.alreadyConfigured === true) {
+      return;
     }
 
+    /* Determine environment */
+    const environment = SimpleAppConfig.determineEnvironment();
+
     /* Load .env file */
-    EnvVarConfig.loadEnvFile(environment);
-
-    /* Load config.json */
-    EnvVarConfig.loadConfigFile(environment);
-
-    /* Load default.json file */
-    EnvVarConfig.loadDefaultConfigFile();
+    SimpleAppConfig.loadEnvFile(environment);
 
     /* Load all environment variables into cache */
-    EnvVarConfig.refreshEnvCache();
+    SimpleAppConfig.refreshEnvCache();
+
+    /* Load config file */
+    SimpleAppConfig.loadConfigFile(environment);
+
+    /* Load default config file */
+    SimpleAppConfig.loadDefaultConfigFile();
+
+    /* Set the alrady configured flag to true */
+    SimpleAppConfig.alreadyConfigured = true;
   }
 
   /**
    * Determines the environment from the following in order of precedence from highest priority to lowest:
    * - Command line arguments
    * - NODE_ENV environment variable
-   * - Assumes the environment to be 'development' if nothing is set.
+   * - Assumes the environment to be 'development' if nothing is set
    */
   private static determineEnvironment(): string {
     /* Check if the environment is set as a command line arguments */
     for (const arg of process.argv) {
-      if (arg.startsWith(EnvVarConfig.COMMAND_LINE_ARGS.ENVIRONMENT)) {
+      if (arg.startsWith(SimpleAppConfig.COMMAND_LINE_ARGS.ENVIRONMENT)) {
         return arg.split('=')[1];
       }
     }
@@ -122,32 +142,25 @@ export class EnvVarConfig {
     }
 
     /* If no environment is set, use 'development'*/
-    return EnvVarConfig.DEFAULT_ENV;
+    return SimpleAppConfig.DEFAULT_ENV;
   }
 
   /**
-   * Determines whether the environment being set is valid
-   */
-  private static isValidEnvironment(environment: string): boolean {
-    for (const envType in EnvVarConfig.ENV_MAPPINGS) {
-      const { NAME } = EnvVarConfig.ENV_MAPPINGS[envType];
-      if (environment.toLowerCase() === NAME) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Loads a .env file
-   * @returns The file path to use when loading a .env file.
+   * Loads a .env file in the following order of precedence from highest priority to lowest:
+   * - Loads the path specified in command line args if the path is valid
+   * - Loads the path specified in environment variables if the path is valid
+   * - Loads the path corresponding to the environment if the path is valid
+   * @param environment The environment of the application.
    */
   private static loadEnvFile(environment: string): void {
     /* Load path specified by command line argument if it exists */
     for (const arg of process.argv) {
-      if (arg.startsWith(EnvVarConfig.COMMAND_LINE_ARGS.ENV_PATH)) {
+      
+      if (arg.startsWith(SimpleAppConfig.COMMAND_LINE_ARGS.ENV_PATH)) {
         const path = arg.split('=')[1];
+        console.log(path)
         if (fs.existsSync(path)) {
+          
           dotenv.config({ path: path });
           return;
         }
@@ -155,15 +168,15 @@ export class EnvVarConfig {
     }
 
     /* Load path specified by environment variable argument if it exists */
-    const path = process.env[EnvVarConfig.ENV_VAR_ARGS.ENV_PATH];
+    const path = process.env[SimpleAppConfig.ENV_VAR_ARGS.ENV_PATH];
     if (path !== undefined && fs.existsSync(path)) {
       dotenv.config({ path: path });
       return;
     }
 
     /* Load path corresponding to the environment if it exists */
-    for (const envType in EnvVarConfig.ENV_MAPPINGS) {
-      const { NAME, ENV_PATH } = EnvVarConfig.ENV_MAPPINGS[envType];
+    for (const envType in SimpleAppConfig.ENV_MAPPINGS) {
+      const { NAME, ENV_PATH } = SimpleAppConfig.ENV_MAPPINGS[envType];
       if (environment.toLowerCase() === NAME && fs.existsSync(ENV_PATH)) {
         dotenv.config({ path: ENV_PATH });
         return;
@@ -172,74 +185,103 @@ export class EnvVarConfig {
   }
 
   /**
-   * Loads a config file
+   * Loads a config file in the following order of precedence from highest priority to lowest:
+   * - Loads the path specified in command line args if the path is valid
+   * - Loads the path specified in environment variables if the path is valid
+   * - Loads the path corresponding to the environment if the path is valid
+   * @param environment The environment of the application.
    */
-  private static loadConfigFile(environment: string) {
+  private static loadConfigFile(environment: string): void {
     /* Load path specified by command line argument if specified and if path exists */
     for (const arg of process.argv) {
-      if (arg.startsWith(EnvVarConfig.COMMAND_LINE_ARGS.CONFIG_PATH)) {
+      if (arg.startsWith(SimpleAppConfig.COMMAND_LINE_ARGS.CONFIG_PATH)) {
         const path = arg.split('=')[1];
         if (fs.existsSync(path)) {
-          EnvVarConfig.loadConfig(path);
-          return;
-        }
-      }
-
-      /* Load path specified by environment variable argument if it exists */
-      const path = process.env[EnvVarConfig.ENV_VAR_ARGS.CONFIG_PATH];
-      if (path !== undefined && fs.existsSync(path)) {
-        dotenv.config({ path: path });
-        return;
-      }
-
-      /* Load path corresponding to the environment if it exists */
-      for (const envType in EnvVarConfig.ENV_MAPPINGS) {
-        const { NAME, CONFIG_PATH } = EnvVarConfig.ENV_MAPPINGS[envType];
-        if (environment.toLowerCase() === NAME && fs.existsSync(CONFIG_PATH)) {
-          EnvVarConfig.loadConfig(CONFIG_PATH);
+          SimpleAppConfig.loadConfig(path);
           return;
         }
       }
     }
+
+    /* Load path specified by environment variable argument if it exists */
+    const path = process.env[SimpleAppConfig.ENV_VAR_ARGS.CONFIG_PATH];
+    if (path !== undefined && fs.existsSync(path)) {
+      SimpleAppConfig.loadConfig(path);
+      return;
+    }
+
+    /* Load path corresponding to the environment if it exists */
+    for (const envType in SimpleAppConfig.ENV_MAPPINGS) {
+      const { NAME, CONFIG_PATH } = SimpleAppConfig.ENV_MAPPINGS[envType];
+      if (environment.toLowerCase() === NAME && fs.existsSync(CONFIG_PATH)) {
+        SimpleAppConfig.loadConfig(CONFIG_PATH);
+        return;
+      }
+    }
+
   }
 
   /**
-   * Loads a config file
+   * Checks if a config file is valid. A config file is valid if all the below are true:
+   * - It isn't a directory
+   * - It matches a valid file extension
+   * @param filePath The path of the config file to check.
+   * @returns A boolean indicating whether the config file is valid.
    */
-  private static loadDefaultConfigFile() {
-    /* Throw error if default config path doesn't exist */
-    if (!fs.existsSync(EnvVarConfig.DEFAULT_CONFIG_PATH)) {
-      throw new MissingConfigFileError(EnvVarConfig.DEFAULT_CONFIG_PATH);
+  private static isValidConfigFile(filePath: string): boolean {
+    /* Check that the path isn't a directory */
+    const stats = fs.statSync(filePath);
+    if (stats.isDirectory()) {
+      return false;
+    }
+
+    /* Check if the file type is supported */
+    const extension = path.extname(filePath);
+    if (!SimpleAppConfig.supportedConfigFileTypes.has(extension)) {
+      return false;
+    }
+
+    /* Return true by default */
+    return true;
+  }
+
+  /**
+   * Loads the default config file, and updates config values that have not yet been set.
+   */
+  private static loadDefaultConfigFile(): void {
+    /* Return if default config path doesn't exist */
+    if (!fs.existsSync(SimpleAppConfig.DEFAULT_CONFIG_PATH)) {
+      return;
     }
 
     /* Load the default.json config */
-    EnvVarConfig.loadConfig(EnvVarConfig.DEFAULT_CONFIG_PATH);
+    SimpleAppConfig.loadConfig(SimpleAppConfig.DEFAULT_CONFIG_PATH);
   }
 
   /**
-   * Clears the existing cache and refreshes the cache with the most up-to-date environment variables in process.env.
+   * Clears the cache and refreshes the cache with the most up-to-date environment variables in process.env.
    */
   public static refreshEnvCache() {
     /* Clear the cache */
-    EnvVarConfig.envCache.clear();
+    SimpleAppConfig.envCache.clear();
 
     /* Load all existing environment variables in the cache */
     for (const key in process.env) {
-      EnvVarConfig.envCache.set(key, process.env[key]);
+      SimpleAppConfig.envCache.set(key, process.env[key]);
     }
   }
 
   /**
    * Sets a new value to an environment variable and writes-through the value to the cache.
-   * @param key Key or name of the environment variable.
-   * @param value The name value to set the environment variable to.
+   * @param key Key of the environment variable.
+   * @param value The value to set the environment variable to.
    */
   public static setEnvValue(key: string, value: string) {
     /* Update value in process.env */
     process.env[key] = value;
 
     /* Write-through to cache */
-    EnvVarConfig.envCache.set(key, value);
+    SimpleAppConfig.envCache.set(key, value);
   }
 
   /**
@@ -251,25 +293,25 @@ export class EnvVarConfig {
     delete process.env[key];
 
     /* Delete from cache */
-    EnvVarConfig.envCache.delete(key);
+    SimpleAppConfig.envCache.delete(key);
   }
 
   /**
    * Returns the value corresponding the to environment variable with name {@link key} in the environment variables. 
    * Checks the {@link envCache} first and then process.env if there is a cache miss. Will lazy load the value into
    * the in-memory cache if there is a miss. Caches undefined environment variables as well.
-   * @param key Key or name name of the environment variable.
-   * @returns the value corresponding the to environment variable with name {@link key} in the environment variables.
+   * @param key Key of the environment variable.
+   * @returns The value corresponding the to environment variable with name {@link key} in the environment variables.
    */
   private static getValueFromEnv(key: string): string | undefined {
     /* Check if cache contains the environment variable */
-    if (EnvVarConfig.envCache.has(key)) {
-      return EnvVarConfig.envCache.get(key);
+    if (SimpleAppConfig.envCache.has(key)) {
+      return SimpleAppConfig.envCache.get(key);
     }
 
     /* Lazy load value from process.env into cache */
     const value = process.env[key];
-    EnvVarConfig.envCache.set(key, value);
+    SimpleAppConfig.envCache.set(key, value);
 
     /* Return the value */
     return value;
@@ -283,7 +325,7 @@ export class EnvVarConfig {
    */
   public static getStringFromEnv(key: string): string {
     /* Check if value is undefined */
-    const value = EnvVarConfig.getValueFromEnv(key);
+    const value = SimpleAppConfig.getValueFromEnv(key);
     if (value === undefined) {
       throw new UndefinedEnvVarError(key);
     }
@@ -299,7 +341,7 @@ export class EnvVarConfig {
    */
   public static getNumberFromEnv(key: string): number {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to number and return it */
     return TypeConverterUtil.convertToNumber(value);
@@ -312,7 +354,7 @@ export class EnvVarConfig {
    */
   public static getBooleanFromEnv(key: string): boolean {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to boolean and return it */
     return TypeConverterUtil.convertToBoolean(value);
@@ -325,7 +367,7 @@ export class EnvVarConfig {
    */
   public static getDateFromEnv(key: string): Date {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to date and return it */
     return TypeConverterUtil.convertToDate(value);
@@ -338,7 +380,7 @@ export class EnvVarConfig {
    */
   public static getRegExpFromEnv(key: string): RegExp {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to date and return it */
     return TypeConverterUtil.convertToRegExp(value);
@@ -351,7 +393,7 @@ export class EnvVarConfig {
    */
   public static getObjectFromEnv(key: string): object {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to date and return it */
     return TypeConverterUtil.convertToObject(value);
@@ -365,7 +407,7 @@ export class EnvVarConfig {
    */
   public static getArrayFromEnv<T>(key: string, type?: string): Array<T> {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to array and return it */
     return TypeConverterUtil.convertToArray(value, type);
@@ -379,7 +421,7 @@ export class EnvVarConfig {
    */
   public static getSetFromEnv<T>(key: string, type?: string): Set<T> {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to array and return it */
     return TypeConverterUtil.convertToSet(value, type);
@@ -393,20 +435,24 @@ export class EnvVarConfig {
    */
   public static getMapFromEnv<K, V>(key: string, keyType?: string, valueType?: string): Map<K, V> {
     /* Get environment variable value as string */
-    const value = EnvVarConfig.getStringFromEnv(key);
+    const value = SimpleAppConfig.getStringFromEnv(key);
 
     /* Convert value to array and return it */
     return TypeConverterUtil.convertToMap(value, keyType, valueType);
   }
 
   /**
-   * Helper method
+   * Helper method to load a config file given a path. Performs the following in the listed order:
+   * - Returns if the path doesn't exist or the file type is unsupported
+   * - Reads the config file and parses it as a JSON object
+   * - Processes the object into a Map. Nested configurations will be recursively parsed into nested maps.
+   * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
+   * ones with higher priority.
    * @param path Path to load the config file from.
-   * @returns 
    */
   public static loadConfig(path: string): void {
-    /* Returns if path doesn't exist */
-    if (!fs.existsSync(path)) {
+    /* Returns if path doesn't exist or if file type is unsupported */
+    if (!fs.existsSync(path) || !SimpleAppConfig.isValidConfigFile(path)) {
       return;
     }
 
@@ -415,49 +461,52 @@ export class EnvVarConfig {
     const config = JSON.parse(configFile);
 
     /* Process the config object into a map */
-    const map: Map<string, unknown> = EnvVarConfig.processConfig(config);
+    const map: Map<string, unknown> = SimpleAppConfig.processConfig(config);
 
     /* Set the value in the global config map if is hasn't been set yet. This is so that default values loaded afterwards won't override values with higher priority */
     for (const key of map.keys()) {
-      if (!EnvVarConfig.configMap.has(key)) {
-        EnvVarConfig.configMap.set(key, map.get(key));
+      if (!SimpleAppConfig.configMap.has(key)) {
+        SimpleAppConfig.configMap.set(key, map.get(key));
       }
     }
   }
 
   /**
-   * Processes a config object into a map
-   * @param config 
+   * Processes a config object into a Map. Performs the following in the listed order recursively:
+   * - Converts the input to an array if it is an array
+   * - Process each in the JSON object. If it is a string it expands any environment variables within the string. If it is an 
+   * object it will recursively process the object and treat it like a nested map of configurations
+   * @param config The configuration object to process.
    * @returns 
    */
-  private static processConfig<T>(config: T): T {
+  private static processConfig<T>(config: unknown): T {
     /* Check if input is an array */
     if (Array.isArray(config)) {
-      return config.map(item => EnvVarConfig.processConfig(item)) as T;
+      return config.map(item => SimpleAppConfig.processConfig(item)) as T;
     }
 
-    /* Recursively process each key-value pair in the JSON object. Strings should be expanded and interposed. */
+    /* Recursively process each key-value pair in the JSON object. Strings should be expanded. */
     const processedConfig: Map<string, T> = new Map();
     Object.entries(config as Record<string, T>).forEach(([key, value]) => {
       if (typeof value === 'string') {
-        processedConfig.set(key, EnvVarConfig.expandEnvVar(value));
+        processedConfig.set(key, SimpleAppConfig.expandEnvVar(value));
       } else {
-        processedConfig.set(key, EnvVarConfig.processConfig(value));
+        processedConfig.set(key, SimpleAppConfig.processConfig(value));
       }
     });
     return processedConfig as T;
   }
 
   /**
-   * Expands an environment variable
+   * Expands an environment variable, and performs type conversions if it is not nested in a string.
    * 
-   * Fields starting with $ will be treated as a special case and matched as $VAR::TYPE:SUBTYPE1:SUBTYPE2, and will be converted 
+   * Fields starting with $ will be treated as a special case and matched as $VAR::TYPE:SUBTYPE1:SUBTYPE2. They will be converted 
    * to the type TYPE with SUBTYPE1 and SUBTYPE2 if it is a nested structure like an Array, Set, or Map.
    * 
    * Fields that are string containing ${...} will be matched as ${VAR::TYPE:SUBTYPE1:SUBTYPE2}, and will be treated as a string 
    * regardless of the types specified and expanded as a string.
-   * @param input 
-   * @returns 
+   * @param input The input string to expand
+   * @returns The expanded or converted form of the input.
    */
   private static expandEnvVar<T>(input: string): T {
     /* Check if the input starts with $ indicating special variable expansion and type conversion */
@@ -467,52 +516,59 @@ export class EnvVarConfig {
       const match = input.match(regex);
       if (match) {
         const [, varName, type = 'string', subtype1, subtype2] = match;
-        // Handle different types
+
+        /* Perform type conversion to the desired type */
         switch (type.toLowerCase()) {
           case NestableDataTypes.String.toLowerCase():
-            return EnvVarConfig.getStringFromEnv(varName) as T;
+            return SimpleAppConfig.getStringFromEnv(varName) as T;
           case NestableDataTypes.Number.toLowerCase():
-            return EnvVarConfig.getNumberFromEnv(varName) as T;
+            return SimpleAppConfig.getNumberFromEnv(varName) as T;
           case NestableDataTypes.Boolean.toLowerCase():
-            return EnvVarConfig.getBooleanFromEnv(varName) as T;
+            return SimpleAppConfig.getBooleanFromEnv(varName) as T;
           case NestableDataTypes.Date.toLowerCase():
-            return EnvVarConfig.getDateFromEnv(varName) as T;
+            return SimpleAppConfig.getDateFromEnv(varName) as T;
           case NestableDataTypes.RegExp.toLowerCase():
-            return EnvVarConfig.getRegExpFromEnv(varName) as T;
+            return SimpleAppConfig.getRegExpFromEnv(varName) as T;
           case NestableDataTypes.Object.toLowerCase():
-            return EnvVarConfig.getObjectFromEnv(varName) as T;
+            return SimpleAppConfig.getObjectFromEnv(varName) as T;
           case NonNestableDataTypes.Array.toLowerCase():
-            return EnvVarConfig.getArrayFromEnv(varName, subtype1) as T;
+            return SimpleAppConfig.getArrayFromEnv(varName, subtype1) as T;
           case NonNestableDataTypes.Set.toLowerCase():
-            return EnvVarConfig.getSetFromEnv(varName, subtype1) as T;
+            return SimpleAppConfig.getSetFromEnv(varName, subtype1) as T;
           case NonNestableDataTypes.Map.toLowerCase():
-            return EnvVarConfig.getMapFromEnv(varName, subtype1, subtype2) as T;
+            return SimpleAppConfig.getMapFromEnv(varName, subtype1, subtype2) as T;
           default:
             /* Throw error if target conversion type is not supported */
             throw new UnsupportedTypeError(type);
         }
       }
     }
-
     /* Expand environment variable as a string */
-    return input.replace(/\$\{([A-Z0-9_]+)(?:::\w+)?(?::\w+)?(?::\w+)?\}/gi, (match, varName) => EnvVarConfig.getStringFromEnv(varName)) as T;
+    return input.replace(/\$\{([A-Z0-9_]+)(?:::\w+)?(?::\w+)?(?::\w+)?\}/gi, (match, varName) => SimpleAppConfig.getStringFromEnv(varName)) as T;
   }
 
   /**
-   * Get a field from the config file
-   * @param key 
-   * @returns 
+   * Get a field from the config map containing processed fields from the config files.
+   * @param key The name of the field in the config file.
+   * @returns The expanded and converted value in the config file.
    */
-  static get<T>(key: string): T {
-    if (EnvVarConfig.configMap.has(key)) {
-      return EnvVarConfig.configMap.get(key) as T;
+  public static get<T>(key: string): T {
+    /* Throw error if the config value doesn't exist */
+    if (!SimpleAppConfig.configMap.has(key)) {
+      throw new UndefinedConfigValueError(key);
     }
-    throw new UndefinedConfigValueError(key)
+
+    /* Get the config value from the config map and return it*/
+    return SimpleAppConfig.configMap.get(key) as T;
   }
+
+  /**
+   * Private constructor
+   */
+  private constructor() { }
 }
 
-
-
-
+/* Configure module immediately upon import from dependent module */
+SimpleAppConfig.configure();
 
 

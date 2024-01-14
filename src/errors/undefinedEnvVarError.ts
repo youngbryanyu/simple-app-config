@@ -1,15 +1,14 @@
-import { EnvVarConfigError } from "./envVarConfigError";
+import { SimpleAppConfigError } from "./SimpleAppConfigError";
 
 /**
- * An error extending {@link EnvVarConfigError} that should be thrown when an environment variable is undefined, but is being 
- * accessed.
+ * An error extending {@link SimpleAppConfigError} that should be thrown when accessing an environment variable that is undefined.
  */
-export class UndefinedEnvVarError extends EnvVarConfigError {
+export class UndefinedEnvVarError extends SimpleAppConfigError {
   /**
    * Constructor for {@link UndefinedEnvVarError}.
-   * @param message A custom error message.
+   * @param key The key of the environment variable that is undefined.
    */
-  constructor(key: string) {
+  public constructor(key: string) {
     super(`The environment variable '${key}' is undefined.`);
     this.name = "UndefinedEnvVarError";
     Object.setPrototypeOf(this, UndefinedEnvVarError.prototype);

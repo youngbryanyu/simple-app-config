@@ -1,7 +1,7 @@
-/* Class for converting environment variable string values into other data types */
+/* Class for converting string values into other data types */
 import { NestableDataTypes, NonNestableDataTypes } from "../enums";
-import { UnsupportedTypeError } from "../errors/unSupportedTypeError";
 import { TypeConversionError } from "../errors/typeConversionError";
+import { UnsupportedTypeError } from "../errors/unsupportedTypeError";
 
 /**
  * Conversion functions of types that can be nested within Arrays, Sets, and Maps.
@@ -12,14 +12,15 @@ const nestableConversionFunctions = {
   [NestableDataTypes.Boolean as string]: convertToBoolean,
   [NestableDataTypes.Date as string]: convertToDate,
   [NestableDataTypes.RegExp as string]: convertToRegExp,
-  [NestableDataTypes.Object as string]: convertToObject, 
+  [NestableDataTypes.Object as string]: convertToObject,
 }
 
 /**
- * TODO:
- * @param type 
- * @param value 
- * @returns 
+ * Converts a value to the target nestable type.
+ * @param type The type that {@link value} should be converted to.
+ * @param value The value to be converted.
+ * @returns The value after being converted to the target type.
+ * @throws {UnsupportedTypeError} Error thrown if the target type isn't one of the nestable types.
  */
 function convertValue<T>(type: string, value: string): T {
   if (type in nestableConversionFunctions) {
@@ -36,7 +37,6 @@ function convertValue<T>(type: string, value: string): T {
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (number in this case).
  */
 function convertToNumber(value: string): number {
-  /* Check if value can be strictly converted to an number */
   const num = Number(value);
   if (isNaN(num)) {
     throw new TypeConversionError(value, NestableDataTypes.Number);
@@ -55,7 +55,7 @@ function convertToBoolean(value: string): boolean {
   const truthyValues = ['t', 'true', 'y', 'yes', 'on'];
   const falsyValues = ['f', 'false', 'n', 'no', 'off'];
 
-  /* Check the lowercase version of the input value is truthy or falsy */
+  /* Check if input value is truthy or falsy, ignoring case */
   const lowercaseVal = value.toLowerCase();
   if (truthyValues.includes(lowercaseVal)) {
     return true;
@@ -97,11 +97,9 @@ function convertToDate(value: string): Date {
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (RegExp in this case).
  */
 function convertToRegExp(value: string): RegExp {
-  /* Try to convert value to regex */
   try {
     return new RegExp(value);
   } catch (error) {
-    /* Throw error if value cannot be converted to a regex */
     throw new TypeConversionError(value, NestableDataTypes.RegExp);
   }
 }
@@ -113,18 +111,16 @@ function convertToRegExp(value: string): RegExp {
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (object in this case).
  */
 function convertToObject(value: string): object {
-  /* Try to convert value to an object */
   try {
     return JSON.parse(value);
   } catch (error) {
-    /* Throw error if value cannot be converted to an object */
     throw new TypeConversionError(value, NestableDataTypes.Object);
   }
 }
 /**
  * Converts a string into an Array. If {@type} is not set, it will default to string.
  * @param value The input value to convert into an Array.
- * @param type: The type for each element in the Array. 
+ * @param type The type that each element in the Array will be converted to. 
  * @returns The value after being converted to an Array.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Array in this case).
  */
@@ -140,32 +136,21 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
 
     /* Set each element to the desired type and return */
     for (const idx in array) {
-      /* Check if the element is already the desired type from the previous JSON.parse  */
+      /* Check if the element is already the desired type from JSON.parse  */
       const item = array[idx];
-      let alreadyType = false;
-      for (const nestableType of Object.values(NestableDataTypes)) {
-        if (type === nestableType && typeof item === nestableType) {
-          alreadyType = true;
-          break;
-        }
-      }
-
-      /* Skip conversion if value is already desired type from JSON.parse */
-      if (alreadyType) {
+      if (typeof item === type) {
         continue;
       }
 
       /* Set the element to its converted type */
       array[idx] = convertValue(type, item);
     }
-    
+
     return array;
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      /* Throw error if the target conversion type is unsupported */
-      throw new UnsupportedTypeError(error.getType());
+      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtype in config file */
     } else {
-      /* Throw error if value cannot be converted to an Array */
       throw new TypeConversionError(value, `${NonNestableDataTypes.Array}<${type}>`);
     }
   }
@@ -174,7 +159,7 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
 /**
  * Converts a string into an Set. If {@type} is not set, it will default to string.
  * @param value The input value to convert into a Set.
- * @param type: The type for each element in the Set. 
+ * @param type: The type that each element in the Set will be converted to. 
  * @returns The value after being converted to an Set.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Set in this case).
  */
@@ -183,14 +168,12 @@ function convertToSet<T>(value: string, type: string = NestableDataTypes.String)
     /* Convert the input to an array */
     const array: Array<T> = convertToArray(value, type);
 
-    /* Initialize a new set with the array */
+    /* Create a set with the array */
     return new Set(array);
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      /* Throw error if the target conversion type is unsupported */
-      throw new UnsupportedTypeError(error.getType());
+      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtype in config file */
     } else {
-      /* Throw error if value cannot be converted to an Set */
       throw new TypeConversionError(value, `${NonNestableDataTypes.Set}<${type}>`);
     }
   }
@@ -199,7 +182,8 @@ function convertToSet<T>(value: string, type: string = NestableDataTypes.String)
 /**
  * Converts a string into a Map. If {@link keyType} or {@link valueType} are not set, they will default to string.
  * @param value The input value to convert into a Map.
- * @param type: The type for each element in the Map. 
+ * @param keyType: The type that each key in the Map will be converted to. 
+ * @param valueType: The type that each value in the Map will be converted to. 
  * @returns The value after being converted to an Map.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Map in this case).
  */
@@ -207,18 +191,19 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
   try {
     /* Parse the input into a JSON object */
     const object = JSON.parse(value);
-    const map = new Map();
 
     /* Loop through each key value pair and convert to the desired datatypes */
+    const map = new Map();
     Object.entries(object).forEach(([key, val]) => {
-      
       /* Convert the key to its target type. We don't need to check if key from the previous JSON.parse is already an object
-      since keys must be strings in JSON, unlike Array elements. */
+      since keys must be strings in JSON. */
       const convertedKey = convertValue(keyType, key);
 
-      /* Convert the value to its target type. We don't need to check if key from the previous JSON.parse is already an object
-      since keys must be strings in JSON, unlike Array elements. */
-      const convertedVal = convertValue(valueType, String(val));
+      /* Converted the value to its target type if its not already the desired type from JSON.parse */
+      let convertedVal = val;
+      if (typeof val !== valueType) {
+        convertedVal = convertValue(valueType, String(val));
+      }
 
       /* Set the key-value mapping in the map */
       map.set(convertedKey, convertedVal);
@@ -227,10 +212,8 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
     return map;
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      /* Throw error if the target conversion type is unsupported */
-      throw new UnsupportedTypeError(error.getType());
+      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtypes in config file */
     } else {
-      /* Throw error if value cannot be converted to an Map */
       throw new TypeConversionError(value, `${NonNestableDataTypes.Map}<${keyType}, ${valueType}>`);
     }
   }

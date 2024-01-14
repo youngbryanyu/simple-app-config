@@ -1,22 +1,21 @@
-import { EnvVarConfigError } from "./envVarConfigError";
+import { SimpleAppConfigError } from "./SimpleAppConfigError";
 
 /**
- * An error extending {@link EnvVarConfigError} that should be thrown when a string is being converted to a nonexistent type.
+ * An error extending {@link SimpleAppConfigError} that should be thrown when a string is being converted to a nonexistent type.
  */
-export class UnsupportedTypeError extends EnvVarConfigError {
+export class UnsupportedTypeError extends SimpleAppConfigError {
 
   /**
    * The conversion type that is unsupported.
    */
-  type = "";
+  private type = "";
 
   /**
-   * Constructor for {@link UndefinedEnvVarError}.
-   * @param value The string value of the environment variable being converted.
-   * @param targetType The target that the input value is being converted to.
+   * Constructor for {@link UnsupportedTypeError}.
+   * @param type The type that the input value is being converted to.
    */
-  constructor(type: string) {
-    super(`Converting to type '${type}' is not supported.`);
+  public constructor(type: string) {
+    super(`Converting to type '${type}' is not supported..`);
     this.name = "UnsupportedTypeError";
     this.type = type;
     Object.setPrototypeOf(this, UnsupportedTypeError.prototype);
@@ -26,7 +25,7 @@ export class UnsupportedTypeError extends EnvVarConfigError {
    * Gets the type that caused the error
    * @returns The type that is nonexistent.
    */
-  getType() {
+  public getType() {
     return this.type;
   }
 }
