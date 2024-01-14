@@ -434,7 +434,7 @@ export class Config {
       }
     }
     /* Expand environment variable as a string */
-    return input.replace(/\$\{([A-Z0-9_]+)(?:::\w+)?(?::\w+)?(?::\w+)?\}/gi, (match, varName) => Config.getStringFromEnv(varName)) as T;
+    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) => Config.getStringFromEnv(varName)) as T;
   }
 
   /**
