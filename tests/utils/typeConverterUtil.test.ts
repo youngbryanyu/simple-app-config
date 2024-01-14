@@ -374,6 +374,20 @@ describe('Type Converter Util Tests', () => {
       /* Call function and Compare against expected */
       expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
     });
+
+    /* Test when the target subtype doesn't exist */
+    it('Should throw an error if the target subtype doesn\'t exist.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToArray');
+
+      /* Set up */
+      const value = '[1, 2, 3]';
+      const invalidType = 'invalid type'
+      expect(() => TypeConverterUtil.convertToArray(value, invalidType)).toThrow(UnsupportedTypeError);
+
+      /* Call function and Compare against expected */
+      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+    });
   });
 
   /* Convert to Set tests */
@@ -503,6 +517,20 @@ describe('Type Converter Util Tests', () => {
       /* Set up */
       const value = '{"k1": "v1"}';
       expect(() => TypeConverterUtil.convertToSet(value, NestableDataTypes.Object)).toThrow(TypeConversionError);
+
+      /* Call function and Compare against expected */
+      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+    });
+
+    /* Test when the target subtype doesn't exist */
+    it('Should throw an error if the target subtype doesn\'t exist.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToSet');
+
+      /* Set up */
+      const value = '[1, 2, 3]';
+      const invalidType = 'invalid type'
+      expect(() => TypeConverterUtil.convertToSet(value, invalidType)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
       expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
@@ -662,6 +690,34 @@ describe('Type Converter Util Tests', () => {
       /* Set up */
       const value = '[a, b, c]';
       expect(() => TypeConverterUtil.convertToMap(value, NestableDataTypes.Object, NestableDataTypes.Object)).toThrow(TypeConversionError);
+
+      /* Call function and Compare against expected */
+      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+    });
+
+    /* Test when the key's target subtype doesn't exist */
+    it('Should throw an error if the key\'s target subtype doesn\'t exist.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToMap');
+
+      /* Set up */
+      const value = '{"test": "test"}';
+      const invalidType = 'invalid type'
+      expect(() => TypeConverterUtil.convertToMap(value, invalidType, NestableDataTypes.String)).toThrow(UnsupportedTypeError);
+
+      /* Call function and Compare against expected */
+      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+    });
+
+    /* Test when the value's target subtype doesn't exist */
+    it('Should throw an error if the key\'s target subtype doesn\'t exist.', () => {
+      /* Spy on the function under test */
+      jest.spyOn(TypeConverterUtil, 'convertToMap');
+
+      /* Set up */
+      const value = '{"test": "test"}';
+      const invalidType = 'invalid type'
+      expect(() => TypeConverterUtil.convertToMap(value, NestableDataTypes.String, invalidType)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
       expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();

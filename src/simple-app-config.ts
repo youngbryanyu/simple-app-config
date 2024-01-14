@@ -369,34 +369,34 @@ export class Config {
    * - Converts the input to an array if it is an array
    * - Process each in the JSON object. If it is a string it expands any environment variables within the string. If it is an 
    * object it will recursively process the object and treat it like a nested map of configurations
-   * @param config The configuration object to process.
+   * @param jsonObj The JSON object to process.
    * @returns a Map of the key-value pairs in the JSON file.
    */
-  private static convertJSONToMap<T>(config: unknown): T {
-    /* Recursively convert each element of an array */
-    if (Array.isArray(config)) {
-      return config.map(item => Config.convertJSONToMap(item)) as T;
+  private static convertJSONToMap<T>(jsonObj: unknown): T {
+    /* If config is an array, recursively convert each element of an array */
+    if (Array.isArray(jsonObj)) {
+      return jsonObj.map(item => Config.convertJSONToMap(item)) as T;
     }
 
-    /* Handle primitive data types */
-    if (typeof config !== 'object' || config === null) {
-      if (typeof config === 'string') {
-        return Config.expandEnvVar(config) as T;
+    /* Handle primitive data types. Strings should be expanded. */
+    if (typeof jsonObj !== 'object' || jsonObj === null) {
+      if (typeof jsonObj === 'string') {     
+        return Config.expandEnvVar(jsonObj) as T;
       } else {
-        return config as T;
+        return jsonObj as T;
       }
     }
 
-    /* Recursively process each key-value pair in the JSON object. Strings should be expanded. */
-    const processedConfig: Map<string, T> = new Map();
-    Object.entries(config as Record<string, T>).forEach(([key, value]) => {
+    /* Recursively process each key-value pair in the JSON object into a map. Strings should be expanded. */
+    const configMap: Map<string, T> = new Map();
+    Object.entries(jsonObj as Record<string, T>).forEach(([key, value]) => {
       if (typeof value === 'string') {
-        processedConfig.set(key, Config.expandEnvVar(value));
+        configMap.set(key, Config.expandEnvVar(value));
        } else {
-        processedConfig.set(key, Config.convertJSONToMap(value));
+        configMap.set(key, Config.convertJSONToMap(value));
       }
     });
-    return processedConfig as T;
+    return configMap as T;
   }
 
   /**
@@ -440,7 +440,7 @@ export class Config {
           case NonNestableDataTypes.Map.toLowerCase():
             return Config.getMapFromEnv(varName, subtype1, subtype2) as T;
           default:
-            /* Throw error if target conversion type is not supported */
+            /* Throw error if primary target conversion type is not supported */
             throw new UnsupportedTypeError(type);
         }
       }
