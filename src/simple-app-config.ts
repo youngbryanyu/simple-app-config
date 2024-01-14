@@ -312,19 +312,19 @@ export class Config {
   }
 
   /**
- * Helper method to load a config file given a path. Performs the following in the listed order:
- * - Reads the config file 
- * - Parses the read file depending on the type of the config file. Processes the object into a Map. Nested configurations will 
- * be recursively parsed into nested maps.
- * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
- * ones with higher priority.
- * 
- * This function assumes that the file path is valid since it should be called from {@link Config.loadConfigFile} and 
- * {@link Config.loadDefaultConfigFile}, and file validation is performed there.
- * 
- * @param filePath Path to load the config file from.
- */
-  public static loadConfigAndPopulate(filePath: string): void {
+   * Helper method to load a config file given a path. Performs the following in the listed order:
+   * - Reads the config file 
+   * - Parses the read file depending on the type of the config file. Processes the object into a Map. Nested configurations will 
+   * be recursively parsed into nested maps.
+   * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
+   * ones with higher priority.
+   * 
+   * This function assumes that the file path is valid since it should be called from {@link Config.loadConfigFile} and 
+   * {@link Config.loadDefaultConfigFile}, and file validation is performed there.
+   * 
+   * @param filePath Path to load the config file from.
+   */
+  private static loadConfigAndPopulate(filePath: string): void {
     /* Read file */
     const file = fs.readFileSync(filePath, 'utf8').trim();
 
