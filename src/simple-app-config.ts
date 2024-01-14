@@ -655,5 +655,4 @@ export class Config {
 }
 
 /* Configure module immediately upon import from dependent module */
-process.env.NODE_ENV = 'production'
 Config.configure();
