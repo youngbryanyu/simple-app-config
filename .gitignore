@@ -1,9 +1,5 @@
 # ignore .env files used for testing
-.env
-.env.development
-.env.testing
-.env.staging
-.env.production
+.env**
 
 # ignore node_modules
 node_modules
