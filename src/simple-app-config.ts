@@ -380,7 +380,11 @@ export class Config {
 
     /* Handle primitive data types */
     if (typeof config !== 'object' || config === null) {
-      return config as T;
+      if (typeof config === 'string') {
+        return Config.expandEnvVar(config) as T;
+      } else {
+        return config as T;
+      }
     }
 
     /* Recursively process each key-value pair in the JSON object. Strings should be expanded. */

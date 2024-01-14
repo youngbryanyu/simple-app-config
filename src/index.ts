@@ -3,3 +3,5 @@ import { NestableDataTypes } from "./constants";
 
 /* Export Config and Nestable Data Types */
 export { Config, NestableDataTypes as DataTypes };
+
+console.log(Config.get('array'))
