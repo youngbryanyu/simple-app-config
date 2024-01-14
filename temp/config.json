@@ -1,7 +1,0 @@
-{
-  "var1": "${ARRAY::ARRAY:bool:test}",
-  "var3": "not a simple TEMP string",
-  "var2": {
-    "test": "$MAP::map:string:string"
-  }
-}
