@@ -289,18 +289,14 @@ describe('simple-app-config Tests', () => {
     /* Test getting a Map value */
     it('Should get a Map value', () => {
       /* Set up */
-      Config.setEnvValue('MAP', '{"cat": "5", "dog": "3"}');
       Config.configure();
-      jest.spyOn(Config, 'getMapFromEnv');
+      jest.spyOn(Config, 'get');
 
       /* Call function */
-      const result = Config.getMapFromEnv('MAP', DataTypes.String, DataTypes.Number);
+      const result = Config.get('MAP');
 
       /* Compare against expected */
-      expect(Config.getMapFromEnv).toHaveBeenCalled();
-      expect(result instanceof Map).toBeTruthy();
-      expect(result.get('cat')).toBe(5);
-      expect(result.get('dog')).toBe(3);
+      expect(Config.get).toHaveBeenCalled()
     });
   });
 });

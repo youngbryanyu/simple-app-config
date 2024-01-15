@@ -13,17 +13,24 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts" ,
+    "dev": "nodemon src/index.ts",
     "lint": "eslint .",
     "test": "jest --verbose"
   },
   "keywords": [
-    "application configuration",
     "app config",
     "app-config",
+    "app configuration",
+    "app-configuration",
     "appconfig",
+    "application config",
+    "application-config",
+    "application configuration",
+    "application-configuration",
     "config",
     "configuration",
+    "configuration management",
+    "configuration-management",
     ".env",
     "env",
     "environment",
@@ -31,7 +38,7 @@
     "javascript",
     "nodejs",
     "typescript",
-    "JSON"   
+    "JSON"
   ],
   "author": "Young Yu",
   "license": "ISC",

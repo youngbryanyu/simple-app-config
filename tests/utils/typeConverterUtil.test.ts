@@ -8,11 +8,11 @@ import TypeConverterUtil from '../../src/utils/typeConverterUtil';
 describe('Type Converter Util Tests', () => {
   /* Setup before each test */
   beforeEach(() => {
-    jest.restoreAllMocks();
+    jest.restoreAllMocks(); /* Restore all mocks to their default implementation and clear all states */
   });
 
   /* Convert to nestable value tests */
-  describe('Convert to Nestable Value Ttests', () => {
+  describe('Convert to Nestable Value Tests', () => {
     /* Test when converting to a number is possible */
     it('Should successfully convert a value to a nestable type.', () => {
       /* Spy on the function under test */
