@@ -6,6 +6,7 @@ This module solves the following things that are kind of a pain:
 - Automatically converting configuration variables to their desired types when retrieving them
 - Direct access of environment variables and conversion to common types
 
+## Navigation
 * [Installation](#installation)
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
