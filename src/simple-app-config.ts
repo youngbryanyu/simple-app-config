@@ -1,11 +1,18 @@
 /* Environment variable configuration loader. */
-import dotenv from 'dotenv';
+import dotenv, { DotenvParseOutput } from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { COMMAND_LINE_ARGS, ENV_ARGS, Environments, FileTypes, NestableDataTypes, NonNestableDataTypes } from './constants';
 import { UnsupportedTypeError } from './errors/unsupportedTypeError';
 import { UndefinedConfigValueError } from './errors/undefinedConfigValueError';
 import EnvParser from './utils/envParser';
+
+/**
+ * Customization options when running configure
+ */
+interface ConfigOptions {
+  force?: boolean
+}
 
 /**
  * The class encapsulating all the logic for simple-app-config
@@ -24,7 +31,7 @@ export class Config {
   /**
    * The environments of the application. 
    * Defaults to development, testing, staging, production.
-   * Populated with custom values when {@link Config.setPaths} is called.
+   * Populated with custom values when {@link Config.setEnvironmentNames} is called.
    */
   private static environments: Set<string> = new Set(Object.values(Environments));
 
@@ -48,7 +55,7 @@ export class Config {
 
   /**
    * Map containing converted and expanded values from the loaded config file.
-   * Populated when {@link Config.loadConfigAndPopulate} is called.
+   * Populated when {@link Config.parseConfigIntoMap} is called.
    */
   private static configMap: Map<string, unknown> = new Map();
 
@@ -57,6 +64,11 @@ export class Config {
    * This is set to true after {@link Config.configure} is finished running.
    */
   private static alreadyConfigured: boolean = false;
+
+  /**
+   * The previously set environment variables by dotenv.config
+   */
+  private static prevDotenvValues: unknown;
 
   /**
    * The entry point to all of the configuration functions. Configures the module in the following order:
@@ -71,20 +83,20 @@ export class Config {
    * - Sets already configured flag to true.
    * @param force Whether to force the module to re-configure, even if it has already been configured.
    */
-  public static configure(force?: boolean): void {
+  public static configure(configOptions: ConfigOptions = {}): void {
     /* Return if the application is already configured and the force isn't set  */
-    if (Config.alreadyConfigured === true && force === false) {
+    if (Config.alreadyConfigured === true && configOptions.force === false) {
       return;
     }
 
-    Config.setEnvironmentNames();         /* Set the names of the environment */
-    Config.determineEnvironment();        /* Determine environment */
-    Config.setPaths();                    /* Set the .env and possible config paths */
-    Config.loadEnvFile();                 /* Load .env file */
-    EnvParser.refreshCache();          /* Load all environment variables into cache */
-    Config.loadConfigFile();              /* Load config file */
-    Config.loadDefaultConfigFile();       /* Load default config file */
-    Config.alreadyConfigured = true;      /* Set the alrady configured flag to true */
+    Config.setEnvironmentNames();                     /* Set the names of the environment */
+    Config.determineEnvironment();                    /* Determine environment */
+    Config.setPaths();                                /* Set the .env and possible config paths */
+    Config.loadEnvFile(Config.findEnvFile());         /* Find and load .env file */
+    EnvParser.refreshCache();                         /* Load all environment variables into cache */
+    Config.loadConfigFile(Config.findConfigFile());   /* Find and load config file */
+    Config.loadDefaultConfigFile();                   /* Load default config file */
+    Config.alreadyConfigured = true;                  /* Set the alrady configured flag to true */
   }
 
   /**
@@ -99,7 +111,7 @@ export class Config {
     /* Check if environment names are set in command line arguments */
     for (const arg of process.argv) {
       if (arg.startsWith(COMMAND_LINE_ARGS.ENV_NAMES)) {
-        Config.environments.clear(); /* Clear default environment names */
+        Config.environments.clear(); /* Clear default environment names, and any previously set */
         const envNames = arg.split('=')[1].split(',');
         for (const envName of envNames) {
           Config.environments.add(envName);
@@ -111,7 +123,7 @@ export class Config {
     /* Check if environment names are set in environment variables */
     const arg = process.env[ENV_ARGS.ENV_NAMES];
     if (arg !== undefined) {
-      Config.environments.clear();  /* Clear default environment names */
+      Config.environments.clear();  /* Clear default environment names, and any previously set */
       const envNames = arg.split(',');
       for (const envName of envNames) {
         Config.environments.add(envName);
@@ -127,6 +139,10 @@ export class Config {
    * - The default config file
    */
   private static setPaths() {
+    /* Clear any previously set paths other than defaults */
+    Config.envPaths.clear();
+    Config.configPaths.clear();
+
     /* Loop over each environments */
     for (const environment of Config.environments) {
       /* Set the .env paths */
@@ -179,14 +195,16 @@ export class Config {
    * 
    * If the path specified in each of the above doesn't exist, it will try the next highest priority value.
    */
-  private static loadEnvFile(): void {
+  private static findEnvFile(): string | undefined {
+    /* Reset previously set dotenv values */
+    Config.resetDotEnv();
+
     /* Load path specified by command line argument if it exists */
     for (const arg of process.argv) {
       if (arg.startsWith(COMMAND_LINE_ARGS.ENV_PATH)) {
         const path = arg.split('=')[1];
         if (Config.isValidEnvFile(path)) {
-          dotenv.config({ path: path });
-          return;
+          return path;
         }
       }
     }
@@ -194,17 +212,28 @@ export class Config {
     /* Load path specified by environment variable argument if it exists */
     const path = process.env[ENV_ARGS.ENV_PATH];
     if (path !== undefined && Config.isValidEnvFile(path)) {
-      dotenv.config({ path: path });
-      return;
+      return path;
     }
 
     /* Load path corresponding to the environment if it exists */
     if (Config.envPaths.has(Config.environment)) {
       const path = Config.envPaths.get(Config.environment) as string;
       if (Config.isValidEnvFile(path)) {
-        dotenv.config({ path: path });
-        return;
+        return path;
       }
+    }
+
+    /* Default return undefined indicating no path found */
+    return undefined;
+  }
+
+  /**
+   * Loads the .env file if it has been found and set.
+   */
+  private static loadEnvFile(path: string | undefined): void {
+    if (path !== undefined) {
+      dotenv.config({ path: path });
+      Config.prevDotenvValues = dotenv.parse(fs.readFileSync(path)); /* Set prev dotenv values */
     }
   }
 
@@ -219,6 +248,17 @@ export class Config {
   }
 
   /**
+   * Resets and values set previously by dotenv to undefined from the previous call of dotenv.config
+   * @param Path to the .env file.
+   */
+  private static resetDotEnv(): void {
+    /* Iterate over the keys and delete the environment variables */
+    for (const key in (Config.prevDotenvValues as DotenvParseOutput)) {
+        delete process.env[key];
+    }
+  }
+
+  /**
    * Loads a config file from the folloowing in the following order from highest priority to lowest, where higher priority values 
    * will override lower priority values::
    * - Command line arguments
@@ -227,14 +267,16 @@ export class Config {
    * 
    * If the path specified in each of the above doesn't exist, it will try the next highest priority value.
    */
-  private static loadConfigFile(): void {
+  private static findConfigFile(): string | undefined {
+    /* Reset any previous values in the config file */
+    Config.configMap.clear();
+
     /* Load path specified by command line argument if specified and if path exists */
     for (const arg of process.argv) {
       if (arg.startsWith(COMMAND_LINE_ARGS.CONFIG_PATH)) {
         const path = arg.split('=')[1];
         if (Config.isValidConfigFile(path)) {
-          Config.loadConfigAndPopulate(path);
-          return;
+          return path;
         }
       }
     }
@@ -242,7 +284,7 @@ export class Config {
     /* Load path specified by environment variable argument if it exists */
     const path = process.env[ENV_ARGS.CONFIG_PATH];
     if (path !== undefined && Config.isValidConfigFile(path)) {
-      Config.loadConfigAndPopulate(path);
+      Config.parseConfigIntoMap(path);
       return;
     }
 
@@ -250,10 +292,21 @@ export class Config {
     if (Config.configPaths.has(Config.environment)) {
       for (const path of (Config.configPaths.get(Config.environment) as Set<string>)) {
         if (Config.isValidConfigFile(path)) {
-          Config.loadConfigAndPopulate(path);
-          return;
+          return path;
         }
       }
+    }
+
+    /* Return undefined to indicate no config file found */
+    return undefined;
+  }
+
+  /**
+   * Loads the config file if it has been found and set.
+   */
+  private static loadConfigFile(path: string | undefined): void {
+    if (path !== undefined) {
+      Config.parseConfigIntoMap(path);
     }
   }
 
@@ -299,26 +352,26 @@ export class Config {
   private static loadDefaultConfigFile(): void {
     for (const path of Config.defaultConfigPaths) {
       if (Config.isValidConfigFile(path)) {
-        Config.loadConfigAndPopulate(path)
+        Config.parseConfigIntoMap(path)
         return;
       }
     }
   }
 
   /**
-   * Helper method to load a config file given a path. Performs the following in the listed order:
+   * Helper method to parse a config file given a path and load it into {@link Config.configMap}. Performs the following in the listed order:
    * - Reads the config file 
    * - Parses the read file depending on the type of the config file. Processes the object into a Map. Nested configurations will 
    * be recursively parsed into nested maps.
    * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
    * ones with higher priority.
    * 
-   * This function assumes that the file path is valid since it should be called from {@link Config.loadConfigFile} and 
+   * This function assumes that the file path is valid since it should be called from {@link Config.findConfigFile} and 
    * {@link Config.loadDefaultConfigFile}, and file validation is performed there.
    * 
    * @param filePath Path to load the config file from.
    */
-  private static loadConfigAndPopulate(filePath: string): void {
+  private static parseConfigIntoMap(filePath: string): void {
     /* Read file */
     const file = fs.readFileSync(filePath, 'utf8').trim();
 
