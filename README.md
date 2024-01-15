@@ -73,13 +73,14 @@ Command line arguments can be specified to override and set custom settings:
 ### ENV_NAMES
 
 ## API
+
 ### configure
 `configure` is run immediately when it is imported so you shouldn't need to run it. Configure sets up
 
 ### get
 ...
 
-### getStringFromEnv
-
+### getString
+...
 
 
