@@ -1,5 +1,5 @@
 # simple-app-config
-A simple configuration manager for Node.js projects. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
+A simple configuration manager for Node.js applications. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
 ## Navigation
 * [Features](#features)
