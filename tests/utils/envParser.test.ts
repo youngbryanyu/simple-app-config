@@ -1,7 +1,6 @@
 /* Unit tests for env-var-config */
 import { DataTypes, EnvParser } from '../../src/index';
 import { UndefinedEnvVarError } from '../../src/errors/undefinedEnvVarError';
-import sinon from 'ts-sinon';
 
 /* simple-app-config tests */
 describe('envParser Tests', () => {
@@ -13,15 +12,13 @@ describe('envParser Tests', () => {
     /* Clear the env config cache */
     EnvParser.clearCache();
 
-    /* Clear sinon stubs */
-    sinon.restore();
 
     /* Delete all environment variables */
-    // for (const key in process.env) {
-    //   if (process.env.hasOwnProperty(key)) {
-    //     delete process.env[key];
-    //   }
-    // }
+    for (const key in process.env) {
+      if (process.env.hasOwnProperty(key)) {
+        delete process.env[key];
+      }
+    }
   });
 
   /* Tests for refreshEnvCache*/
@@ -103,7 +100,7 @@ describe('envParser Tests', () => {
     /* Test getting a string value and its not in cache */
     it('Should get a string value when its not in the cache', () => {
       /* Set up */
-      const envStub = sinon.stub(process.env, 'PORT').value('8000');
+      process.env['PORT'] = '8000';
       jest.spyOn(EnvParser, 'getString');
       jest.spyOn(Map.prototype, 'get');
 
@@ -243,7 +240,7 @@ describe('envParser Tests', () => {
   /* Tests for getSetFromEnv */
   describe('getSet Tests', () => {
     /* Test getting an Set value */
-    it('Should get an Set value', () => {
+    it('Should get a Set value', () => {
       /* Set up */
       EnvParser.setValue('SET', '[1, 2, 3]');
       jest.spyOn(EnvParser, 'getSet');
