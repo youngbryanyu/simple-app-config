@@ -15,7 +15,7 @@ export class EnvParser {
   /**
    * Clears the environment variable cache and updates the cache with the most up-to-date environment variables
    */
-  public static refreshEnvCache(): void {
+  public static refreshCache(): void {
     /* Clear the cache */
     EnvParser.clearCache();
 
@@ -37,7 +37,7 @@ export class EnvParser {
    * @param key Key of the environment variable.
    * @param value The value to set the environment variable to.
    */
-  public static setEnvValue(key: string, value: string): void {
+  public static setValue(key: string, value: string): void {
     /* Update value in process.env */
     process.env[key] = value;
 
@@ -49,7 +49,7 @@ export class EnvParser {
    * Deletes an environment variable and removes it from the cache.
    * @param key Key or name of the environment variable.
    */
-  public static deleteEnvValue(key: string): void {
+  public static deleteValue(key: string): void {
     /* Update value in process.env */
     delete process.env[key];
 
@@ -64,7 +64,7 @@ export class EnvParser {
    * @param key Key of the environment variable.
    * @returns The value corresponding the to environment variable with name {@link key} in the environment variables.
    */
-  private static getValueFromEnv(key: string): string | undefined {
+  private static getValue(key: string): string | undefined {
     /* Check if cache contains the environment variable */
     if (EnvParser.envCache.has(key)) {
       return EnvParser.envCache.get(key);
@@ -83,9 +83,9 @@ export class EnvParser {
    * @returns The value of the environment variable.
    * @throws {UndefinedEnvVarError} Error thrown if the environment variable is not defined.
    */
-  public static getStringFromEnv(key: string): string {
+  public static getString(key: string): string {
     /* Check if value is undefined */
-    const value = EnvParser.getValueFromEnv(key);
+    const value = EnvParser.getValue(key);
     if (value === undefined) {
       throw new UndefinedEnvVarError(key);
     }
@@ -99,9 +99,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a number.
    */
-  public static getNumberFromEnv(key: string): number {
+  public static getNumber(key: string): number {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to number and return it */
     return TypeConverter.convertToNumber(value);
@@ -112,9 +112,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a boolean.
    */
-  public static getBooleanFromEnv(key: string): boolean {
+  public static getBoolean(key: string): boolean {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to boolean and return it */
     return TypeConverter.convertToBoolean(value);
@@ -125,9 +125,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a date.
    */
-  public static getDateFromEnv(key: string): Date {
+  public static getDate(key: string): Date {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to date and return it */
     return TypeConverter.convertToDate(value);
@@ -138,9 +138,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a RegExp.
    */
-  public static getRegExpFromEnv(key: string): RegExp {
+  public static getRegExp(key: string): RegExp {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to date and return it */
     return TypeConverter.convertToRegExp(value);
@@ -151,9 +151,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as an object.
    */
-  public static getObjectFromEnv(key: string): object {
+  public static getObject(key: string): object {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to date and return it */
     return TypeConverter.convertToObject(value);
@@ -165,9 +165,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as an Array.
    */
-  public static getArrayFromEnv<T>(key: string, type?: string): Array<T> {
+  public static getArray<T>(key: string, type?: string): Array<T> {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to array and return it */
     return TypeConverter.convertToArray(value, type);
@@ -179,9 +179,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a Set.
    */
-  public static getSetFromEnv<T>(key: string, type?: string): Set<T> {
+  public static getSet<T>(key: string, type?: string): Set<T> {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to array and return it */
     return TypeConverter.convertToSet(value, type);
@@ -193,9 +193,9 @@ export class EnvParser {
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a Map.
    */
-  public static getMapFromEnv<K, V>(key: string, keyType?: string, valueType?: string): Map<K, V> {
+  public static getMap<K, V>(key: string, keyType?: string, valueType?: string): Map<K, V> {
     /* Get environment variable value as string */
-    const value = EnvParser.getStringFromEnv(key);
+    const value = EnvParser.getString(key);
 
     /* Convert value to array and return it */
     return TypeConverter.convertToMap(value, keyType, valueType);

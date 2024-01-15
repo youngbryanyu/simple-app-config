@@ -81,7 +81,7 @@ export class Config {
     Config.determineEnvironment();        /* Determine environment */
     Config.setPaths();                    /* Set the .env and possible config paths */
     Config.loadEnvFile();                 /* Load .env file */
-    EnvParser.refreshEnvCache();          /* Load all environment variables into cache */
+    EnvParser.refreshCache();          /* Load all environment variables into cache */
     Config.loadConfigFile();              /* Load config file */
     Config.loadDefaultConfigFile();       /* Load default config file */
     Config.alreadyConfigured = true;      /* Set the alrady configured flag to true */
@@ -413,23 +413,23 @@ export class Config {
         /* Perform type conversion to the desired type */
         switch (type.toLowerCase()) {
           case NestableDataTypes.String.toLowerCase():
-            return EnvParser.getStringFromEnv(varName) as T;
+            return EnvParser.getString(varName) as T;
           case NestableDataTypes.Number.toLowerCase():
-            return EnvParser.getNumberFromEnv(varName) as T;
+            return EnvParser.getNumber(varName) as T;
           case NestableDataTypes.Boolean.toLowerCase():
-            return EnvParser.getBooleanFromEnv(varName) as T;
+            return EnvParser.getBoolean(varName) as T;
           case NestableDataTypes.Date.toLowerCase():
-            return EnvParser.getDateFromEnv(varName) as T;
+            return EnvParser.getDate(varName) as T;
           case NestableDataTypes.RegExp.toLowerCase():
-            return EnvParser.getRegExpFromEnv(varName) as T;
+            return EnvParser.getRegExp(varName) as T;
           case NestableDataTypes.Object.toLowerCase():
-            return EnvParser.getObjectFromEnv(varName) as T;
+            return EnvParser.getObject(varName) as T;
           case NonNestableDataTypes.Array.toLowerCase():
-            return EnvParser.getArrayFromEnv(varName, subtype1) as T;
+            return EnvParser.getArray(varName, subtype1) as T;
           case NonNestableDataTypes.Set.toLowerCase():
-            return EnvParser.getSetFromEnv(varName, subtype1) as T;
+            return EnvParser.getSet(varName, subtype1) as T;
           case NonNestableDataTypes.Map.toLowerCase():
-            return EnvParser.getMapFromEnv(varName, subtype1, subtype2) as T;
+            return EnvParser.getMap(varName, subtype1, subtype2) as T;
           default:
             /* Throw error if primary target conversion type is not supported */
             throw new UnsupportedTypeError(type);
@@ -437,7 +437,7 @@ export class Config {
       }
     }
     /* Expand environment variable as a string */
-    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) => EnvParser.getStringFromEnv(varName)) as T;
+    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) => EnvParser.getString(varName)) as T;
   }
 
   /**
