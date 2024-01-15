@@ -3,7 +3,7 @@ A simple configuration manager for different environments. I created this libary
 
 This module comes with the following key features:
 - Loading the appropriate configuration file based on the environment
-- Automatically converting configuration fields to their desired types
+- Automatically converting configuration fields to the desired types
 - Referencing environment variables in configuration files and expanding them (or converting them to their desired type)
 
 Some other features include 
