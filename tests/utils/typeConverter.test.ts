@@ -2,7 +2,7 @@
 import { NestableDataTypes } from '../../src/constants';
 import { TypeConversionError } from '../../src/errors/typeConversionError';
 import { UnsupportedTypeError } from '../../src/errors/unsupportedTypeError';
-import TypeConverterUtil from '../../src/utils/typeConverterUtil';
+import TypeConverter from '../../src/utils/typeConverter';
 
 /* Type converter util tests */
 describe('Type Converter Util Tests', () => {
@@ -16,15 +16,15 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a number is possible */
     it('Should successfully convert a value to a nestable type.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToNestableType');
+      jest.spyOn(TypeConverter, 'convertToNestableType');
 
       /* Set up and call function */
       const type = 'number'
       const value = '5';
-      const result = TypeConverterUtil.convertToNestableType(type, value);
+      const result = TypeConverter.convertToNestableType(type, value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToNestableType).toHaveBeenCalled();
+      expect(TypeConverter.convertToNestableType).toHaveBeenCalled();
       expect(typeof result).toBe('number');
       expect(result).toBe(5);
     });
@@ -32,15 +32,15 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a type is not supported */
     it('Should throw an error if the type to be converted to is not supported.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToNestableType');
+      jest.spyOn(TypeConverter, 'convertToNestableType');
 
       /* Set up */
       const type = 'NOT A TYPE'
       const value = 'test';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToNestableType(type, value)).toThrow(UnsupportedTypeError);
-      expect(TypeConverterUtil.convertToNestableType).toHaveBeenCalled();
+      expect(() => TypeConverter.convertToNestableType(type, value)).toThrow(UnsupportedTypeError);
+      expect(TypeConverter.convertToNestableType).toHaveBeenCalled();
     });
   });
 
@@ -49,14 +49,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a number is possible */
     it('Should successfully convert the input to a number if possible.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToNumber');
+      jest.spyOn(TypeConverter, 'convertToNumber');
 
       /* Set up and call function */
       const value = '5';
-      const result = TypeConverterUtil.convertToNumber(value);
+      const result = TypeConverter.convertToNumber(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToNumber).toHaveBeenCalled();
+      expect(TypeConverter.convertToNumber).toHaveBeenCalled();
       expect(typeof result).toBe('number');
       expect(result).toBe(5);
     });
@@ -64,14 +64,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a number isn't possible */
     it('Should throw an error if the input cannot be converted to a number.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToNumber');
+      jest.spyOn(TypeConverter, 'convertToNumber');
 
       /* Set up */
       const value = '100ABC';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToNumber(value)).toThrow(TypeConversionError);
-      expect(TypeConverterUtil.convertToNumber).toHaveBeenCalled();
+      expect(() => TypeConverter.convertToNumber(value)).toThrow(TypeConversionError);
+      expect(TypeConverter.convertToNumber).toHaveBeenCalled();
     });
   });
 
@@ -80,14 +80,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a truthy boolean is possible */
     it('Should successfully convert the input to a truthy boolean if possible.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToBoolean');
+      jest.spyOn(TypeConverter, 'convertToBoolean');
 
       /* Set up and call function */
       const value = 'TRUE';
-      const result = TypeConverterUtil.convertToBoolean(value);
+      const result = TypeConverter.convertToBoolean(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToBoolean).toHaveBeenCalled();
+      expect(TypeConverter.convertToBoolean).toHaveBeenCalled();
       expect(typeof result).toBe('boolean');
       expect(result).toBe(true);
     });
@@ -95,14 +95,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a falsy boolean is possible */
     it('Should successfully convert the input to a falsy boolean if possible.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToBoolean');
+      jest.spyOn(TypeConverter, 'convertToBoolean');
 
       /* Set up and call function */
       const value = 'FALSE';
-      const result = TypeConverterUtil.convertToBoolean(value);
+      const result = TypeConverter.convertToBoolean(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToBoolean).toHaveBeenCalled();
+      expect(TypeConverter.convertToBoolean).toHaveBeenCalled();
       expect(typeof result).toBe('boolean');
       expect(result).toBe(false);
     });
@@ -110,14 +110,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a boolean isn't possible */
     it('Should throw an error if the input cannot be converted to a number.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToBoolean');
+      jest.spyOn(TypeConverter, 'convertToBoolean');
 
       /* Set up */
       const value = 'NOT_A_BOOLEAN';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToBoolean(value)).toThrow(TypeConversionError);
-      expect(TypeConverterUtil.convertToBoolean).toHaveBeenCalled();
+      expect(() => TypeConverter.convertToBoolean(value)).toThrow(TypeConversionError);
+      expect(TypeConverter.convertToBoolean).toHaveBeenCalled();
     });
   });
 
@@ -126,14 +126,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a date is possible as a unix timestamp */
     it('Should successfully convert a unix timestamp to a Date.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToDate');
+      jest.spyOn(TypeConverter, 'convertToDate');
 
       /* Set up and call function */
       const value = '1000';
-      const result = TypeConverterUtil.convertToDate(value);
+      const result = TypeConverter.convertToDate(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToDate).toHaveBeenCalled();
+      expect(TypeConverter.convertToDate).toHaveBeenCalled();
       expect(result instanceof Date).toBeTruthy();
       expect(result.toJSON()).toBe('1970-01-01T00:00:01.000Z');
     });
@@ -141,14 +141,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Date is possible as a valid date string */
     it('Should successfully convert a date string to a Date.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToDate');
+      jest.spyOn(TypeConverter, 'convertToDate');
 
       /* Set up and call function */
       const value = 'Wed Dec 31 1969';
-      const result = TypeConverterUtil.convertToDate(value);
+      const result = TypeConverter.convertToDate(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToDate).toHaveBeenCalled();
+      expect(TypeConverter.convertToDate).toHaveBeenCalled();
       expect(result instanceof Date).toBeTruthy();
       expect(result.toJSON()).toBe('1969-12-31T08:00:00.000Z');
     });
@@ -156,14 +156,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Date is not possible */
     it('Should throw an error if the input cannot be converted to a Date.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToDate');
+      jest.spyOn(TypeConverter, 'convertToDate');
 
       /* Set up  */
       const value = 'not a date';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToDate(value)).toThrow(TypeConversionError);
-      expect(TypeConverterUtil.convertToDate).toHaveBeenCalled();
+      expect(() => TypeConverter.convertToDate(value)).toThrow(TypeConversionError);
+      expect(TypeConverter.convertToDate).toHaveBeenCalled();
     });
   });
 
@@ -172,28 +172,28 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a RegExp is possible */
     it('Should successfully convert the input to a RegExp.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToRegExp');
+      jest.spyOn(TypeConverter, 'convertToRegExp');
 
       /* Set up and call function */
       const value = '[0-9]';
-      const regex = TypeConverterUtil.convertToRegExp(value);
+      const regex = TypeConverter.convertToRegExp(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToRegExp).toHaveBeenCalled();
+      expect(TypeConverter.convertToRegExp).toHaveBeenCalled();
       expect(regex.test('9')).toBeTruthy();
     });
 
     /* Test when converting to a RegExp is not possible */
     it('Should throw an error if the input cannot be converted to a RegExp.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToRegExp');
+      jest.spyOn(TypeConverter, 'convertToRegExp');
 
       /* Set up */
       const value = '\\';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToRegExp(value)).toThrow(TypeConversionError);
-      expect(TypeConverterUtil.convertToRegExp).toHaveBeenCalled()
+      expect(() => TypeConverter.convertToRegExp(value)).toThrow(TypeConversionError);
+      expect(TypeConverter.convertToRegExp).toHaveBeenCalled()
     });
   });
 
@@ -202,14 +202,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a regexp is possible */
     it('Should successfully convert the input to an object.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToObject');
+      jest.spyOn(TypeConverter, 'convertToObject');
 
       /* Set up and call function */
       const value = '{"key1" :   "value1", "key2": [1, 2, 3]}';
-      const result = TypeConverterUtil.convertToObject(value);
+      const result = TypeConverter.convertToObject(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToObject).toHaveBeenCalled();
+      expect(TypeConverter.convertToObject).toHaveBeenCalled();
       expect(Object.keys(result)[0]).toBe("key1");
       expect(Object.keys(result)[1]).toBe("key2");
       expect(Object.values(result)[0]).toBe("value1");
@@ -219,14 +219,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to an object is not possible */
     it('Should throw an error if the input cannot be converted to an object .', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToObject');
+      jest.spyOn(TypeConverter, 'convertToObject');
 
       /* Set up */
       const value = '\\';
 
       /* Call function and compare against expected */
-      expect(() => TypeConverterUtil.convertToObject(value)).toThrow(TypeConversionError);
-      expect(TypeConverterUtil.convertToObject).toHaveBeenCalled()
+      expect(() => TypeConverter.convertToObject(value)).toThrow(TypeConversionError);
+      expect(TypeConverter.convertToObject).toHaveBeenCalled()
     });
   });
 
@@ -235,14 +235,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a string Array is possible */
     it('Should successfully convert the input to a string Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function with type set explicitely to string */
       const value = '["1", "2", "3"]';
-      const result = TypeConverterUtil.convertToArray(value);
+      const result = TypeConverter.convertToArray(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(typeof result[0]).toBe('string');
       expect(typeof result[1]).toBe('string');
       expect(typeof result[2]).toBe('string');
@@ -252,10 +252,10 @@ describe('Type Converter Util Tests', () => {
 
       /* Set up and call function with type string being implied as the default */
       const value2 = '["1", "2", "3"]';
-      const result2 = TypeConverterUtil.convertToArray(value2, NestableDataTypes.String);
+      const result2 = TypeConverter.convertToArray(value2, NestableDataTypes.String);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(typeof result2[0]).toBe('string');
       expect(typeof result2[1]).toBe('string');
       expect(typeof result2[2]).toBe('string');
@@ -267,14 +267,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a number Array is possible */
     it('Should successfully convert the input to a number Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function */
       const value = '[1, 2, 3]';
-      const result = TypeConverterUtil.convertToArray(value, NestableDataTypes.Number);
+      const result = TypeConverter.convertToArray(value, NestableDataTypes.Number);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(typeof result[0]).toBe('number');
       expect(typeof result[1]).toBe('number');
       expect(typeof result[2]).toBe('number');
@@ -286,14 +286,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a boolean Array is possible */
     it('Should successfully convert the input to a boolean Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function */
       const value = '["t", "FALSE", "true"]';
-      const result = TypeConverterUtil.convertToArray(value, NestableDataTypes.Boolean);
+      const result = TypeConverter.convertToArray(value, NestableDataTypes.Boolean);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(typeof result[0]).toBe('boolean');
       expect(typeof result[1]).toBe('boolean');
       expect(typeof result[2]).toBe('boolean');
@@ -305,14 +305,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Date Array is possible */
     it('Should successfully convert the input to a Date Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function */
       const value = '["100", "Wed Dec 31 1969", "100000"]';
-      const result: Array<Date> = TypeConverterUtil.convertToArray(value, NestableDataTypes.Date);
+      const result: Array<Date> = TypeConverter.convertToArray(value, NestableDataTypes.Date);
       
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(result[0] instanceof Date).toBeTruthy();
       expect(result[1] instanceof Date).toBeTruthy();
       expect(result[2] instanceof Date).toBeTruthy();
@@ -324,14 +324,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a RegExp Array is possible */
     it('Should successfully convert the input to a RegExp Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function */
       const value = '["[0-9]", "[a-z]", "a.b"]';
-      const result: Array<RegExp> = TypeConverterUtil.convertToArray(value, NestableDataTypes.RegExp);
+      const result: Array<RegExp> = TypeConverter.convertToArray(value, NestableDataTypes.RegExp);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(result[0] instanceof RegExp).toBeTruthy();
       expect(result[1] instanceof RegExp).toBeTruthy();
       expect(result[2] instanceof RegExp).toBeTruthy();
@@ -343,14 +343,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to an object Array is possible */
     it('Should successfully convert the input to an object Array.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up and call function */
       const value = '[{"k1": "v1"}, {"k2": "v2"}, {"k3": "v3"}]';
-      const result: Array<Object> = TypeConverterUtil.convertToArray(value, NestableDataTypes.Object);
+      const result: Array<Object> = TypeConverter.convertToArray(value, NestableDataTypes.Object);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
       expect(result[0] instanceof Object).toBeTruthy();
       expect(result[1] instanceof Object).toBeTruthy();
       expect(result[2] instanceof Object).toBeTruthy();
@@ -365,28 +365,28 @@ describe('Type Converter Util Tests', () => {
      /* Test when converting to an Array is not possible */
      it('Should throw an error if the input cannot be converted to a Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up */
       const value = '{"k1": "v1"}';
-      expect(() => TypeConverterUtil.convertToArray(value, NestableDataTypes.Object)).toThrow(TypeConversionError);
+      expect(() => TypeConverter.convertToArray(value, NestableDataTypes.Object)).toThrow(TypeConversionError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
     });
 
     /* Test when the target subtype doesn't exist */
     it('Should throw an error if the target subtype doesn\'t exist.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToArray');
+      jest.spyOn(TypeConverter, 'convertToArray');
 
       /* Set up */
       const value = '[1, 2, 3]';
       const invalidType = 'invalid type'
-      expect(() => TypeConverterUtil.convertToArray(value, invalidType)).toThrow(UnsupportedTypeError);
+      expect(() => TypeConverter.convertToArray(value, invalidType)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToArray).toHaveBeenCalled();
+      expect(TypeConverter.convertToArray).toHaveBeenCalled();
     });
   });
 
@@ -395,14 +395,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a string Set is possible */
     it('Should successfully convert the input to a string Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function with type set explicitely to string */
       const value = '["1", "2", "3"]';
-      const result = TypeConverterUtil.convertToSet(value);
+      const result = TypeConverter.convertToSet(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       expect(result.has("1")).toBe(true);
       expect(result.has("2")).toBe(true);
       expect(result.has("3")).toBe(true);
@@ -412,10 +412,10 @@ describe('Type Converter Util Tests', () => {
 
       /* Set up and call function with type string being implied as the default */
       const value2 = '["1", "2", "3"]';
-      const result2 = TypeConverterUtil.convertToSet(value2, NestableDataTypes.String);
+      const result2 = TypeConverter.convertToSet(value2, NestableDataTypes.String);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       expect(result2.has("1")).toBe(true);
       expect(result2.has("2")).toBe(true);
       expect(result2.has("3")).toBe(true);
@@ -427,14 +427,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a number Set is possible */
     it('Should successfully convert the input to a number Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function */
       const value = '[1, 2, 3]';
-      const result = TypeConverterUtil.convertToSet(value, NestableDataTypes.Number);
+      const result = TypeConverter.convertToSet(value, NestableDataTypes.Number);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       expect(result.has(1)).toBe(true);
       expect(result.has(2)).toBe(true);
       expect(result.has(3)).toBe(true);
@@ -446,14 +446,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a boolean Set is possible */
     it('Should successfully convert the input to a boolean Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function */
       const value = '["t", "FALSE", "true"]';
-      const result = TypeConverterUtil.convertToSet(value, NestableDataTypes.Boolean);
+      const result = TypeConverter.convertToSet(value, NestableDataTypes.Boolean);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       expect(result.has(true)).toBe(true);
       expect(result.has(false)).toBe(true);
       for (const item of result) {
@@ -464,14 +464,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Date Set is possible */
     it('Should successfully convert the input to a Date Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function */
       const value = '["100", "Wed Dec 31 1969", "1970-01-01T00:01:40.000Z"]';
-      const result = TypeConverterUtil.convertToSet(value, NestableDataTypes.Date);
+      const result = TypeConverter.convertToSet(value, NestableDataTypes.Date);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       for (const item of result) {
         expect(item instanceof Date).toBeTruthy();
       }
@@ -480,14 +480,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a RegExp Set is possible */
     it('Should successfully convert the input to a RegExp Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function */
       const value = '["[0-9]", "[a-z]", "a.b"]';
-      const result = TypeConverterUtil.convertToSet(value, NestableDataTypes.RegExp);
+      const result = TypeConverter.convertToSet(value, NestableDataTypes.RegExp);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       for (const item of result) {
         expect(item instanceof RegExp).toBeTruthy();
       }
@@ -496,14 +496,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to an object Set is possible */
     it('Should successfully convert the input to an object Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up and call function */
       const value = '[{"k1": "v1"}, {"k2": "v2"}, {"k3": "v3"}]';
-      const result = TypeConverterUtil.convertToSet(value, NestableDataTypes.Object);
+      const result = TypeConverter.convertToSet(value, NestableDataTypes.Object);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
       for (const item of result) {
         expect(item instanceof Object).toBeTruthy();
       }
@@ -512,28 +512,28 @@ describe('Type Converter Util Tests', () => {
      /* Test when converting to an Set is not possible */
      it('Should throw an error if the input cannot be converted to a Set.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up */
       const value = '{"k1": "v1"}';
-      expect(() => TypeConverterUtil.convertToSet(value, NestableDataTypes.Object)).toThrow(TypeConversionError);
+      expect(() => TypeConverter.convertToSet(value, NestableDataTypes.Object)).toThrow(TypeConversionError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
     });
 
     /* Test when the target subtype doesn't exist */
     it('Should throw an error if the target subtype doesn\'t exist.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToSet');
+      jest.spyOn(TypeConverter, 'convertToSet');
 
       /* Set up */
       const value = '[1, 2, 3]';
       const invalidType = 'invalid type'
-      expect(() => TypeConverterUtil.convertToSet(value, invalidType)).toThrow(UnsupportedTypeError);
+      expect(() => TypeConverter.convertToSet(value, invalidType)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToSet).toHaveBeenCalled();
+      expect(TypeConverter.convertToSet).toHaveBeenCalled();
     });
   });
 
@@ -542,14 +542,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with string keys and string values is possible */
     it('Should successfully convert the input to Map with string keys and string values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function with type set explicitely to string */
       const value = '{"k1": "v1", "k2": "v2"}';
-      const result = TypeConverterUtil.convertToMap(value);
+      const result = TypeConverter.convertToMap(value);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       expect(result.has("k1")).toBe(true);
       expect(result.has("k2")).toBe(true);
       expect(result.get("k1")).toBe("v1");
@@ -563,10 +563,10 @@ describe('Type Converter Util Tests', () => {
 
       /* Set up and call function with type string being implied as the default */
       const value2 = '{"k1": "v1", "k2": "v2"}';
-      const result2 = TypeConverterUtil.convertToMap(value2, NestableDataTypes.String, NestableDataTypes.String);
+      const result2 = TypeConverter.convertToMap(value2, NestableDataTypes.String, NestableDataTypes.String);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       expect(result2.has("k1")).toBe(true);
       expect(result2.has("k2")).toBe(true);
       expect(result2.get("k1")).toBe("v1");
@@ -582,14 +582,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with number keys and number values is possible */
     it('Should successfully convert the input to Map with number keys and number values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function */
       const value = '{"1": "2", "3": "4"}';
-      const result = TypeConverterUtil.convertToMap(value, NestableDataTypes.Number, NestableDataTypes.Number);
+      const result = TypeConverter.convertToMap(value, NestableDataTypes.Number, NestableDataTypes.Number);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       expect(result.has(1)).toBe(true);
       expect(result.has(3)).toBe(true);
       expect(result.get(1)).toBe(2);
@@ -605,14 +605,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with boolean keys and boolean values is possible */
     it('Should successfully convert the input to Map with boolean keys and boolean values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function */
       const value = '{"true": "FALSE", "f": "T"}';
-      const result = TypeConverterUtil.convertToMap(value, NestableDataTypes.Boolean, NestableDataTypes.Boolean);
+      const result = TypeConverter.convertToMap(value, NestableDataTypes.Boolean, NestableDataTypes.Boolean);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       expect(result.has(true)).toBe(true);
       expect(result.has(false)).toBe(true);
       expect(result.get(true)).toBe(false);
@@ -628,14 +628,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with Date keys and Date values is possible */
     it('Should successfully convert the input to Map with Date keys and Date values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function */
       const value = '{"100": "Wed Dec 31 1969", "1970-01-01T00:01:40.000Z": "1970-01-01T00:01:40.000Z"}';
-      const result = TypeConverterUtil.convertToMap(value, NestableDataTypes.Date, NestableDataTypes.Date);
+      const result = TypeConverter.convertToMap(value, NestableDataTypes.Date, NestableDataTypes.Date);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       for (const item of result.keys()) {
         expect(item instanceof Date).toBe(true);
       }
@@ -647,14 +647,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with RegExp keys and RegExp values is possible */
     it('Should successfully convert the input to Map with RegExp keys and RegExp values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function */
       const value = '{"[0-9]": "[a-z]", "a.b": "[A-Z]"}';
-      const result = TypeConverterUtil.convertToMap(value, NestableDataTypes.RegExp, NestableDataTypes.RegExp);
+      const result = TypeConverter.convertToMap(value, NestableDataTypes.RegExp, NestableDataTypes.RegExp);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       for (const item of result.keys()) {
         expect(item instanceof RegExp).toBe(true);
       }
@@ -666,14 +666,14 @@ describe('Type Converter Util Tests', () => {
     /* Test when converting to a Map with object keys and object values is possible */
     it('Should successfully convert the input to Map with object keys and object values.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up and call function */
       const value = '{"{\\"key1\\": \\"value1\\"}" : "{\\"key2\\": \\"value2\\"}"}';
-      const result = TypeConverterUtil.convertToMap(value, NestableDataTypes.Object, NestableDataTypes.Object);
+      const result = TypeConverter.convertToMap(value, NestableDataTypes.Object, NestableDataTypes.Object);
 
       /* Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
       for (const item of result.keys()) {
         expect(item instanceof Object).toBe(true);
       }
@@ -685,42 +685,42 @@ describe('Type Converter Util Tests', () => {
      /* Test when converting to a Map is not possible */
      it('Should throw an error if the input cannot be converted to a Map.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up */
       const value = '[a, b, c]';
-      expect(() => TypeConverterUtil.convertToMap(value, NestableDataTypes.Object, NestableDataTypes.Object)).toThrow(TypeConversionError);
+      expect(() => TypeConverter.convertToMap(value, NestableDataTypes.Object, NestableDataTypes.Object)).toThrow(TypeConversionError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
     });
 
     /* Test when the key's target subtype doesn't exist */
     it('Should throw an error if the key\'s target subtype doesn\'t exist.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up */
       const value = '{"test": "test"}';
       const invalidType = 'invalid type'
-      expect(() => TypeConverterUtil.convertToMap(value, invalidType, NestableDataTypes.String)).toThrow(UnsupportedTypeError);
+      expect(() => TypeConverter.convertToMap(value, invalidType, NestableDataTypes.String)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
     });
 
     /* Test when the value's target subtype doesn't exist */
     it('Should throw an error if the key\'s target subtype doesn\'t exist.', () => {
       /* Spy on the function under test */
-      jest.spyOn(TypeConverterUtil, 'convertToMap');
+      jest.spyOn(TypeConverter, 'convertToMap');
 
       /* Set up */
       const value = '{"test": "test"}';
       const invalidType = 'invalid type'
-      expect(() => TypeConverterUtil.convertToMap(value, NestableDataTypes.String, invalidType)).toThrow(UnsupportedTypeError);
+      expect(() => TypeConverter.convertToMap(value, NestableDataTypes.String, invalidType)).toThrow(UnsupportedTypeError);
 
       /* Call function and Compare against expected */
-      expect(TypeConverterUtil.convertToMap).toHaveBeenCalled();
+      expect(TypeConverter.convertToMap).toHaveBeenCalled();
     });
   });
 });

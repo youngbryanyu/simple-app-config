@@ -220,7 +220,7 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
 }
 
 /* Wrap the util functions and export them */
-const TypeConverterUtil = {
+export const TypeConverter = {
   convertToNumber,
   convertToBoolean,
   convertToDate,
@@ -231,5 +231,7 @@ const TypeConverterUtil = {
   convertToMap,
   convertToNestableType
 }
-export default TypeConverterUtil;
+
+/* Set the default export */
+export default TypeConverter;
 
