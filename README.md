@@ -17,9 +17,6 @@ This module comes with the following key features:
 - Automatically converting configuration fields to the desired types
 - Referencing environment variables in configuration files and expanding them (or converting them to the desired type)
 
-Additional features include: 
-- Direct access to environment variables with conversion to common types
-
 ## Installation
 ```
 npm install simple-app-config
