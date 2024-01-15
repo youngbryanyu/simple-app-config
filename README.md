@@ -1,9 +1,12 @@
 # simple-app-config
-A simple configuration manager for different environments.
+A simple configuration manager for different environments. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
-This module solves the following things that are kind of a pain:
-- Loading the appropriate configuration based on the environment
-- Automatically converting configuration variables to their desired types when retrieving them
+This module comes with the following key features:
+- Loading the appropriate configuration files based on the environment
+- Automatically converting configuration fields to their desired types when retrieving them
+- Referencing environment variables in configuration files and expanding them (or converting them to their desired type)
+
+Some other features include 
 - Direct access of environment variables and conversion to common types
 
 ## Navigation
