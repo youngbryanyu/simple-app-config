@@ -35,7 +35,7 @@ Create the following .env files in the base directory of your project:
 - `.env.staging`
 - `.env.production`
 
-The naming of the files and directories matter, and make sure you name them like in the setup instructions.
+The naming of the files and directories matter, so make sure you name them like specified in the setup instructions.
 
 
 Import simple-app-config whenever you need to retrieve configuration values by using:
