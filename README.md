@@ -77,5 +77,7 @@ Command line arguments can be specified to override and set custom settings:
 ### get
 ...
 
-## 
+### getStringFromEnv
+
+
 
