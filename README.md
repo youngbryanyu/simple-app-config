@@ -27,7 +27,7 @@ If you're using yarn run `yarn add simple-app-config` instead. If you're using p
 
 ## Usage
 ### Setup
-Create a `/config` directory in the base directory of your project. The base directory is determined from the current working directory, which should be where your `package.json` file resides if you are running your application using scripts. Populate the directory with the following JSON config files:
+Create a `/config` directory in the base directory of your project. The base directory is determined from the current working directory, which should be where your `package.json` file resides if you are running your application using scripts. Populate the `/config` directory with the following JSON config files:
 - `development.json`
 - `testing.json`
 - `staging.json`
