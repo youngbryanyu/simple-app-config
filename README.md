@@ -4,8 +4,15 @@ A simple configuration manager for different environments.
 This module solves the following things that are kind of a pain:
 - Loading the appropriate configuration based on the environment
 - Automatically converting configuration variables to their desired types when retrieving them
+- Direct access of environment variables and conversion to common types
 
-Direct access of environment variables and conversion to common types is also supported.
+## Navigation
+* [Installation](#installation)
+* [Usage](#usage)
+* [Command Line Arguments](#command-line-arguments)
+* [Environment Variables](#environment-variables)
+* [APIs](#apis)
+* [Changelog](./CHANGELOG.md)
 
 ## Installation
 ```
@@ -16,7 +23,7 @@ If you're using yarn run `yarn add simple-app-config` instead. If you're using p
 
 ## Usage
 ### Setup
-Create a `/config` directory in the base directory of your project (determined from `process.cwd()`), and populate it with the following JSON config files:
+Create a `/config` directory in the base directory of your project. The base directory is determined from the current working directory, which should be where your `package.json` file resides if you are running your application using scripts. Populate the directory with the following JSON config files:
 - `development.json`
 - `testing.json`
 - `staging.json`
@@ -27,6 +34,9 @@ Create the following .env files in the base directory of your project:
 - `.env.testing`
 - `.env.staging`
 - `.env.production`
+
+The naming of the files and directories matter, and make sure you name them like in the setup instructions.
+
 
 Import simple-app-config whenever you need to retrieve configuration values by using:
 ```
