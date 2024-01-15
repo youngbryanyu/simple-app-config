@@ -1,5 +1,5 @@
 /* Unit tests for env-var-config */
-import { COMMAND_LINE_ARGS, ENV_ARGS } from '../src/constants';
+import { CommandLineArgs, EnvArgs } from '../src/constants';
 import { UndefinedConfigValueError } from '../src/errors/undefinedConfigValueError';
 import Config, { EnvParser } from '../src/index';
 import sinon from 'ts-sinon';
@@ -12,10 +12,10 @@ describe('simple-app-config Tests', () => {
     jest.restoreAllMocks();
 
     /* Set the default path and dir of the config and files for tests */
-    process.env[ENV_ARGS.CONFIG_PATH] = `${__dirname}/config/testing.json`;
-    process.env[ENV_ARGS.ENV_PATH] = `${__dirname}/.env.testing`;
-    process.env[ENV_ARGS.CONFIG_DIR] = `${__dirname}`;
-    process.env[ENV_ARGS.ENV_DIR] = `${__dirname}`;
+    process.env[EnvArgs.ConfigPath] = `${__dirname}/config/testing.json`;
+    process.env[EnvArgs.EnvPath] = `${__dirname}/.env.testing`;
+    process.env[EnvArgs.ConfigDir] = `${__dirname}`;
+    process.env[EnvArgs.EnvDir] = `${__dirname}`;
     Config.configure({ force: true });
 
     /* Restore sinon stubs */
@@ -184,8 +184,8 @@ describe('simple-app-config Tests', () => {
       jest.spyOn(Config, 'configure');
 
       /* Set up */
-      process.env[ENV_ARGS.CONFIG_PATH] = `${__dirname}/config/testing.json`;
-      process.env[ENV_ARGS.ENV_PATH] = `${__dirname}/.env.testing`;
+      process.env[EnvArgs.ConfigPath] = `${__dirname}/config/testing.json`;
+      process.env[EnvArgs.EnvPath] = `${__dirname}/.env.testing`;
       Config.configure({ force: true });
 
       /* Compare against expected */
@@ -203,8 +203,8 @@ describe('simple-app-config Tests', () => {
       jest.spyOn(EnvParser, 'refreshCache')
 
       /* Set up */
-      process.env[ENV_ARGS.CONFIG_PATH] = `${__dirname}/config/testing.json`;
-      process.env[ENV_ARGS.ENV_PATH] = `${__dirname}/.env.testing`;
+      process.env[EnvArgs.ConfigPath] = `${__dirname}/config/testing.json`;
+      process.env[EnvArgs.EnvPath] = `${__dirname}/.env.testing`;
       Config.configure({ force: true });
       Config.configure();
 
@@ -219,10 +219,10 @@ describe('simple-app-config Tests', () => {
       jest.spyOn(Config, 'configure');
 
       /* Set up */
-      process.env[ENV_ARGS.ENV] = 'beta';
-      process.env[ENV_ARGS.ENV_NAMES] = 'beta,prod';
-      process.env[ENV_ARGS.CONFIG_DIR] = `${__dirname}`;
-      process.env[ENV_ARGS.ENV_DIR] = `${__dirname}`;
+      process.env[EnvArgs.Env] = 'beta';
+      process.env[EnvArgs.EnvNames] = 'beta,prod';
+      process.env[EnvArgs.ConfigDir] = `${__dirname}`;
+      process.env[EnvArgs.EnvDir] = `${__dirname}`;
       Config.configure({ force: true });
 
       /* Compare against expected */
@@ -241,15 +241,15 @@ describe('simple-app-config Tests', () => {
       // process.argv.push(`${COMMAND_LINE_ARGS.CONFIG_DIR}${__dirname}`);
       // process.argv.push(`${COMMAND_LINE_ARGS.ENV_DIR}${__dirname}`);
       sinon.stub(process, 'argv').value([
-        `${COMMAND_LINE_ARGS.ENV}beta`, 
-        `${COMMAND_LINE_ARGS.ENV_NAMES}beta,prod`, 
-        `${COMMAND_LINE_ARGS.CONFIG_DIR}${__dirname}`,
-        `${COMMAND_LINE_ARGS.ENV_DIR}${__dirname}`
+        `${CommandLineArgs.Env}beta`, 
+        `${CommandLineArgs.EnvNames}beta,prod`, 
+        `${CommandLineArgs.ConfigDir}${__dirname}`,
+        `${CommandLineArgs.EnvDir}${__dirname}`
       ]);
-      process.env[ENV_ARGS.ENV] = 'prod';
-      process.env[ENV_ARGS.ENV_NAMES] = 'alpha,gamma';
-      process.env[ENV_ARGS.CONFIG_DIR] = '../..';
-      process.env[ENV_ARGS.ENV_DIR] = '../..';
+      process.env[EnvArgs.Env] = 'prod';
+      process.env[EnvArgs.EnvNames] = 'alpha,gamma';
+      process.env[EnvArgs.ConfigDir] = '../..';
+      process.env[EnvArgs.EnvDir] = '../..';
       Config.configure({ force: true });
 
       /* Compare against expected */

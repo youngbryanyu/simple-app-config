@@ -2,7 +2,7 @@
 import dotenv, { DotenvParseOutput } from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import { COMMAND_LINE_ARGS, ENV_ARGS, Environments, FileTypes, NestableDataTypes, NonNestableDataTypes } from './constants';
+import { CommandLineArgs, EnvArgs, Environments, FileTypes, NestableDataTypes, NonNestableDataTypes } from './constants';
 import { UnsupportedTypeError } from './errors/unsupportedTypeError';
 import { UndefinedConfigValueError } from './errors/undefinedConfigValueError';
 import EnvParser from './utils/envParser';
@@ -28,7 +28,7 @@ export class Config {
    * The current environment. Defaults to development.
    * Set when {@link Config.determineEnvironment} is called.
    */
-  private static environment: string = Environments.DEVELOPMENT;
+  private static environment: string = Environments.Development;
 
   /**
    * The environments of the application. 
@@ -89,11 +89,12 @@ export class Config {
    * The entry point to all of the configuration functions. Configures the module in the following order:
    * - Returns if the module has already been configured and the force flag isn't set
    * - Sets the environment names
-   * - Sets the paths to the .env and possible config files based on the environment names
    * - Determines the environment
-   * - Loads the .env file
+   * - Sets the environment dir and config dir if specified
+   * - Sets the paths to the .env and possible config files based on the environment names
+   * - Finds and loads the .env file
    * - Loads environment variables into the cache
-   * - Loads the config file
+   * - Finds and loads the config file
    * - Loads the default config file
    * - Sets already configured flag to true.
    * @param force Whether to force the module to re-configure, even if it has already been configured.
@@ -127,7 +128,7 @@ export class Config {
   private static setEnvironmentNames(): void {
     /* Check if environment names are set in command line arguments */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.ENV_NAMES)) {
+      if (arg.startsWith(CommandLineArgs.EnvNames)) {
         Config.environments.clear();  /* Clear default environment names, and any previously set */
         const envNames = arg.split('=')[1].split(',');
         for (const envName of envNames) {
@@ -138,7 +139,7 @@ export class Config {
     }
 
     /* Check if environment names are set in environment variables */
-    const arg = process.env[ENV_ARGS.ENV_NAMES];
+    const arg = process.env[EnvArgs.EnvNames];
     if (arg !== undefined) {
       Config.environments.clear();  /* Clear default environment names, and any previously set */
       const envNames = arg.split(',');
@@ -158,14 +159,14 @@ export class Config {
 
     /* Check if the env dir is set in command line args */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.ENV_DIR)) {
+      if (arg.startsWith(CommandLineArgs.EnvDir)) {
         Config.envDir = StringUtil.trimStringFromEnd(arg.split('=')[1], '/');
         return;
       }
     }
 
     /* Check if the env dir is set as an environment variable */
-    const dir = process.env[ENV_ARGS.ENV_DIR];
+    const dir = process.env[EnvArgs.EnvDir];
     if (dir !== undefined) {
       Config.envDir = StringUtil.trimStringFromEnd(dir, '/');
       return;
@@ -181,14 +182,14 @@ export class Config {
 
     /* Check if the env dir is set in command line args */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.CONFIG_DIR)) {
+      if (arg.startsWith(CommandLineArgs.ConfigDir)) {
         Config.configDir = StringUtil.trimStringFromEnd(arg.split('=')[1], '/');
         return;
       }
     }
 
     /* Check if the env dir is set as an environment variable */
-    const dir = process.env[ENV_ARGS.CONFIG_DIR];
+    const dir = process.env[EnvArgs.ConfigDir];
     if (dir !== undefined) {
       Config.configDir = StringUtil.trimStringFromEnd(dir, '/');
       return;
@@ -235,14 +236,14 @@ export class Config {
   private static determineEnvironment(): void {
     /* Check if the environment is set as a command line argument */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.ENV)) {
+      if (arg.startsWith(CommandLineArgs.Env)) {
         Config.environment = arg.split('=')[1].toLowerCase();
         return;
       }
     }
 
     /* Check if the environment is set as an environment variable */
-    const environment = process.env[ENV_ARGS.ENV];
+    const environment = process.env[EnvArgs.Env];
     if (environment !== undefined) {
       Config.environment = environment.toLowerCase();
       return;
@@ -264,7 +265,7 @@ export class Config {
 
     /* Load path specified by command line argument if it exists */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.ENV_PATH)) {
+      if (arg.startsWith(CommandLineArgs.EnvPath)) {
         const path = StringUtil.trimStringFromEnd(arg.split('=')[1], '/');
         if (Config.isValidEnvFile(path)) {
           return path;
@@ -273,7 +274,7 @@ export class Config {
     }
 
     /* Load path specified by environment variable argument if it exists */
-    let path = process.env[ENV_ARGS.ENV_PATH];
+    let path = process.env[EnvArgs.EnvPath];
     if (path !== undefined) {
       path = StringUtil.trimStringFromEnd(path, '/');
       if (Config.isValidEnvFile(path)) {
@@ -339,7 +340,7 @@ export class Config {
 
     /* Load path specified by command line argument if specified and if path exists */
     for (const arg of process.argv) {
-      if (arg.startsWith(COMMAND_LINE_ARGS.CONFIG_PATH)) {
+      if (arg.startsWith(CommandLineArgs.ConfigPath)) {
         const path = StringUtil.trimStringFromEnd(arg.split('=')[1], '/');
         if (Config.isValidConfigFile(path)) {
           return path;
@@ -348,7 +349,7 @@ export class Config {
     }
 
     /* Load path specified by environment variable argument if it exists */
-    let path = process.env[ENV_ARGS.CONFIG_PATH];
+    let path = process.env[EnvArgs.ConfigPath];
     if (path !== undefined) {
       path = StringUtil.trimStringFromEnd(path, '/');
       if (Config.isValidConfigFile(path)) {
@@ -448,7 +449,7 @@ export class Config {
     const fileType = path.extname(filePath);
     let map: Map<string, unknown>;
     switch (fileType) {
-      case FileTypes.JSON:
+      case FileTypes.Json:
         map = Config.parseJSON(file);
         break;
       default:

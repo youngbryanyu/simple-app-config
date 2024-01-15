@@ -26,39 +26,39 @@ export enum NonNestableDataTypes {
  * Supported file extensions for config files
  */
 export enum FileTypes {
-  JSON = '.json'
+  Json = '.json'
 }
 
 /**
  * The default environments 
  */
 export enum Environments {
-  DEVELOPMENT = 'development',
-  TESTING = 'testing',
-  STAGING = 'staging',
-  PRODUCTION = 'production'
+  Development = 'development',
+  Testing = 'testing',
+  Staging = 'staging',
+  Production = 'production'
 }
 
 /**
  * Command line arguments that can be specified when the application starts
  */
-export enum COMMAND_LINE_ARGS {
-  ENV = '--env=',                     /* The environment */
-  ENV_PATH = '--env-path=',           /* The path to the .env file */
-  ENV_DIR = '--env-dir=',             /* The path to the .env dir */
-  ENV_NAMES = '--env-names=',         /* Custom environment names */
-  CONFIG_PATH = '--config-path=',     /* The path to the config file */
-  CONFIG_DIR = '--config-dir='        /* The path to the config dir */
+export enum CommandLineArgs {
+  Env = '--env=',                    /* The environment */
+  EnvPath = '--env-path=',           /* The path to the .env file */
+  EnvDir = '--env-dir=',             /* The path to the .env dir */
+  EnvNames = '--env-names=',         /* Custom environment names */
+  ConfigPath = '--config-path=',     /* The path to the config file */
+  ConfigDir = '--config-dir='        /* The path to the config dir */
 }
 
 /**
  * Environment variables that can be set to change configurations
  */
-export enum ENV_ARGS {
-  ENV = 'NODE_ENV',                  /* The environment */
-  ENV_PATH = 'ENV_PATH',             /* The path to the .env file */
-  ENV_DIR = 'ENV_DIR',               /* The path to the .env dir */
-  ENV_NAMES = 'ENV_NAMES',           /* Custom environments */
-  CONFIG_PATH = 'CONFIG_PATH',       /* The path to the config file */
-  CONFIG_DIR = 'CONFIG_DIR'          /* The path to the config dir */
+export enum EnvArgs {
+  Env = 'NODE_ENV',                 /* The environment */
+  EnvPath = 'ENV_PATH',             /* The path to the .env file */
+  EnvDir = 'ENV_DIR',               /* The path to the .env dir */
+  EnvNames = 'ENV_NAMES',           /* Custom environments */
+  ConfigPath = 'CONFIG_PATH',       /* The path to the config file */
+  ConfigDir = 'CONFIG_DIR'          /* The path to the config dir */
 }
