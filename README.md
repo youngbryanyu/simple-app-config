@@ -16,6 +16,7 @@ Some other features include
 * [Environment Variables](#environment-variables)
 * [APIs](#apis)
 * [Changelog](./CHANGELOG.md)
+* [Contributing](./CONTRIBUTING.md)
 
 ## Installation
 ```
@@ -31,6 +32,7 @@ Create a `/config` directory in the base directory of your project. The base dir
 - `testing.json`
 - `staging.json`
 - `production.json`
+- `default.json` - populate this with optional default values to use if not specified in the main config file
 
 Create the following .env files in the base directory of your project:
 - `.env.development`
@@ -38,8 +40,7 @@ Create the following .env files in the base directory of your project:
 - `.env.staging`
 - `.env.production`
 
-The naming of the files and directories matter, so make sure you name them like specified in the setup instructions.
-
+The naming of the files and directories matter, so make sure you name them like specified in the setup instructions. You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it. You also don't necessarily need a .env file for the config file of the same environment, but if you reference any environment variables in your config file, you will need to set them elsewhere (e.g. through your Docker container).
 
 Import simple-app-config whenever you need to retrieve configuration values by using:
 ```
