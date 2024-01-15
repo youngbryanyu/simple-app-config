@@ -1,0 +1,27 @@
+{
+  "ENV": "$ENV",
+  "var1": {
+    "var2": {
+      "map": "$MAP::map:string:string",
+      "mapString": "This is a map: ${MAP}"
+    }
+  },
+  "nested": {
+    "array": [
+      "${ENV} hi",
+      true,
+      {
+        "test": "$MAP::map:string:string"
+      }
+    ]
+  },
+  "string": "$STRING::string",
+  "number": "$NUMBER::number",
+  "boolean": "$BOOLEAN::boolean",
+  "date": "$DATE::date",
+  "regexp": "$REGEXP::regexp",
+  "object": "$OBJECT::object",
+  "map": "$MAP::map:string:string",
+  "set": "$SET::set:number",
+  "array": "$ARRAY::array:number"
+}

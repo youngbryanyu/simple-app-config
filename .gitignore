@@ -1,17 +1,19 @@
-# ignore .env files used for testing
-.env**
+# ignore .env files, but push those in testing folder
+/.env**
+!/testing/.env** 
 
 # ignore node_modules
 node_modules
 
 # ignore build artifacts in dist
-dist
+/dist
 
 # ignore coverage output
-coverage
+/coverage
 
-# ignore config file used for testing
-config
+# ignore config files, but push those in testing folder
+/config
+!/testing/config
 
 # ignore testing packed npm modules
 simple-app-config-**.tgz
