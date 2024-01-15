@@ -2,8 +2,8 @@
 A simple configuration manager for different environments. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
 This module comes with the following key features:
-- Loading the appropriate configuration files based on the environment
-- Automatically converting configuration fields to their desired types when retrieving them
+- Loading the appropriate configuration file based on the environment
+- Automatically converting configuration fields to their desired types
 - Referencing environment variables in configuration files and expanding them (or converting them to their desired type)
 
 Some other features include 
