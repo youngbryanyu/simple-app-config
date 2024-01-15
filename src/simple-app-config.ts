@@ -9,7 +9,7 @@ import EnvParser from './utils/envParser';
 import StringUtil from './utils/stringUtil';
 
 /**
- * Customization options when running configure
+ * Customization options when running {@link Config.configure}
  */
 interface ConfigOptions {
   force?: boolean
@@ -45,13 +45,13 @@ export class Config {
 
   /**
    * The directory of where the .env files reside. This can be relative or absolute. Defaults to "".
-   * Set when {@link Config.setDirs} is called.
+   * Set when {@link Config.setEnvDir} is called.
    */
   private static envDir: string = '';
 
   /**
    * The directory of where the config directory resides. This can be relative or absolute. Defaults to "".
-   * Set when {@link Config.setDirs} is called.
+   * Set when {@link Config.setConfigDir} is called.
    */
   private static configDir: string = '';
 
@@ -123,7 +123,8 @@ export class Config {
    * - Command line arguments
    * - Environment variables
    * 
-   * The environment names default to 'development', 'testing', 'staging', and 'production'.
+   * The environment names default to 'development', 'testing', 'staging', and 'production'. Clears any previously set environment 
+   * names if custom ones are set.
    */
   private static setEnvironmentNames(): void {
     /* Check if environment names are set in command line arguments */
@@ -151,7 +152,7 @@ export class Config {
   }
 
   /**
-   * Sets the directory of the .env files
+   * Sets the directory of the .env files. Resets any previously set dir.
    */
   private static setEnvDir(): void {
     /* Reset any previously set env dir */
@@ -174,7 +175,7 @@ export class Config {
   }
 
   /**
-   * Sets the directory of the config directory.
+   * Sets the directory of the config directory. Resets any previously set dir.
    */
   private static setConfigDir(): void {
     /* Reset any previously set config dir */
@@ -201,6 +202,8 @@ export class Config {
    * - The paths of the .env files based on the environments and directory prefix
    * - The possible paths of the config files based on the environments and directory prefix
    * - The default config file
+   * 
+   * Clears any previously set .env and config paths.
    */
   private static setPaths() {
     /* Clear any previously set paths other than defaults */
@@ -257,7 +260,8 @@ export class Config {
    * - Environment variables
    * - The path corresponding to the environment
    * 
-   * If the path specified in each of the above doesn't exist, it will try the next highest priority value.
+   * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears previously 
+   * loaded values from a .env file
    */
   private static findEnvFile(): string | undefined {
     /* Reset previously set dotenv values */
@@ -332,12 +336,9 @@ export class Config {
    * - Environment variables
    * - The path corresponding to the environment
    * 
-   * If the path specified in each of the above doesn't exist, it will try the next highest priority value.
+   * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears any previously
    */
   private static findConfigFile(): string | undefined {
-    /* Reset any previous values in the config file */
-    Config.configMap.clear();
-
     /* Load path specified by command line argument if specified and if path exists */
     for (const arg of process.argv) {
       if (arg.startsWith(CommandLineArgs.ConfigPath)) {
@@ -372,9 +373,12 @@ export class Config {
   }
 
   /**
-   * Loads the config file if it has been found and set.
+   * Loads the config file if it has been found and set. Clears any previously loaded values.
    */
   private static loadConfigFile(path: string | undefined): void {
+    /* Reset any previous values in the config file */
+    Config.configMap.clear();
+
     if (path !== undefined) {
       Config.parseConfigIntoMap(path);
     }
