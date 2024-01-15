@@ -1,4 +1,4 @@
-/* Environment variable configuration loader. */
+/* Class encapsulating the config loading logic */
 import dotenv, { DotenvParseOutput } from 'dotenv';
 import fs from 'fs';
 import path from 'path';

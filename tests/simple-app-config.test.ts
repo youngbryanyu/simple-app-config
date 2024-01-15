@@ -236,10 +236,6 @@ describe('simple-app-config Tests', () => {
       jest.spyOn(Config, 'configure');
 
       /* Set up */
-      // process.argv.push(`${COMMAND_LINE_ARGS.ENV}beta`);
-      // process.argv.push(`${COMMAND_LINE_ARGS.ENV_NAMES}beta,prod`);
-      // process.argv.push(`${COMMAND_LINE_ARGS.CONFIG_DIR}${__dirname}`);
-      // process.argv.push(`${COMMAND_LINE_ARGS.ENV_DIR}${__dirname}`);
       sinon.stub(process, 'argv').value([
         `${CommandLineArgs.Env}beta`, 
         `${CommandLineArgs.EnvNames}beta,prod`, 
