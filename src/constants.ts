@@ -43,10 +43,12 @@ export enum Environments {
  * Command line arguments that can be specified when the application starts
  */
 export enum COMMAND_LINE_ARGS {
-  ENV = '--env=',            /* The environment */
-  ENV_PATH = '--env-path=',          /* The path to the .env file */
-  CONFIG_PATH = '--config-path=',    /* The path to the config file */
-  ENV_NAMES = '--env-names='      /* Custom environment names */
+  ENV = '--env=',                     /* The environment */
+  ENV_PATH = '--env-path=',           /* The path to the .env file */
+  ENV_DIR = '--env-dir=',             /* The path to the .env dir */
+  ENV_NAMES = '--env-names=',         /* Custom environment names */
+  CONFIG_PATH = '--config-path=',     /* The path to the config file */
+  CONFIG_DIR = '--config-dir='        /* The path to the config dir */
 }
 
 /**
@@ -55,6 +57,8 @@ export enum COMMAND_LINE_ARGS {
 export enum ENV_ARGS {
   ENV = 'NODE_ENV',                  /* The environment */
   ENV_PATH = 'ENV_PATH',             /* The path to the .env file */
+  ENV_DIR = 'ENV_DIR',               /* The path to the .env dir */
+  ENV_NAMES = 'ENV_NAMES',           /* Custom environments */
   CONFIG_PATH = 'CONFIG_PATH',       /* The path to the config file */
-  ENV_NAMES = 'ENV_NAMES'      /* Custom environments */
+  CONFIG_DIR = 'CONFIG_DIR'          /* The path to the config dir */
 }
