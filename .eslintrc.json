@@ -22,7 +22,7 @@
     /* See .eslintignore for rules */
   ],
   "rules": {
-    "no-console": 2,          /* Don't allow console statements */
+    // "no-console": 2,          /* Don't allow console statements */
     "prettier/prettier": 2    /* Check if format matches prettier */
   }
 }

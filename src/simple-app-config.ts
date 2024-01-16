@@ -410,6 +410,9 @@ export class Config {
   private static loadConfigFile(path: string | undefined): void {
     /* Reset any previous values in the config file */
     Config.configMap.clear();
+    console.log('clearing config map');
+    console.log(Config.configMap);
+    console.log('cone clearing config map');
 
     if (path !== undefined) {
       Config.parseConfigIntoMap(path);
