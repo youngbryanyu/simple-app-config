@@ -16,12 +16,12 @@ pnpm run test
 ```
 
 ## Code style
-We are using [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) for code styling and best practices. Make sure your code adheres to the ESLint rules by running
+We are using [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) for code styling and best practices. Make sure your code adheres to the ESLint rules by running the script
 ```
 pnpm run lint
 ```
 
-If there are any errors due to violating prettier rules automatically fix them using
+If there are any errors due to violating prettier rules automatically fix them using the prettier script
 ```
 pnpm run prettier
 ```
