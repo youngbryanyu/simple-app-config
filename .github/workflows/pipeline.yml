@@ -48,3 +48,21 @@ jobs:
       run: pnpm install
     - name: Run unit tests with jest
       run: pnpm run test
+
+  # Build Application
+  build:
+    name: Build Application
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    - name: Install pnpm
+      run: npm install -g pnpm
+    - name: Install Dependencies
+      run: pnpm install
+    - name: Compile TypeScript into JavaScript
+      run: pnpm run build
