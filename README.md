@@ -8,8 +8,8 @@ A simple configuration manager for Node.js applications. I created this libary s
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
 * [Special Environment Variables](#special-environment-variables)
-* [Config API](#config-API)
-* [EnvParser API](#Envparser-API)
+* [Config API](#config-api)
+* [EnvParser API](#envparser-api)
 * [FAQ](#faq)
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
@@ -51,7 +51,7 @@ If you're using CommonJS module instead of ES modules, you can import use the `r
 const Config = require('simple-app-config`);
 ```
 
-See the [API](#API-reference) section for how to use the APIs.
+See the [Config API](#config-api) and [EnvParser](#envparser-api) sections for how to use the APIs.
 
 > :warning: The naming of the files and directories matter, so make sure you name them like specified in the setup instructions. If you need more flexibility with the setup, see the [command line arguments](#command-line-arguments) and [environment variables](#special-environment-variables) that can be set to customize your setup. You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it. You don't necessarily need a .env file for the configuration file of the same environment, but if you reference any environment variables in your configuration file, you will need to set them elsewhere (e.g. through your Docker container).
 
@@ -215,6 +215,7 @@ The `ENV_PATH` environment variable can be set to specify a custom path to the `
 If the path specified by `environment variable` is invalid, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
 ## Config API
+API reference for the `Config` which is used to retrieve values from the configuration files and convert them to the target type.
 
 ### configure(configOptions?: ConfigOptions): void
 Sets up the module, which involves the following steps :
@@ -308,6 +309,7 @@ const set: Set<number> = Config.get('escaped\\\.field.inside');
 ```
 
 ## EnvParser API
+API reference for `EnvParser` which is used to directly work with environment variables and convert them to the target type upon retrieval.
 
 ### refreshCache(): void
 Clears the environment variable cache and updates the cache with the most up-to-date environment variables.
