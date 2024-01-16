@@ -51,7 +51,7 @@ If you're using CommonJS module instead of ES modules, you can import use the `r
 const Config = require('simple-app-config`);
 ```
 
-See the [Config API](#config-api) and [EnvParser](#envparser-api) sections for how to use the APIs.
+See the [Config API](#config-api) and [EnvParser API](#envparser-api) sections for how to use the APIs.
 
 > :warning: The naming of the files and directories matter, so make sure you name them like specified in the setup instructions. If you need more flexibility with the setup, see the [command line arguments](#command-line-arguments) and [environment variables](#special-environment-variables) that can be set to customize your setup. You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it. You don't necessarily need a .env file for the configuration file of the same environment, but if you reference any environment variables in your configuration file, you will need to set them elsewhere (e.g. through your Docker container).
 
