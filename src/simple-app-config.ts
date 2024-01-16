@@ -35,14 +35,14 @@ export class Config {
    * The current environment. Defaults to development.
    * Set when {@link Config.determineEnvironment} is called.
    */
-  public static environment: string = Environments.Development;
+  private static environment: string = Environments.Development;
 
   /**
    * The environments of the application.
    * Defaults to development, testing, staging, production.
    * Populated with custom values when {@link Config.setEnvironmentNames} is called.
    */
-  public static environments: Set<string> = new Set(Object.values(Environments));
+  private static environments: Set<string> = new Set(Object.values(Environments));
 
   /**
    * The set of possible paths of the default config file.
@@ -66,19 +66,19 @@ export class Config {
    * The Map of environments to .env paths.
    * Populated when {@link Config.setPaths} is called.
    */
-  public static envPaths: Map<string, string> = new Map();
+  private static envPaths: Map<string, string> = new Map();
 
   /**
    * The Map of environments to a set of possible paths for the config file.
    * Populated when {@link Config.setPaths} is called.
    */
-  public static configPaths: Map<string, Set<string>> = new Map();
+  private static configPaths: Map<string, Set<string>> = new Map();
 
   /**
    * Map containing converted and expanded values from the loaded config file.
    * Populated when {@link Config.parseConfigIntoMap} is called.
    */
-  public static configMap: Map<string, unknown> = new Map();
+  private static configMap: Map<string, unknown> = new Map();
 
   /**
    * Flag indicating whether configuration has already been performed.
@@ -561,7 +561,7 @@ export class Config {
   private static expandEnvVar<T>(input: string): T {
     /* Check if the input starts with $ indicating special variable expansion and type conversion */
     if (input.startsWith('$')) {
-      /* Match all strings of $VAR_NAME::TYPE:subType1:subType2 */
+      /* Match all strings of $VAR_NAME::TYPE:subType1:subType2, Don't need to escape $ since it must be first character in entire string */
       const regex = /^\$([A-Z0-9_]+)(?:::(\w+))?(?::(\w+))?(?::(\w+))?$/;
       const match = input.match(regex);
       if (match) {
@@ -593,8 +593,8 @@ export class Config {
         }
       }
     }
-    /* Expand environment variable as a string */
-    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) =>
+    /* Expand environment variable as a string, allows the $ to be escaped so it doesn't match the pattern */
+    return input.replace(/(?<!\\)\$\{([A-Z0-9_]+)\}/g, (match, varName) =>
       EnvParser.getString(varName)
     ) as T;
   }
