@@ -219,7 +219,7 @@ Sets up the module, which involves the following steps :
 3. Sets the target directory for the `.env` files and `/config` directory.
 4. Determines the possible paths to the `.env` and configuration files for each environment.
 5. Attempts to find and load a `.env` file.
-6. Loads al the environment variables into an in-memory cache.
+6. Loads all the environment variables into an in-memory cache.
 7. Attempts to find and load a configuration file into an in-memory map structure.
 8. Loads the default configuration file if it exists.
 
