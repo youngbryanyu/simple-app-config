@@ -159,7 +159,7 @@ node dist/index.js --env=production
 ```
 
 ### --env-names
-The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable. If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`.
+The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable. If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`. Environment names are non-case-sensitive, so `DEVELOPMENT` and `development` are treated as the same environment.
 ```bash
 node dist/index.js --env-names='alpha,beta,gamma,prod'
 ```
@@ -198,7 +198,7 @@ If the path specified by `CONFIG_PATH` is invalid, the module will attempt to se
 The `NODE_ENV` environment variable is standard and used to set the current environment of the application. This will override the default environment which is set to `development`.
 
 ### ENV_NAMES
-The `ENV_NAMES` environment variable can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your configuration files must follow the naming convention of `<custom-environment-name>.json`.
+The `ENV_NAMES` environment variable can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your configuration files must follow the naming convention of `<custom-environment-name>.json`.  Environment names are non-case-sensitive, so `DEVELOPMENT` and `development` are treated as the same environment.
 
 ### ENV_DIR
 The `ENV_DIR` environment variable can be set to specify a custom path to the `.env` file. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
@@ -232,7 +232,7 @@ This function does not return a value
 
 #### Errors Thrown
 - `UndefinedEnvVarError`: Thrown if your configuration file references an invalid environment variable.
-- `UnsupportedTypeError`: Thrown if you attempt to convert an environment variable referenced in your configuration file to a non-supported type (not a type mentioned).
+- `UnsupportedTypeError`: Thrown if you attempt to convert an environment variable referenced in your configuration file to a non-supported type.
 - `TypeConversionError`: Thrown if if you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type.
 
 #### Example
