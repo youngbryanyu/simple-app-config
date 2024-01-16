@@ -132,7 +132,7 @@ See the [API](#api) section for how to retrieve values from the configuration fi
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
 
-> :warning: Command line arguments take precedence over environment variables. As an example. if the `--env` command line arg which sets the environment is set to `production`, but the `NODE_ENV` environment variable is set to `development`, the environment determined will be `production`. If neither a command line argument or environment varirable is set to override a specific field, the module will fall back to the default.
+> :warning: Command line arguments take precedence over environment variables. As an example. if the `--env` command line argument which sets the environment is set to `production`, but the `NODE_ENV` environment variable is set to `development`, the environment determined will be `production`. If neither a command line argument or environment varirable is set to override a specific field, the module will fall back to the default.
 
 ### ---config-dir
 The `--config-dir` command line argument can be set to specify a custom path to the `/config` directory. This will override any custom path set by the `CONFIG_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
@@ -214,7 +214,7 @@ If the path specified by `environment variable` is invalid, the module will atte
 
 ### Config.configure(configOptions?: ConfigOptions): void
 Sets up the module, which involves the following steps :
-1. Sets any custom environment names that can be specified by command line arg `--env-names` or environment variable `ENV_NAMES`.
+1. Sets custom environment names if the command line argument `--env-names` or environment variable `ENV_NAMES`.
 2. Determines the environment of the application.
 3. Sets the target directory for the `.env` files and `/config` directory.
 4. Determines the possible paths to the `.env` and configuration files for each environment.
