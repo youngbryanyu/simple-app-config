@@ -1,9 +1,9 @@
 name: CI/CD Pipeline
 
 # Currenlty used environment variables:
-# - CODE_CHANGES: whether there were code changes
-# - PACKAGE_VERSION: version of the package
-# - RELEASE_VERSION: release version and tag. Should be same as PACKAGE_VERSION.
+# - CODE_CHANGES: whether there were code changes --> this is written into an artifact to share between jobs
+# - PACKAGE_VERSION: version of the package --> local in publish to NPM job
+# - RELEASE_VERSION: release version and tag. Should be same as PACKAGE_VERSION. --> local in create release job
 
 # Workflow triggers
 on:
@@ -122,12 +122,12 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org/'
-      # - uses: actions/download-artifact@v4
-      #   with:
-      #     name: code-changes-artifact # get artifact containing whether there were code changes
-      # - name: Read Code Changes Flag
-      #   run: |
-      #     echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v4
+        with:
+          name: code-changes-artifact # get artifact containing whether there were code changes
+      - name: Read Code Changes Flag From Artifact
+        run: |
+          echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
       - name: Install dependencies
         run: npm install
       - name: Check if version number is updated
@@ -157,12 +157,12 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org/'
-      # - uses: actions/download-artifact@v4
-      #   with:
-      #     name: code-changes-artifact # get artifact containing whether there were code changes
-      # - name: Read Code Changes Flag
-      #   run: |
-      #     echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v4
+        with:
+          name: code-changes-artifact # get artifact containing whether there were code changes
+      - name: Read Code Changes Flag From Artifact
+        run: |
+          echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
       - name: Install dependencies
         run: npm install
       - name: Get package version number
@@ -183,12 +183,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # - uses: actions/download-artifact@v4
-      #   with:
-      #     name: code-changes-artifact # get artifact containing whether there were code changes
-      # - name: Read Code Changes Flag
-      #   run: |
-      #     echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v4
+        with:
+          name: code-changes-artifact # get artifact containing whether there were code changes
+      - name: Read Code Changes Flag From Artifact
+        run: |
+          echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
       - name: Extract version number
         run: echo "RELEASE_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Release
