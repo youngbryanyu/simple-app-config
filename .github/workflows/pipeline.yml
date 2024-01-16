@@ -139,9 +139,8 @@ jobs:
           fi
           
 
-  # publish to NPM. Runs the publish step only if:
-  #   - It was a push
-  #   - There were code changes
+  # Publish to NPM if the event was 'push'.
+  # Runs the publish to NPM step only if there were code changes
   publish-npm:
     name: Publish to NPM
     if: github.event_name == 'push'
@@ -176,12 +175,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # Create Release on GitHub if. Runs the release step only if:
-  #   - It was a push
-  #   - There were code changes
+  # Create Release on GitHub if the event was 'push'.
+  # Runs the release step only if there were code changes
   release:
     name: Create Release
-    if: github.event_name == 'push' && env.CODE_CHANGES == 'true'
+    if: github.event_name == 'push'
     needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
