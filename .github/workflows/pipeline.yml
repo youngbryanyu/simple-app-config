@@ -1,5 +1,10 @@
 name: CI/CD Pipeline
 
+# Currenlty used environment variables:
+# - CODE_CHANGES: whether there were code changes
+# - PACKAGE_VERSION: version of the package
+# - RELEASE_VERSION: release version and tag. Should be same as PACKAGE_VERSION.
+
 # Workflow triggers
 on:
   push:
@@ -104,7 +109,7 @@ jobs:
   # Verify new NPM version is updated during push and PR. 
   # Skips version number check step if there were code changes
   verify-npm-version:
-    name: Verify Updated NPM version
+    name: Verify Updated NPM version (if code changed)
     if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
     needs: detect-code-changes
     runs-on: ubuntu-latest
@@ -139,7 +144,7 @@ jobs:
   # Publish to NPM if the event was 'push'.
   # Runs the publish to NPM step only if there were code changes
   publish-npm:
-    name: Publish to NPM
+    name: Publish to NPM (if code changed)
     if: github.event_name == 'push'
     needs: verify-npm-version
     runs-on: ubuntu-latest
@@ -171,7 +176,7 @@ jobs:
   # Create Release on GitHub if the event was 'push'.
   # Runs the release step only if there were code changes
   release:
-    name: Create Release
+    name: Create Release (if code changed)
     if: github.event_name == 'push'
     needs: verify-npm-version
     runs-on: ubuntu-latest
@@ -185,15 +190,15 @@ jobs:
       #   run: |
       #     echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
       - name: Extract version number
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Release
         if: env.CODE_CHANGES == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
 
