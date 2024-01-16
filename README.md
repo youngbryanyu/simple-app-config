@@ -213,7 +213,7 @@ If the path specified by `environment variable` is invalid, the module will atte
 ## API
 
 ### Config.configure(configOptions?: ConfigOptions): void
-`configure()` sets up the module, which involves the following steps :
+Sets up the module, which involves the following steps :
 1. Sets any custom environment names that can be specified by command line arg `--env-names` or environment variable `ENV_NAMES`.
 2. Determines the environment of the application.
 3. Sets the target directory for the `.env` files and `/config` directory.
@@ -249,7 +249,7 @@ Config.configure({ force: true });
 > :warning: This function will only run a single time upon importing the dependency when running the application, and if called again will not re-configure unless the `force` flag is set to `true` when calling it again.
 
 ### Config.get\<T\>(key: string): T
-`get()` retrieves a value loaded from the configuration file and returns it as the desired type that it was set to.
+Retrieves a value loaded from the configuration file and returns it as the desired type that it was set to.
 
 #### Parameters
 - `key`: The key of the configuration variable to retrieve
