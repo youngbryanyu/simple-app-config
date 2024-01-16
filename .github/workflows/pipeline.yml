@@ -91,20 +91,32 @@ jobs:
     outputs:
       code_changes: ${{ steps.files.outputs.code_changes }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Determine Changed Files and Create Artifact
-        run: |
-          if git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} | grep -qvE '(\.md$|\.github/workflows/)'
-          then
-            echo "true" > code_changes.txt
-          else
-            echo "false" > code_changes.txt
-          fi
-          echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
-      - uses: actions/upload-artifact@v4
-        with:
-          name: code-changes-artifact
-          path: code_changes.txt
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2  # Fetch enough commits for comparison
+
+    - name: Determine Changed Files and Create Artifact
+      id: files
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          # For pull_request event
+          CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }})
+        else
+          # For push event
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        fi
+
+        if echo "$CHANGED_FILES" | grep -qvE '(\.md$|\.github/workflows/)'; then
+          echo "true" > code_changes.txt
+          echo "CODE_CHANGES=true" >> $GITHUB_ENV
+        else
+          echo "false" > code_changes.txt
+          echo "CODE_CHANGES=false" >> $GITHUB_ENV
+        fi
+    - uses: actions/upload-artifact@v4
+      with:
+        name: code-changes-artifact
+        path: code_changes.txt
 
   # Verify new NPM version is updated during push and PR. 
   # Skips version number check step if there were code changes
