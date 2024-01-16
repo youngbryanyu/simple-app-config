@@ -1,6 +1,6 @@
 # ignore .env files, but push those in testing folder
 /.env**
-!/testing/.env** 
+!/testing/.env**
 
 # ignore node_modules
 node_modules
@@ -15,5 +15,11 @@ node_modules
 /config
 !/testing/config
 
-# ignore testing packed npm modules
+# ignore testing packed tar ball npm modules
 simple-app-config-**.tgz
+
+# ignore manual testing folder
+manualTesting
+
+# ignore DS store
+.DS_Store

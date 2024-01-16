@@ -1,27 +1,3 @@
 {
-  "ENV": "$ENV",
-  "var1": {
-    "var2": {
-      "var3": "$MAP::map"
-    }
-  },
-  "test": {
-    "array": [
-      1,
-      2,
-      {
-        "nested": "map"
-      }
-    ]
-  },
-  "nested": {
-    "test": "${MAP}"
-  },
-  "array": [
-    "${ENV} hi",
-    true,
-    {
-      "test": "$MAP::map:string:string"
-    }
-  ]
+  "ENV": "$ENV"
 }

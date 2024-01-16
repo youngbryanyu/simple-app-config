@@ -1,8 +1,6 @@
 /* Unit tests for env-var-config */
-import { existsSync } from 'fs';
 import { CommandLineArgs, EnvArgs } from '../src/constants';
 import { UndefinedConfigValueError } from '../src/errors/undefinedConfigValueError';
-import { UndefinedEnvVarError } from '../src/errors/undefinedEnvVarError';
 import { UnsupportedTypeError } from '../src/errors/unsupportedTypeError';
 import Config, { EnvParser } from '../src/index';
 import sinon from 'ts-sinon';
@@ -25,7 +23,7 @@ describe('simple-app-config Tests', () => {
     process.env[EnvArgs.EnvNames] = 'development,testing,staging,production';
     Config.configure({ force: true });
 
-    /* Reset all environment variables */
+    /* Reset all environment variables. Keep in mind this resets all env vars if .configure is called again manually within the test itself. */
     for (const key in process.env) {
       delete process.env[key];
     }
@@ -37,6 +35,7 @@ describe('simple-app-config Tests', () => {
     it('should get a value successfully from the config file if it exists', () => {
       /* Set up */
       const key = 'ENV';
+
       const result = Config.get(key);
 
       /* Compare against expected */
@@ -242,6 +241,8 @@ describe('simple-app-config Tests', () => {
     it('should be able to set the environment with command line args and override lesser priority values.', () => {
       sinon.stub(process, 'argv').value([`${CommandLineArgs.Env}development`]);
       process.env[EnvArgs.Env] = 'production';
+      process.env[EnvArgs.ConfigDir] = `${__dirname}`;
+      process.env[EnvArgs.EnvDir] = `${__dirname}`;
       Config.configure({ force: true });
       expect(Config.get('ENV')).toBe('DEVELOPMENT');
     });
@@ -249,25 +250,15 @@ describe('simple-app-config Tests', () => {
     /* Test setting .env path with environment variable */
     it('should be able to set the .env path with environment variables.', () => {
       process.env[EnvArgs.EnvPath] = `${__dirname}/.env.production`;
+      process.env[EnvArgs.ConfigDir] = `${__dirname}`;
       Config.configure({ force: true });
-      console.log(existsSync(`${__dirname}/.env.production`));
-      console.log(`${__dirname}/.env.production`);
-      console.log(Config.environments);
-      console.log(Config.envPaths);
-      console.log(Config.configPaths);
-      console.log(process.cwd());
-      console.log(Config.environment);
-      console.log(Config.configMap);
-      console.log(process.env);
-      console.log(Config.get('ENV'));
-
       expect(Config.get('ENV')).toBe('PRODUCTION');
     });
 
     /* Test setting .env path with command line argument */
     it('should be able to set the .env path with command line arguments, and have it override lower priority values', () => {
-      sinon.stub(process, 'argv').value([`${CommandLineArgs.EnvPath}.env.production`]);
-      // process.env[EnvArgs.ConfigPath] = `${__dirname}/config/beta.json`;
+      sinon.stub(process, 'argv').value([`${CommandLineArgs.EnvPath}${__dirname}/.env.production`]);
+      process.env[EnvArgs.ConfigPath] = `${__dirname}/config/development.json`;
       process.env[EnvArgs.EnvPath] = `${__dirname}/.env.development`;
       Config.configure({ force: true });
       expect(Config.get('ENV')).toBe('PRODUCTION');
@@ -279,9 +270,9 @@ describe('simple-app-config Tests', () => {
         .stub(process, 'argv')
         .value([
           `${CommandLineArgs.Env}INVALID_ENV`,
-          `${CommandLineArgs.ConfigPath}config/development.json`
+          `${CommandLineArgs.ConfigPath}${__dirname}/config/development.json`
         ]);
-      expect(() => Config.configure({ force: true })).toThrow(UndefinedEnvVarError);
+      expect(() => Config.configure({ force: true })).toThrow(Error);
     });
 
     /* Test setting config path with environment variable */

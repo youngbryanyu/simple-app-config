@@ -1,8 +1,5 @@
 <!-- Ignore JS artifact/build files -->
 **/dist
 
-<!-- Ignore Test files -->
-**/tests
-
 <!--  Ignore javascript files -->
 **/**.js
