@@ -6,7 +6,7 @@ A simple configuration manager for Node.js applications. I created this libary s
 * [Installation](#installation)
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
-* [Environment Variables](#environment-variables)
+* [Special Environment Variables](#special-environment-variables)
 * [API](#api)
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
@@ -53,20 +53,21 @@ See the [API](#API) section for how to use the APIs.
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
 
-❗ Note: command line arguments take precedence over environment variables. As an example. if the `--env` command line arg which sets the environment is set to `production`, but the `NODE_ENV` environment variable is set to `development`, the environment determined will be `production`. If neither a command line argument or environment varirable is set to override a specific field, it will fall back to the default.
+❗ Note: command line arguments take precedence over environment variables. As an example. if the `--env` command line arg which sets the environment is set to `production`, but the `NODE_ENV` environment variable is set to `development`, the environment determined will be `production`. If neither a command line argument or environment varirable is set to override a specific field, the module will fall back to the default.
 
 ### ---config-dir
-The `--config-dir` command line argument can be set to specify a custom path to the `/config` directory when searching for the config file to load. This will override the custom path to the directory set by the `CONFIG_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
+The `--config-dir` command line argument can be set to specify a custom path to the `/config` directory. This will override any custom path set by the `CONFIG_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
 
-However, if the path specified by `--config-path` doesn't exist it will try to load a path if specified by `CONFIG_PATH`, then from any other path determined based on the environment.
+If the path specified by `--config-dir` doesn't exist, the module will try to load any path set by `CONFIG_DIR`. If the path specified by `CONFIG_DIR` doesn't or isn't set then the default path to the directory containing the `/config` directory will remain the current working directory.
+
 ```
-node dist/index.js --config-path=test/configFiles
+node dist/index.js --config-dir=test/configFiles
 ```
 
 ### ---config-path
 The `--config-path` command line argument can be set to specify a custom path to the config file to use. This will override the custom path set by the `CONFIG_PATH` environment variable. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--config-dir` command line argument or `CONFIG_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
-However, if the path specified by `--config-path` doesn't exist it will try to load a path if specified by `CONFIG_PATH`. If `CONFIG_PATH` is invalid, it will be set to the default which is the current working directory.
+If the path specified by `--config-path` doesn't exist, the module will try to load any path set by `CONFIG_PATH`. If `CONFIG_PATH` is invalid or isn't set, the module will attempt to search the config directory to find the config file matching the environment.
 ```
 node dist/index.js --config-path=test/config.json
 ```
@@ -79,21 +80,26 @@ node dist/index.js --env=production
 ```
 
 ### --env-names
-The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable.
+The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable. If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`.
 ```
 node dist/index.js --env='alpha,beta,gamma,prod'
 ```
 
-### --env-path
-The `--env-path` command line argument can be set to specify a custom path to the `.env` file. 
+### ---env-dir
+The `--env-dir` command line argument can be set to specify a custom path to the `.env` file. This will override any custom path set by the `ENV_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
 
-This will override the following:
-- A custom path set by the `ENV_PATH` environment variable.
-- Any other path determined based on the environment
+If the path specified by `--env-path` doesn't exist, the module will try to load any path set by `ENV_PATH`. If the path specified by `ENV_PATH` doesn't or isn't set then the default path to the directory containing the .env files will remain the current working directory.
 
-However, if the path specified by `--env-path` doesn't exist it will try to load a path if specified by `ENV_PATH`, then from any other path determined based on the environment.
 ```
-node dist/index.js --env-path=test/dotenvFiles
+node dist/index.js --env-dir=test/envFiles
+```
+
+### ---env-path
+The `--env-path` command line argument can be set to specify a custom path to the `.env` file to use. This will override the custom path set by the `ENV_PATH` environment variable. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--env-dir` command line argument or `ENV_DIR` environment variable, so any relative path will always be relative to the current working directory.
+
+If the path specified by `--env-path` doesn't exist, the module will try to load any path set by `ENV_PATH`. If `ENV_PATH` is invalid or isn't set, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
+```
+node dist/index.js --env-path=test/.env.development
 ```
 
 ## Special environment Variables
@@ -102,27 +108,28 @@ These special environment variables are optional and can be specified to overrid
 ❗ Note: special environment variables take precedence over defaults set by the module, but will be overriden if the corresponding command line argument that affects the same field is set.
 
 ### CONFIG_DIR
-The `CONFIG_DIR` environment variable can be set to specify a custom path to the `/config` directory when searching for the config file to load. This will override any defaults set by the module.  This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
-
-However, if the path specified by `CONFIG_PATH` doesn't exist it, the directory of where `/config` resides will be set to the default which is the current working directory.
+The `CONFIG_DIR` environment variable can be set to specify a custom path to the `/config` directory. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory. If the path specified by `CONFIG_DIR` is invalid, then the default path to the directory containing the `/config` directory will remain the current working directory.
 
 ### CONFIG_PATH
 The `CONFIG_PATH` environment variable can be set to specify a custom path to the config file to use. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--config-dir` command line argument or `CONFIG_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
-However, if the path specified by `CONFIG_PATH` doesn't exist, it will try to find the path of the config file from any other path determined based on the environment.
+If the path specified by `CONFIG_PATH` is invalid, the module will attempt to search the config directory to find the config file matching the environment.
 
 ### NODE_ENV
 The `NODE_ENV` environment variable is standard and used to set the current environment of the application. This will override the default environment which is set to `development`.
 
 ### ENV_NAMES
-The `ENV_NAMES` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the default environment names of `development` , `testing`, `staging`, and `production`.
+The `ENV_NAMES` environment variable can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`.
+
+### ENV_DIR
+The `ENV_DIR` environment variable can be set to specify a custom path to the `.env` file. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
+
+If the path specified by `ENV_DIR` doesn't exist, then the default path to the directory containing the .env files will remain the current working directory.
 
 ### ENV_PATH
-The `ENV_PATH` command line argument can be set to specify a custom path to the `.env` file. 
+The `ENV_PATH` environment variable can be set to specify a custom path to the `.env` file to use. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--env-dir` command line argument or `ENV_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
-This will override any other path determined based on the environment
-
-However, if the path specified by `ENV_PATH` doesn't exist it will try to load a .env file from any other path determined based on the environment.
+If the path specified by `environment variable` is invalid, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
 ## API
 
