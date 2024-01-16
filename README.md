@@ -72,16 +72,25 @@ SET = '["one", "two", "three"]'
 MAP = '{"dog": "bark", "cat": "meow"}'
 ```
 
-Nested data types within the `.env` file also only support nesting of the types `string`, `number`, `boolean`, `Date`, `RegExp`, and `object`.
+Nested data types within the `.env` file also only support nesting of the types `string`, `number`, `boolean`, `Date`, `RegExp`, and `object`. See the [API](#api) section for how to directly retrieve environment variables without the need of a configuration file.
 
 ### JSON Config Files
-Configurations can be stored inside JSON configuration. The values within your JSON files can reference your environment variables and either expand them as strings or convert them to the desired data types. Environment variable expansion and type conversion is supported only for values within the JSON file, and not the keys. You can specify whether to expand an environment variable as a string or convert it to a target type using the following notations:
+Configurations can be stored inside JSON files. The values within your JSON files can reference your environment variables and either expand them as strings or convert them to the desired data types. Environment variable expansion and type conversion is supported only for values within the JSON file, and not the keys. You can specify whether to expand an environment variable as a string or convert it to a target type using the following notations:
 - `${<environment-variable-name>}`: expands an environment variable as a string if it's valid.
 - `$<environment-variable-name>::<primary-type>:<sub-type-1>:<sub-type-2>`: converts an environment variable to the target primary type. Types like `Array`, `Set`, and `Map` will need secondary subtypes specified or else the subtypes will default to `string`. If a subtype is specified but unnecessary to convert to the target type it will be ignored (e.g. `string` has no subtype).
 
 > :warning: If your configuration file references an invalid environment variable, an `UndefinedEnvVarError` will be thrown. If you attempt to convert an environment variable referenced in your configuration file to a non-supported type (not a type mentioned), an `UnsupportedTypeError` will be thrown. If you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type, a `TypeConversionError` will be thrown. 
 
-If you want to use `.` in the key of your configuration variables, your should escape them using a backslash since the module uses `.` as the delimiter when specifying nested configuration values.
+If you want to use `.` in the key of your configuration variables, your should escape them using a backslash since the module uses `.` as the delimiter when specifying nested configuration values. The supported conversion types are the following which are non-case-sensitive:
+- string
+- number
+- boolean
+- date
+- regexp
+- object
+- array
+- set
+- map
 
 Below is an example of how to reference environment variables in your JSON configuration file, based on the `.env` file also shown below:
 
@@ -117,6 +126,8 @@ ARRAY = '[1, 2, 3]'
 SET = '["one", "two", "three"]'
 MAP = '{"dog": "3", "cat": "4"}'
 ```
+
+See the [API](#api) section for how to retrieve values from the configuration files.
 
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
@@ -216,6 +227,14 @@ If the path specified by `environment variable` is invalid, the module will atte
 - `configOptions?`: An optional configuration object
   - `force?`: optional `boolean` indicating whether or not to force simple-app-config to re-configure
 
+#### Return Value
+This function does not return a value
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if your configuration file references an invalid environment variable.
+- `UnsupportedTypeError`: Thrown if you attempt to convert an environment variable referenced in your configuration file to a non-supported type (not a type mentioned).
+- `TypeConversionError`: Thrown if if you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type.
+
 #### Example
 ```typescript
 import Config from 'simple-app-config';   // will automatically perfor all configuration setup upon the first import
@@ -227,14 +246,19 @@ Config.configure();
 Config.configure({ force: true });      
 ```
 
-This function will only run a single time upon importing the dependency when running the application, and if called again will not re-configure unless the `force` flag is set to `true` when calling it again.
+> :warning: This function will only run a single time upon importing the dependency when running the application, and if called again will not re-configure unless the `force` flag is set to `true` when calling it again.
 
 ### Config.get\<T\>(key: string): T
 `get()` retrieves a value loaded from the configuration file and returns it as the desired type that it was set to.
 
-
 #### Parameters
 - `key`: The key of the configuration variable to retrieve
+
+#### Return Value
+Returns a value of generic type `T` that is determined by what type the value was converted to when the configuration file was loaded.
+
+#### Errors Thrown
+- `UndefinedConfigValueError`: Thrown if the input `key` is invalid (the configuration value doesn't exist).
 
 #### Example
 Assume the .env file to be:
@@ -277,10 +301,7 @@ const mapString: string = Config.get('var1.var2.mapString');
 const set: Set<number> = Config.get('escaped\\\.field.inside');
 ```
 
-### get
-...
-
-### getString
+### EnvParser.getString(key: string): string
 ...
 
 
