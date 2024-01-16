@@ -41,8 +41,14 @@ Create the following .env files in the base directory of your project:
 
 Import simple-app-config whenever you need to retrieve configuration values by using:
 ```typescript
-import Config from 'simple-app-config'
+import Config from 'simple-app-config';
 ```
+
+If you're using CommonJS module instead of ES modules, you can import use the `require` keyword:
+```javascript
+const Config = require('simple-app-config`);
+```
+
 See the [API](#API) section for how to use the APIs.
 
 ### ❗Things to keep in mind
