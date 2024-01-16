@@ -1,6 +1,6 @@
 {
   "name": "simple-app-config",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A simple configuration manager for different environments",
   "repository": {
     "type": "git",
