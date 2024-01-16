@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+# Workflow triggers
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # Schedule pipeline to run monday midnight after sunday ends
+  schedule:
+    - cron: 0 0 * * MON
+  # Enable manual runs of workflow
+  workflow_dispatch:
+
+# Workflow stages
+jobs:      
+  # Perform Lint Checks
+  lint:
+    name: Lint Checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    - name: Install pnpm
+      run: npm install -g pnpm
+    - name: Install Dependencies
+      run: pnpm install
+    - name: Run lint script
+      run: pnpm run lint
+
+  # Run Unit Tests
+  test:
+    name: Unit Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+    - name: Install pnpm
+      run: npm install -g pnpm
+    - name: Install dependencies
+      run: pnpm install
+    - name: Run unit tests with jest
+      run: pnpm run test
