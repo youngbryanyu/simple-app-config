@@ -155,9 +155,7 @@ describe('envParser Tests', () => {
 
       /* Compare against expected */
       expect(result instanceof Date).toBeTruthy();
-      expect(result.getUTCFullYear()).toBe(1969);
-      expect(result.getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
-      expect(result.getUTCDate()).toBe(31);
+      expect((result as Date).toISOString()).toBe('1969-12-31T08:00:00.000Z');
     });
   });
 

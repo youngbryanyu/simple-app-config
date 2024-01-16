@@ -121,7 +121,7 @@ describe('simple-app-config Tests', () => {
 
       /* Check date against expected */
       expect(dateVal instanceof Date).toBeTruthy;
-      expect(JSON.stringify(dateVal)).toBe('"1970-01-01T00:00:10.000Z"');
+      expect(JSON.stringify((dateVal as Date).toISOString())).toBe('"1970-01-01T00:00:10.000Z"');
 
       /* Check regexp against expected */
       expect(regexpVal instanceof RegExp).toBeTruthy;
