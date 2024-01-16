@@ -90,14 +90,16 @@ jobs:
       - name: Determine Changed Files
         id: files
         run: |
+          echo "CODE_CHANGES=true" >> $GITHUB_ENV
           if git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} | grep -qvE '(\.md$|\.github/workflows/)'
           then
-            echo "::set-output name=code_changes::true"
+            echo "CODE_CHANGES=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=code_changes::false"
+            echo "CODE_CHANGES=false" >> $GITHUB_ENV
           fi
 
-  # verify new NPM version is updated during push and PR. Skips version number check step if there were code changes
+  # Verify new NPM version is updated during push and PR. 
+  # Skips version number check step if there were code changes
   verify-npm-version:
     name: Verify Updated NPM version
     if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
@@ -115,7 +117,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Check if version number is updated
-        if: needs.build-and-test.outputs.code_changes == 'true' # only make check for code changes
+        if: env.CODE_CHANGES == 'true' # only run verification if there were code changes
         id: check_version
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
@@ -130,7 +132,7 @@ jobs:
   #   - There were code changes
   publish-npm:
     name: Publish to NPM
-    if: github.event_name == 'push' && needs.build-and-test.outputs.code_changes == 'true' 
+    if: github.event_name == 'push' && env.CODE_CHANGES == 'true'
     needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
@@ -161,7 +163,7 @@ jobs:
   #   - There were code changes
   release:
     name: Create Release
-    if: github.event_name == 'push' && needs.build-and-test.outputs.code_changes == 'true' 
+    if: github.event_name == 'push' && env.CODE_CHANGES == 'true'
     needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
