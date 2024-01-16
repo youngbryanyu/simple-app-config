@@ -188,7 +188,7 @@ SET = '[1, 2, 3]'
 Assume the default.json default config file to be:
 ```json
 {
-  "bool": $boolean::boolean
+  "bool": "$boolean::boolean",
   "var1": {
     "var2": {
       "map": "$MAP::map:string:string",
