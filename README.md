@@ -8,7 +8,7 @@ A simple configuration manager for Node.js applications. I created this libary s
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
 * [Special Environment Variables](#special-environment-variables)
-* [API](#api-reference)
+* [API Reference](#api-reference)
 * [FAQ](#faq)
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
@@ -56,7 +56,7 @@ See the [API](#API-reference) section for how to use the APIs.
 
 ## Usage
 ### Environment Variables and .env Files
-All environment variables will be loaded into an in-memory cache immediately when the module is loaded. Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes directly into your configuration files. You should be aware of how to represent common data types within your environment variables:
+All environment variables will be loaded into an in-memory cache immediately when the module is loaded. Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes directly into your configuration files, or in your code through the [EnvParser API](#envparser) if you prefer working directly with environment variables. You should be aware of how to represent common data types within your environment variables:
 - The datatypes `string`, `number`, `boolean`, `Date`, and `RegExp` should be represented normally as strings. 
 - Nested datatypes like `object`, `Array`, `Set`, and `Map`  should be represented as JSON strings. Maps and JSON objects are both represented the same way with curly braces as nested JSON structures, but distinction between the two is specified during type conversion. Square brackets are used to represent both sets and arrays, but the distinction is specified during type conversion.
 
@@ -130,7 +130,7 @@ SET = '["one", "two", "three"]'
 MAP = '{"dog": "3", "cat": "4"}'
 ```
 
-See the [API](#api-reference) section for how to retrieve values from the configuration files.
+See the [Config API](#config) for how to retrieve values from the configuration files.
 
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
