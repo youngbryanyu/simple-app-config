@@ -18,7 +18,7 @@ This module comes with the following key features:
 - Referencing environment variables in configuration files and expanding them (or converting them to the desired type)
 
 ## Installation
-```
+```bash
 npm install simple-app-config
 ```
 
@@ -40,7 +40,7 @@ Create the following .env files in the base directory of your project:
 - `.env.production`
 
 Import simple-app-config whenever you need to retrieve configuration values by using:
-```
+```typescript
 import Config from 'simple-app-config'
 ```
 See the [API](#API) section for how to use the APIs.
@@ -63,7 +63,7 @@ The `--config-dir` command line argument can be set to specify a custom path to 
 
 If the path specified by `--config-dir` doesn't exist, the module will try to load any path set by `CONFIG_DIR`. If the path specified by `CONFIG_DIR` doesn't or isn't set then the default path to the directory containing the `/config` directory will remain the current working directory.
 
-```
+```bash
 node dist/index.js --config-dir=test/configFiles
 ```
 
@@ -71,20 +71,20 @@ node dist/index.js --config-dir=test/configFiles
 The `--config-path` command line argument can be set to specify a custom path to the config file to use. This will override the custom path set by the `CONFIG_PATH` environment variable. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--config-dir` command line argument or `CONFIG_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
 If the path specified by `--config-path` doesn't exist, the module will try to load any path set by `CONFIG_PATH`. If `CONFIG_PATH` is invalid or isn't set, the module will attempt to search the config directory to find the config file matching the environment.
-```
+```bash
 node dist/index.js --config-path=test/config.json
 ```
 
 ### --env
 The `--env` command line argument can be set to override the environment determined by the module. This will override the environment set by the `NODE_ENV` environment variable.
 
-```
+```bash
 node dist/index.js --env=production
 ```
 
 ### --env-names
 The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable. If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`.
-```
+```bash
 node dist/index.js --env-names='alpha,beta,gamma,prod'
 ```
 
@@ -93,7 +93,7 @@ The `--env-dir` command line argument can be set to specify a custom path to the
 
 If the path specified by `--env-path` doesn't exist, the module will try to load any path set by `ENV_PATH`. If the path specified by `ENV_PATH` doesn't or isn't set then the default path to the directory containing the .env files will remain the current working directory.
 
-```
+```bash
 node dist/index.js --env-dir=test/envFiles
 ```
 
@@ -101,7 +101,7 @@ node dist/index.js --env-dir=test/envFiles
 The `--env-path` command line argument can be set to specify a custom path to the `.env` file to use. This will override the custom path set by the `ENV_PATH` environment variable. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--env-dir` command line argument or `ENV_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
 If the path specified by `--env-path` doesn't exist, the module will try to load any path set by `ENV_PATH`. If `ENV_PATH` is invalid or isn't set, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
-```
+```bash
 node dist/index.js --env-path=test/.env.development
 ```
 
@@ -152,7 +152,7 @@ If the path specified by `environment variable` is invalid, the module will atte
   - `force?`: optional `boolean` indicating whether or not to force simple-app-config to re-configure
 
 #### Example
-```
+```typescript
 import Config from 'simple-app-config';   // will automatically perfor all configuration setup upon the first import
 
 /* Does nothing since .configure() was already called upon import */
@@ -173,14 +173,14 @@ This function will only run a single time upon importing the dependency when run
 
 #### Example
 Assume the .env file to be:
-```
+```dosini
 BOOLEAN = FALSE
 MAP = '{"cat": "test", "bat": "test"}'
 SET = '[1, 2, 3]'
 ```
 
 Assume the default.json default config file to be:
-```
+```json
 {
   "bool": $boolean::boolean
   "var1": {
@@ -196,7 +196,7 @@ Assume the default.json default config file to be:
 ```
 
 The below code demonstrates how to retrieve config values. You can retrieve a nested value within your configuration file by using `.` as a delimiter like shown in the example. If you really want to have dots in the names of your keys, you can escape them with a backslash.
-```
+```typescript
 import Config from 'simple-app-config';  
 
 /* Retrieve boolean value */
@@ -209,7 +209,7 @@ const map: Map<string, string> = Config.get('var1.var2.map');
 const mapString: string = Config.get('var1.var2.mapString');
 
 /* Escape dots in the key name by escaping with backslash */
-const set: Set<numner> = Config.get('escaped\\\.field.inside');
+const set: Set<number> = Config.get('escaped\\\.field.inside');
 ```
 
 ### get
