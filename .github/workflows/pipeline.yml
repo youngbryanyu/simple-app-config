@@ -4,16 +4,14 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-    paths-ignore: # ignore workflow for markdown file changes
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'CONTRIBUTING.md'
-  pull_request: # ignore workflow for markdown file changes
+    paths-ignore: 
+      - '**/*.md'          # Ignore all markdown files
+      - '.github/workflows/pipeline.yml'  # Ignore changes in this specific workflow file
+  pull_request: 
     branches: [ "main" ]
     paths-ignore:
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'CONTRIBUTING.md'
+      - '**/*.md'          # Ignore all markdown files
+      - '.github/workflows/pipeline.yml'  # Ignore changes in this specific workflow file
   # Schedule pipeline to run monday midnight after sunday ends
   schedule:
     - cron: 0 0 * * MON
