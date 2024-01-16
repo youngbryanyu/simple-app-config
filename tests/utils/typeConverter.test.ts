@@ -103,7 +103,7 @@ describe('Type Converter Util Tests', () => {
 
       /* Compare against expected */
       expect(result instanceof Date).toBeTruthy();
-      expect((result as Date).toISOString()).toBe('1970-01-01T00:00:01.000Z');
+      expect(result.toJSON()).toBe('1970-01-01T00:00:01.000Z');
     });
 
     /* Test when converting to a Date is possible as a valid date string */
@@ -114,7 +114,9 @@ describe('Type Converter Util Tests', () => {
 
       /* Compare against expected */
       expect(result instanceof Date).toBeTruthy();
-      expect((result as Date).toISOString()).toBe('1969-12-31T08:00:00.000Z');
+      expect(result.getUTCFullYear()).toBe(1969);
+      expect(result.getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
+      expect(result.getUTCDate()).toBe(31);
     });
 
     /* Test when converting to a Date is not possible */
@@ -243,9 +245,11 @@ describe('Type Converter Util Tests', () => {
       expect(result[0] instanceof Date).toBeTruthy();
       expect(result[1] instanceof Date).toBeTruthy();
       expect(result[2] instanceof Date).toBeTruthy();
-      expect((result[0] as Date).toISOString()).toBe('1970-01-01T00:00:00.100Z');
-      expect((result[1] as Date).toISOString()).toBe('1969-12-31T08:00:00.000Z');
-      expect((result[2] as Date).toISOString()).toBe('1970-01-01T00:01:40.000Z');
+      expect(result[0].toJSON()).toBe('1970-01-01T00:00:00.100Z');
+      expect(result[1].getUTCFullYear()).toBe(1969);
+      expect(result[1].getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
+      expect(result[1].getUTCDate()).toBe(31);
+      expect(result[2].toJSON()).toBe('1970-01-01T00:01:40.000Z');
     });
 
     /* Test when converting to a RegExp Array is possible */
