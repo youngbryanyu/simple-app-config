@@ -51,7 +51,7 @@ See the [API](#API) section for how to use the APIs.
 - You don't necessarily need a .env file for the config file of the same environment, but if you reference any environment variables in your config file, you will need to set them elsewhere (e.g. through your Docker container).
 
 ## Environment Variable Conversion and Expansion
-
+Arrays and sets should be represented like they would in JSON. Maps should be represented as nested JSON structures.
 
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
