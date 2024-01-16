@@ -239,7 +239,7 @@ This function does not return a value
 ```typescript
 import Config from 'simple-app-config';   // will automatically perform all configuration setup upon the first import
 
-/* Does nothing since .configure() was already called upon import */
+/* Does nothing since configure() was already called upon import */
 Config.configure();
 
 /* Resets the state and performs configuration setup again since the `force` flag was set */
