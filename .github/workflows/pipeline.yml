@@ -4,8 +4,16 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+    paths-ignore: # ignore workflow for markdown file changes
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
+  pull_request: # ignore workflow for markdown file changes
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
   # Schedule pipeline to run monday midnight after sunday ends
   schedule:
     - cron: 0 0 * * MON
@@ -76,11 +84,38 @@ jobs:
     - name: Compile TypeScript into JavaScript
       run: pnpm run build
 
+  # verify new NPM version is updated
+  verify-npm-version:
+    name: Verify NPM Version Number is Updated
+    if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetches all history for all branches and tags
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org/'
+      - name: Install dependencies
+        run: npm install
+      - name: Check if version number is updated
+        id: check_version
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "$LATEST_TAG" = "v$PACKAGE_VERSION" ]; then
+            echo "Version in package.json is already published. Exiting..."
+            exit 1
+          fi
+
   # publish to NPM
   publish-npm:
     name: Publish to NPM
     if: github.event_name == 'push' # only run this on push, not PR
-    needs: build
+    needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -98,23 +133,18 @@ jobs:
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if [ "$LATEST_TAG" = "v$PACKAGE_VERSION" ]; then
-            echo "Version in package.json is already published. Exiting..."
-            exit 1
-          else
-            echo "::set-output name=version::$PACKAGE_VERSION"
-          fi
+          echo "::set-output name=version::$PACKAGE_VERSION"
       - name: Publish to NPM
         if: steps.check_version.outputs.version
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # Create Release
+  # Create Release on GitHub
   release:
     name: Create Release
     if: github.event_name == 'push' # only run this on push, not PR
-    needs: publish-npm
+    needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
