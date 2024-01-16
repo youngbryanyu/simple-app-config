@@ -1,4 +1,5 @@
 /* Unit tests for env-var-config */
+import { existsSync } from 'fs';
 import { CommandLineArgs, EnvArgs } from '../src/constants';
 import { UndefinedConfigValueError } from '../src/errors/undefinedConfigValueError';
 import { UndefinedEnvVarError } from '../src/errors/undefinedEnvVarError';
@@ -248,6 +249,7 @@ describe('simple-app-config Tests', () => {
     /* Test setting .env path with environment variable */
     it('should be able to set the .env path with environment variables.', () => {
       process.env[EnvArgs.EnvPath] = `${__dirname}/.env.production`;
+      console.log(existsSync(`${__dirname}/.env.production`))
       console.log(`${__dirname}/.env.production`)
       console.log(Config.environments);
       console.log(Config.envPaths);
