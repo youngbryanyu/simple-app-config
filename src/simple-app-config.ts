@@ -42,7 +42,7 @@ export class Config {
    * Defaults to development, testing, staging, production.
    * Populated with custom values when {@link Config.setEnvironmentNames} is called.
    */
-  private static environments: Set<string> = new Set(Object.values(Environments));
+  public static environments: Set<string> = new Set(Object.values(Environments));
 
   /**
    * The set of possible paths of the default config file.
@@ -66,13 +66,13 @@ export class Config {
    * The Map of environments to .env paths.
    * Populated when {@link Config.setPaths} is called.
    */
-  private static envPaths: Map<string, string> = new Map();
+  public static envPaths: Map<string, string> = new Map();
 
   /**
    * The Map of environments to a set of possible paths for the config file.
    * Populated when {@link Config.setPaths} is called.
    */
-  private static configPaths: Map<string, Set<string>> = new Map();
+  public static configPaths: Map<string, Set<string>> = new Map();
 
   /**
    * Map containing converted and expanded values from the loaded config file.

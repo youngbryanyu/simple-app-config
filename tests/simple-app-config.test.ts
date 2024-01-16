@@ -231,6 +231,8 @@ describe('simple-app-config Tests', () => {
     /* Test setting environment with NODE_ENV */
     it('should be able to set the environment with the NODE_ENV environment variable.', () => {
       process.env[EnvArgs.Env] = 'production';
+      process.env[EnvArgs.ConfigDir] = `${__dirname}`;
+      process.env[EnvArgs.EnvDir] = `${__dirname}`; // TODO: changed
       Config.configure({ force: true });
       expect(Config.get('ENV')).toBe('PRODUCTION');
     });
@@ -246,6 +248,11 @@ describe('simple-app-config Tests', () => {
     /* Test setting .env path with environment variable */
     it('should be able to set the .env path with environment variables.', () => {
       process.env[EnvArgs.EnvPath] = `${__dirname}/.env.production`;
+      console.log(`${__dirname}/.env.production`)
+      console.log(Config.environments);
+      console.log(Config.envPaths);
+      console.log(Config.configPaths);
+      console.log(process.cwd())
       Config.configure({ force: true });
       expect(Config.get('ENV')).toBe('PRODUCTION');
     });

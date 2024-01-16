@@ -2,7 +2,7 @@
 **/dist
 
 <!-- Ignore Test files -->
-<!-- **/tests -->
+**/tests
 
 <!--  Ignore javascript files -->
 **/**.js
