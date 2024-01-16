@@ -1,4 +1,4 @@
-import { SimpleAppConfigError } from './SimpleAppConfigError';
+import { SimpleAppConfigError } from './simpleAppConfigError';
 
 /**
  * An error extending {@link SimpleAppConfigError} that should be thrown when a string is being converted to a nonexistent type.

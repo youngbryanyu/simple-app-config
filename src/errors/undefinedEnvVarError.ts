@@ -1,4 +1,4 @@
-import { SimpleAppConfigError } from './SimpleAppConfigError';
+import { SimpleAppConfigError } from './simpleAppConfigError';
 
 /**
  * An error extending {@link SimpleAppConfigError} that should be thrown when accessing an environment variable that is undefined.
