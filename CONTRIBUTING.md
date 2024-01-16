@@ -27,3 +27,16 @@ pnpm run prettier
 ```
 
 If you are using VSCode make sure to install the [EditorConfig](https://editorconfig.org/) plugin as we are also using that for maintaining consistent style.
+
+## Pipeline
+We are using GitHub Actions' Workflow pipelines for automation. The following checks must pass in order to have a valid PR that can be merged:
+- Style and Lint checks
+- Successful build
+- Unit Tests
+- Updated NPM Version Number (this will automatically pass if only markdown or workflow files were changed)
+
+Upon pushing your code the following all above checks will run again in addition to the actions below:
+- Publish new package version to NPM
+- Create release and tag on GitHub
+
+> :warning: Thus, markdown file changes will need to be manually published to NPM. The release and tags on GitHub will need to be manually created as well. 
