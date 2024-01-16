@@ -75,3 +75,58 @@ jobs:
       run: pnpm install
     - name: Compile TypeScript into JavaScript
       run: pnpm run build
+
+  # publish to NPM
+  publish-npm:
+    name: Publish to NPM
+    if: github.event_name == 'push' # only run this on push, not PR
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org/'
+      - name: Install dependencies
+        run: npm install
+      - name: Check if version updated
+        id: check_version
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "$LATEST_TAG" = "v$PACKAGE_VERSION" ]; then
+            echo "Version in package.json is already published. Exiting..."
+            exit 1
+          else
+            echo "::set-output name=version::$PACKAGE_VERSION"
+          fi
+      - name: Publish to NPM
+        if: steps.check_version.outputs.version
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Create Release
+  release:
+    name: Create Release
+    if: github.event_name == 'push' # only run this on push, not PR
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Extract version number
+        id: package_version
+        run: echo "::set-output name=VERSION::$(jq -r .version package.json)"
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package_version.outputs.VERSION }}
+          release_name: Release ${{ steps.package_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+
