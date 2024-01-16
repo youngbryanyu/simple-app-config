@@ -116,7 +116,8 @@ describe('Type Converter Util Tests', () => {
       expect(result instanceof Date).toBeTruthy();
       expect(result.getUTCFullYear()).toBe(1969);
       expect(result.getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
-      expect(result.getUTCDate()).toBe(31)});
+      expect(result.getUTCDate()).toBe(31);
+    });
 
     /* Test when converting to a Date is not possible */
     it('Should throw an error if the input cannot be converted to a Date.', () => {
