@@ -8,7 +8,7 @@ export class SimpleAppConfigError extends Error {
    */
   public constructor(message: string) {
     super(message);
-    this.name = "SimpleAppConfigError";
+    this.name = 'SimpleAppConfigError';
     Object.setPrototypeOf(this, SimpleAppConfigError.prototype);
   }
 }

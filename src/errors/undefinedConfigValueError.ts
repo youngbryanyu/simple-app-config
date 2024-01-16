@@ -1,7 +1,7 @@
-import { SimpleAppConfigError } from "./SimpleAppConfigError";
+import { SimpleAppConfigError } from './SimpleAppConfigError';
 
 /**
- * An error extending {@link SimpleAppConfigError} that should be thrown when attempting to access a value from a configuration 
+ * An error extending {@link SimpleAppConfigError} that should be thrown when attempting to access a value from a configuration
  * file when the value is undefined.
  */
 export class UndefinedConfigValueError extends SimpleAppConfigError {
@@ -11,7 +11,7 @@ export class UndefinedConfigValueError extends SimpleAppConfigError {
    */
   public constructor(key: string) {
     super(`The configuration value '${key}' is undefined.`);
-    this.name = "UndefinedConfigValueError";
+    this.name = 'UndefinedConfigValueError';
     Object.setPrototypeOf(this, UndefinedConfigValueError.prototype);
   }
 }

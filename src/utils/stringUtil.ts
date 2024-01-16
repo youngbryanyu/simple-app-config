@@ -8,7 +8,7 @@
  */
 function trimStringFromEnd(s: string, pattern: string): string {
   /* Escape special characters */
-  const escapedStringToTrim = pattern.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const escapedStringToTrim = pattern.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
   /* Create regex to match the end */
   const regexp = new RegExp(`${escapedStringToTrim}+$`);
@@ -20,7 +20,7 @@ function trimStringFromEnd(s: string, pattern: string): string {
 /* Wrap and export util functions */
 export const StringUtil = {
   trimStringFromEnd
-}
+};
 
 /* Set default export */
 export default StringUtil;

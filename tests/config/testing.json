@@ -23,5 +23,8 @@
   "object": "$OBJECT::object",
   "map": "$MAP::map:string:string",
   "set": "$SET::set:number",
-  "array": "$ARRAY::array:number"
+  "array": "$ARRAY::array:number",
+  "escaped\\.field": {
+    "inside": "$Set::number"
+  }
 }

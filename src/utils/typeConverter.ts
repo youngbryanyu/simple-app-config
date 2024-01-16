@@ -1,7 +1,7 @@
 /* Functions for converting string values into other data types */
-import { NestableDataTypes, NonNestableDataTypes } from "../constants";
-import { TypeConversionError } from "../errors/typeConversionError";
-import { UnsupportedTypeError } from "../errors/unsupportedTypeError";
+import { NestableDataTypes, NonNestableDataTypes } from '../constants';
+import { TypeConversionError } from '../errors/typeConversionError';
+import { UnsupportedTypeError } from '../errors/unsupportedTypeError';
 
 /**
  * Conversion functions of types that can be nested within Arrays, Sets, and Maps.
@@ -12,8 +12,8 @@ const nestableConversionFunctions = {
   [NestableDataTypes.Boolean as string]: convertToBoolean,
   [NestableDataTypes.Date as string]: convertToDate,
   [NestableDataTypes.RegExp as string]: convertToRegExp,
-  [NestableDataTypes.Object as string]: convertToObject,
-}
+  [NestableDataTypes.Object as string]: convertToObject
+};
 
 /**
  * Converts a value to the target nestable type.
@@ -120,7 +120,7 @@ function convertToObject(value: string): object {
 /**
  * Converts a string into an Array. If {@type} is not set, it will default to string.
  * @param value The input value to convert into an Array.
- * @param type The type that each element in the Array will be converted to. 
+ * @param type The type that each element in the Array will be converted to.
  * @returns The value after being converted to an Array.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Array in this case).
  */
@@ -149,7 +149,9 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
     return array;
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtype in config file */
+      throw new UnsupportedTypeError(
+        error.getType()
+      ); /* This is thrown if user types invalid subtype in config file */
     } else {
       throw new TypeConversionError(value, `${NonNestableDataTypes.Array}<${type}>`);
     }
@@ -159,7 +161,7 @@ function convertToArray<T>(value: string, type: string = NestableDataTypes.Strin
 /**
  * Converts a string into an Set. If {@type} is not set, it will default to string.
  * @param value The input value to convert into a Set.
- * @param type: The type that each element in the Set will be converted to. 
+ * @param type: The type that each element in the Set will be converted to.
  * @returns The value after being converted to an Set.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Set in this case).
  */
@@ -172,7 +174,9 @@ function convertToSet<T>(value: string, type: string = NestableDataTypes.String)
     return new Set(array);
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtype in config file */
+      throw new UnsupportedTypeError(
+        error.getType()
+      ); /* This is thrown if user types invalid subtype in config file */
     } else {
       throw new TypeConversionError(value, `${NonNestableDataTypes.Set}<${type}>`);
     }
@@ -182,12 +186,16 @@ function convertToSet<T>(value: string, type: string = NestableDataTypes.String)
 /**
  * Converts a string into a Map. If {@link keyType} or {@link valueType} are not set, they will default to string.
  * @param value The input value to convert into a Map.
- * @param keyType: The type that each key in the Map will be converted to. 
- * @param valueType: The type that each value in the Map will be converted to. 
+ * @param keyType: The type that each key in the Map will be converted to.
+ * @param valueType: The type that each value in the Map will be converted to.
  * @returns The value after being converted to an Map.
  * @throws {TypeConversionError} Error thrown if the environment variable's value cannot be converted to the target type (Map in this case).
  */
-function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.String, valueType: string = NestableDataTypes.String): Map<K, V> {
+function convertToMap<K, V>(
+  value: string,
+  keyType: string = NestableDataTypes.String,
+  valueType: string = NestableDataTypes.String
+): Map<K, V> {
   try {
     /* Parse the input into a JSON object */
     const object = JSON.parse(value);
@@ -212,7 +220,9 @@ function convertToMap<K, V>(value: string, keyType: string = NestableDataTypes.S
     return map;
   } catch (error) {
     if (error instanceof UnsupportedTypeError) {
-      throw new UnsupportedTypeError(error.getType()); /* This is thrown if user types invalid subtypes in config file */
+      throw new UnsupportedTypeError(
+        error.getType()
+      ); /* This is thrown if user types invalid subtypes in config file */
     } else {
       throw new TypeConversionError(value, `${NonNestableDataTypes.Map}<${keyType}, ${valueType}>`);
     }
@@ -230,8 +240,7 @@ export const TypeConverter = {
   convertToSet,
   convertToMap,
   convertToNestableType
-}
+};
 
 /* Set the default export */
 export default TypeConverter;
-

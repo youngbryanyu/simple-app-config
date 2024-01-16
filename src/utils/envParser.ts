@@ -1,15 +1,14 @@
-import { UndefinedEnvVarError } from "../errors/undefinedEnvVarError";
-import TypeConverter from "./typeConverter";
+import { UndefinedEnvVarError } from '../errors/undefinedEnvVarError';
+import TypeConverter from './typeConverter';
 
 /* Util for retrieving and parsing environment variables into their desired types */
 export class EnvParser {
-
   /**
- * Cache Map for environment variables to speed up retrieval due to system calls being slower than retrieving from memory.
- * Populated in the following scenarios:
- * - When {@link Config.refreshEnvCache} is called
- * - When {@link Config.setEnvValue} is called
- */
+   * Cache Map for environment variables to speed up retrieval due to system calls being slower than retrieving from memory.
+   * Populated in the following scenarios:
+   * - When {@link Config.refreshEnvCache} is called
+   * - When {@link Config.setEnvValue} is called
+   */
   private static envCache: Map<string, string | undefined> = new Map();
 
   /**
@@ -58,7 +57,7 @@ export class EnvParser {
   }
 
   /**
-   * Returns the value corresponding the to environment variable with name {@link key} in the environment variables. 
+   * Returns the value corresponding the to environment variable with name {@link key} in the environment variables.
    * Checks the {@link envCache} first and then process.env if there is a cache miss. Will lazy load the value into
    * the in-memory cache if there is a miss. Caches undefined environment variables as well.
    * @param key Key of the environment variable.
@@ -188,7 +187,7 @@ export class EnvParser {
   }
 
   /**
-   * Gets the specified environment variable and returns it as a Map. 
+   * Gets the specified environment variable and returns it as a Map.
    * If the keyType and valueType are ommitted the keys and will default to type string when conversion occurs.
    * @param key The name of the environment variable.
    * @returns The value of the environment variable as a Map.

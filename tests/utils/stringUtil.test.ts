@@ -1,5 +1,5 @@
 /* Tests for String utility functions */
-import StringUtil from "../../src/utils/stringUtil";
+import StringUtil from '../../src/utils/stringUtil';
 
 /* String Util Tests */
 describe('StringUtil tests', () => {

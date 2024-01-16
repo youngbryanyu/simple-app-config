@@ -2,25 +2,27 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "prettier"
   ],
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "env": {
-      "node": true,
-      "es6": true
+    "node": true,
+    "es6": true
   },
   "parserOptions": {
-      "ecmaVersion": "latest",
-      "sourceType": "module"
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
   "ignorePatterns": [
-    "dist/",               /* Ignore JS artifact/build files */
-    "tests/",              /* Ignore Test files */
-    "**/**.js"             /* Ignore javascript files */
-  ],    
+    /* See .eslintignore for rules */
+  ],
   "rules": {
-    /* Add custom rules here */
+    "no-console": 2,          /* Don't allow console statements */
+    "prettier/prettier": 2    /* Check if format matches prettier */
   }
 }

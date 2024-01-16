@@ -2,7 +2,14 @@
 import dotenv, { DotenvParseOutput } from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import { CommandLineArgs, EnvArgs, Environments, FileTypes, NestableDataTypes, NonNestableDataTypes } from './constants';
+import {
+  CommandLineArgs,
+  EnvArgs,
+  Environments,
+  FileTypes,
+  NestableDataTypes,
+  NonNestableDataTypes
+} from './constants';
 import { UnsupportedTypeError } from './errors/unsupportedTypeError';
 import { UndefinedConfigValueError } from './errors/undefinedConfigValueError';
 import EnvParser from './utils/envParser';
@@ -12,7 +19,7 @@ import StringUtil from './utils/stringUtil';
  * Customization options when running {@link Config.configure}
  */
 interface ConfigOptions {
-  force?: boolean
+  force?: boolean;
 }
 
 /**
@@ -31,14 +38,14 @@ export class Config {
   private static environment: string = Environments.Development;
 
   /**
-   * The environments of the application. 
+   * The environments of the application.
    * Defaults to development, testing, staging, production.
    * Populated with custom values when {@link Config.setEnvironmentNames} is called.
    */
   private static environments: Set<string> = new Set(Object.values(Environments));
 
   /**
-   * The set of possible paths of the default config file. 
+   * The set of possible paths of the default config file.
    * Populated when {@link Config.setPaths} is called.
    */
   private static defaultConfigPaths: Set<string> = new Set();
@@ -86,6 +93,11 @@ export class Config {
   private static prevDotenvValues: unknown;
 
   /**
+   * Singleton instance of the config. This is currently unused.
+   */
+  private static instance: Config | undefined = undefined;
+
+  /**
    * The entry point to all of the configuration functions. Configures the module in the following order:
    * - Returns if the module has already been configured and the force flag isn't set
    * - Sets the environment names
@@ -101,36 +113,41 @@ export class Config {
    */
   public static configure(configOptions: ConfigOptions = {}): void {
     /* Return if the application is already configured and the force isn't set  */
-    if ((Config.alreadyConfigured === true) && (configOptions.force !== true)) {
+    if (Config.alreadyConfigured === true && configOptions.force !== true) {
       return;
     }
 
-    Config.setEnvironmentNames();                     /* Set the names of the environment */
-    Config.determineEnvironment();                    /* Determine environment */
-    Config.setEnvDir();                               /* Set the dir for the .env files */
-    Config.setConfigDir();                            /* Set the dir for the config files */
-    Config.setPaths();                                /* Set the .env and possible config paths */
-    Config.loadEnvFile(Config.findEnvFile());         /* Find and load .env file */
-    EnvParser.refreshCache();                         /* Load all environment variables into cache */
-    Config.loadConfigFile(Config.findConfigFile());   /* Find and load config file */
-    Config.loadDefaultConfigFile();                   /* Load default config file */
-    Config.alreadyConfigured = true;                  /* Set the alrady configured flag to true */
+    Config.setEnvironmentNames(); /* Set the names of the environment */
+    Config.determineEnvironment(); /* Determine environment */
+    Config.setEnvDir(); /* Set the dir for the .env files */
+    Config.setConfigDir(); /* Set the dir for the config files */
+    Config.setPaths(); /* Set the .env and possible config paths */
+    Config.loadEnvFile(Config.findEnvFile()); /* Find and load .env file */
+    EnvParser.refreshCache(); /* Load all environment variables into cache */
+    Config.loadConfigFile(Config.findConfigFile()); /* Find and load config file */
+    Config.loadDefaultConfigFile(); /* Load default config file */
+    Config.alreadyConfigured = true; /* Set the alrady configured flag to true */
+
+    /* Initialize singleton instance */
+    if (Config.instance === undefined) {
+      Config.instance = new Config();
+    }
   }
 
   /**
-   * Sets environment names if they are specified in either of the following from highest priority to lowest, where higher 
+   * Sets environment names if they are specified in either of the following from highest priority to lowest, where higher
    * priority values will override lower priority values:
    * - Command line arguments
    * - Environment variables
-   * 
-   * The environment names default to 'development', 'testing', 'staging', and 'production'. Clears any previously set environment 
+   *
+   * The environment names default to 'development', 'testing', 'staging', and 'production'. Clears any previously set environment
    * names if custom ones are set.
    */
   private static setEnvironmentNames(): void {
     /* Check if environment names are set in command line arguments */
     for (const arg of process.argv) {
       if (arg.startsWith(CommandLineArgs.EnvNames)) {
-        Config.environments.clear();  /* Clear default environment names, and any previously set */
+        Config.environments.clear(); /* Clear default environment names, and any previously set */
         const envNames = arg.split('=')[1].split(',');
         for (const envName of envNames) {
           Config.environments.add(envName.toLowerCase());
@@ -142,7 +159,7 @@ export class Config {
     /* Check if environment names are set in environment variables */
     const arg = process.env[EnvArgs.EnvNames];
     if (arg !== undefined) {
-      Config.environments.clear();  /* Clear default environment names, and any previously set */
+      Config.environments.clear(); /* Clear default environment names, and any previously set */
       const envNames = arg.split(',');
       for (const envName of envNames) {
         Config.environments.add(envName.toLowerCase());
@@ -202,7 +219,7 @@ export class Config {
    * - The paths of the .env files based on the environments and directory prefix
    * - The possible paths of the config files based on the environments and directory prefix
    * - The default config file
-   * 
+   *
    * Clears any previously set .env and config paths.
    */
   private static setPaths() {
@@ -212,13 +229,25 @@ export class Config {
 
     /* Loop over each environments */
     for (const environment of Config.environments) {
-      /* Set the .env paths */
-      Config.envPaths.set(environment, `${Config.envDir}/.env.${environment}`);
+      /* Set the .env paths. If the envDir is empty, use the default relative path */
+      if (Config.envDir === '') {
+        Config.envPaths.set(environment, `.env.${environment}`);
+      } else {
+        Config.envPaths.set(environment, `${Config.envDir}/.env.${environment}`);
+      }
 
-      /* Set the possible config paths in the ./config directory */
+      /* Set the possible config paths in the ./config directory. If the configDir is empty, use the default relative path */
       Config.configPaths.set(environment, new Set());
       for (const fileType of Config.configFileTypes) {
-        (Config.configPaths.get(environment) as Set<string>).add(`${Config.configDir}/config/${environment}${fileType}`)
+        if (Config.configDir === '') {
+          (Config.configPaths.get(environment) as Set<string>).add(
+            `config/${environment}${fileType}`
+          );
+        } else {
+          (Config.configPaths.get(environment) as Set<string>).add(
+            `${Config.configDir}/config/${environment}${fileType}`
+          );
+        }
       }
     }
 
@@ -229,11 +258,11 @@ export class Config {
   }
 
   /**
-   * Determines the environment from the following from highest priority to lowest, where higher priority values will override 
+   * Determines the environment from the following from highest priority to lowest, where higher priority values will override
    * lower priority values:
    * - Command line arguments
    * - NODE_ENV environment variable
-   * 
+   *
    * The environment defaults to 'development'.
    */
   private static determineEnvironment(): void {
@@ -254,13 +283,13 @@ export class Config {
   }
 
   /**
-   * Loads a .env file from the following in the following order from highest priority to lowest, where higher priority values 
+   * Loads a .env file from the following in the following order from highest priority to lowest, where higher priority values
    * will override lower priority values:
    * - Command line args
    * - Environment variables
    * - The path corresponding to the environment
-   * 
-   * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears previously 
+   *
+   * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears previously
    * loaded values from a .env file
    */
   private static findEnvFile(): string | undefined {
@@ -288,7 +317,10 @@ export class Config {
 
     /* Load path corresponding to the environment if it exists */
     if (Config.envPaths.has(Config.environment)) {
-      const path = StringUtil.trimStringFromEnd(Config.envPaths.get(Config.environment) as string, '/');
+      const path = StringUtil.trimStringFromEnd(
+        Config.envPaths.get(Config.environment) as string,
+        '/'
+      );
       if (Config.isValidEnvFile(path)) {
         return path;
       }
@@ -324,18 +356,18 @@ export class Config {
    */
   private static resetDotEnv(): void {
     /* Iterate over the keys and delete the environment variables */
-    for (const key in (Config.prevDotenvValues as DotenvParseOutput)) {
+    for (const key in Config.prevDotenvValues as DotenvParseOutput) {
       delete process.env[key];
     }
   }
 
   /**
-   * Loads a config file from the folloowing in the following order from highest priority to lowest, where higher priority values 
+   * Loads a config file from the folloowing in the following order from highest priority to lowest, where higher priority values
    * will override lower priority values::
    * - Command line arguments
    * - Environment variables
    * - The path corresponding to the environment
-   * 
+   *
    * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears any previously
    */
   private static findConfigFile(): string | undefined {
@@ -360,7 +392,7 @@ export class Config {
 
     /* Load path corresponding to the environment if it exists */
     if (Config.configPaths.has(Config.environment)) {
-      for (let path of (Config.configPaths.get(Config.environment) as Set<string>)) {
+      for (let path of Config.configPaths.get(Config.environment) as Set<string>) {
         path = StringUtil.trimStringFromEnd(path, '/');
         if (Config.isValidConfigFile(path)) {
           return path;
@@ -426,7 +458,7 @@ export class Config {
   private static loadDefaultConfigFile(): void {
     for (const path of Config.defaultConfigPaths) {
       if (Config.isValidConfigFile(path)) {
-        Config.parseConfigIntoMap(path)
+        Config.parseConfigIntoMap(path);
         return;
       }
     }
@@ -434,15 +466,15 @@ export class Config {
 
   /**
    * Helper method to parse a config file given a path and load it into {@link Config.configMap}. Performs the following in the listed order:
-   * - Reads the config file 
-   * - Parses the read file depending on the type of the config file. Processes the object into a Map. Nested configurations will 
+   * - Reads the config file
+   * - Parses the read file depending on the type of the config file. Processes the object into a Map. Nested configurations will
    * be recursively parsed into nested maps.
-   * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override 
+   * - Updates the global config map with values that haven't been set yet. This is so that default config values don't override
    * ones with higher priority.
-   * 
-   * This function assumes that the file path is valid since it should be called from {@link Config.findConfigFile} and 
+   *
+   * This function assumes that the file path is valid since it should be called from {@link Config.findConfigFile} and
    * {@link Config.loadDefaultConfigFile}, and file validation is performed there.
-   * 
+   *
    * @param filePath Path to load the config file from.
    */
   private static parseConfigIntoMap(filePath: string): void {
@@ -451,14 +483,12 @@ export class Config {
 
     /* Determine the extension of the config file and parse it accordingly */
     const fileType = path.extname(filePath);
-    let map: Map<string, unknown>;
+    let map: Map<string, unknown> = new Map();
     switch (fileType) {
       case FileTypes.Json:
         map = Config.parseJSON(file);
         break;
-      default:
-        map = Config.parseJSON(file);
-        break;
+      /* No default since file type validation was run earlier  */
     }
 
     /* Set the value in the global config map if is hasn't been set yet. This is so that default values loaded afterwards won't override values with higher priority */
@@ -472,7 +502,7 @@ export class Config {
   /**
    * Parses the text read from a JSON file and returns it as a Map.
    * @param file The text representing the JSON file after reading it.
-   * @returns A Map of the key-value pairs in the JSON file. 
+   * @returns A Map of the key-value pairs in the JSON file.
    */
   private static parseJSON<T>(file: string): Map<string, T> {
     /* Parse the file as JSON */
@@ -485,7 +515,7 @@ export class Config {
   /**
    * Converts a JSON object into a Map. Performs the following in the listed order recursively:
    * - Converts the input to an array if it is an array
-   * - Process each in the JSON object. If it is a string it expands any environment variables within the string. If it is an 
+   * - Process each in the JSON object. If it is a string it expands any environment variables within the string. If it is an
    * object it will recursively process the object and treat it like a nested map of configurations
    * @param jsonObj The JSON object to process.
    * @returns a Map of the key-value pairs in the JSON file.
@@ -493,7 +523,7 @@ export class Config {
   private static convertJSONToMap<T>(jsonObj: unknown): T {
     /* If config is an array, recursively convert each element of an array */
     if (Array.isArray(jsonObj)) {
-      return jsonObj.map(item => Config.convertJSONToMap(item)) as T;
+      return jsonObj.map((item) => Config.convertJSONToMap(item)) as T;
     }
 
     /* Handle primitive data types. Strings should be expanded. */
@@ -519,11 +549,11 @@ export class Config {
 
   /**
    * Expands an environment variable, and performs type conversions if it is not nested in a string.
-   * 
-   * Fields starting with $ will be treated as a special case and matched as $VAR::TYPE:SUBTYPE1:SUBTYPE2. They will be converted 
+   *
+   * Fields starting with $ will be treated as a special case and matched as $VAR::TYPE:SUBTYPE1:SUBTYPE2. They will be converted
    * to the type TYPE with SUBTYPE1 and SUBTYPE2 if it is a nested structure like an Array, Set, or Map.
-   * 
-   * Fields that are string containing ${...} will be matched as ${VAR::TYPE:SUBTYPE1:SUBTYPE2}, and will be treated as a string 
+   *
+   * Fields that are string containing ${...} will be matched as ${VAR::TYPE:SUBTYPE1:SUBTYPE2}, and will be treated as a string
    * regardless of the types specified and expanded as a string.
    * @param input The input string to expand
    * @returns The expanded or converted form of the input.
@@ -564,19 +594,24 @@ export class Config {
       }
     }
     /* Expand environment variable as a string */
-    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) => EnvParser.getString(varName)) as T;
+    return input.replace(/\$\{([A-Z0-9_]+)\}/g, (match, varName) =>
+      EnvParser.getString(varName)
+    ) as T;
   }
 
   /**
-   * Get a field from the config map containing processed fields from the config files. Iteratively searches for nested 
+   * Get a field from the config map containing processed fields from the config files. Iteratively searches for nested
    * configuration values. Each level of the configuration key must be separated with a '.'
    * @param key The name of the field in the config file.
    * @returns The expanded and converted value in the config file.
    */
   public static get<T>(key: string): T {
+    /* use regex to split key, ignoring for escaped . delimiters */
+    const parts = key.split(/(?<!\\)\./).map((part) => part.replace(/\\\./g, '.'));
+
     /* Iteratively search for nested configuration values */
     let currentConfig: unknown = Config.configMap;
-    for (const part of key.split('.')) {
+    for (const part of parts) {
       if (currentConfig instanceof Map && currentConfig.has(part)) {
         currentConfig = currentConfig.get(part);
       } else {
@@ -591,7 +626,7 @@ export class Config {
   /**
    * Private constructor
    */
-  private constructor() { }
+  private constructor() {}
 }
 
 /* Configure module immediately upon import from dependent module */
