@@ -50,6 +50,9 @@ See the [API](#API) section for how to use the APIs.
 - You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it.
 - You don't necessarily need a .env file for the config file of the same environment, but if you reference any environment variables in your config file, you will need to set them elsewhere (e.g. through your Docker container).
 
+## Environment Variable Conversion and Expansion
+
+
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
 
@@ -82,7 +85,7 @@ node dist/index.js --env=production
 ### --env-names
 The `--env-names` command line argument can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). This will override the environment set by the `ENV_NAMES` environment variable. If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your config files must follow the naming convention of `<custom-environment-name>.json`.
 ```
-node dist/index.js --env='alpha,beta,gamma,prod'
+node dist/index.js --env-names='alpha,beta,gamma,prod'
 ```
 
 ### ---env-dir
