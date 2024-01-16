@@ -8,7 +8,8 @@ A simple configuration manager for Node.js applications. I created this libary s
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
 * [Special Environment Variables](#special-environment-variables)
-* [API](#api)
+* [API](#api-reference)
+* [FAQ](#faq)
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
 
@@ -49,13 +50,13 @@ If you're using CommonJS module instead of ES modules, you can import use the `r
 const Config = require('simple-app-config`);
 ```
 
-See the [API](#API) section for how to use the APIs.
+See the [API](#API-reference) section for how to use the APIs.
 
 > :warning: The naming of the files and directories matter, so make sure you name them like specified in the setup instructions. If you need more flexibility with the setup, see the [command line arguments](#command-line-arguments) and [environment variables](#special-environment-variables) that can be set to customize your setup. You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it. You don't necessarily need a .env file for the configuration file of the same environment, but if you reference any environment variables in your configuration file, you will need to set them elsewhere (e.g. through your Docker container).
 
 ## Usage
 ### Environment Variables and .env Files
-Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes either directly into your configuration files, or in your code through the [API](#api). You should be aware of how to represent common data types within your environment variables:
+All environment variables will be loaded into an in-memory cache immediately when the module is loaded. Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes directly into your configuration files. You should be aware of how to represent common data types within your environment variables:
 - The datatypes `string`, `number`, `boolean`, `Date`, and `RegExp` should be represented normally as strings. 
 - Nested datatypes like `object`, `Array`, `Set`, and `Map`  should be represented as JSON strings. Maps and JSON objects are both represented the same way with curly braces as nested JSON structures, but distinction between the two is specified during type conversion. Square brackets are used to represent both sets and arrays, but the distinction is specified during type conversion.
 
@@ -72,16 +73,18 @@ SET = '["one", "two", "three"]'
 MAP = '{"dog": "bark", "cat": "meow"}'
 ```
 
-Nested data types within the `.env` file also only support nesting of the types `string`, `number`, `boolean`, `Date`, `RegExp`, and `object`. See the [API](#api) section for how to directly retrieve environment variables without the need of a configuration file.
+Nested data types within the `.env` file also only support nesting of the types `string`, `number`, `boolean`, `Date`, `RegExp`, and `object`. 
 
 ### JSON Config Files
-Configurations can be stored inside JSON files. The values within your JSON files can reference your environment variables and either expand them as strings or convert them to the desired data types. Environment variable expansion and type conversion is supported only for values within the JSON file, and not the keys. You can specify whether to expand an environment variable as a string or convert it to a target type using the following notations:
+Configurations can be stored inside JSON files. When the module is imported, your configuration file will be loaded into an in-memory map that mimics the nested structure of JSON. The values within your JSON files can reference your environment variables and either expand them as strings or convert them to the desired data types. Environment variable expansion and type conversion is supported only for values within the JSON file, and not the keys. You can specify whether to expand an environment variable as a string or convert it to a target type using the following notations:
 - `${<environment-variable-name>}`: expands an environment variable as a string if it's valid.
-- `$<environment-variable-name>::<primary-type>:<sub-type-1>:<sub-type-2>`: converts an environment variable to the target primary type. Types like `Array`, `Set`, and `Map` will need secondary subtypes specified or else the subtypes will default to `string`. If a subtype is specified but unnecessary to convert to the target type it will be ignored (e.g. `string` has no subtype).
+- `$<environment-variable-name>::<primary-type>:<sub-type-1>:<sub-type-2>`: converts an environment variable to the target primary type. Types like `Array`, `Set`, and `Map` will need secondary subtypes specified or else the subtypes will default to `string`. If a subtype is specified but unnecessary to convert to the target type it will be ignored (e.g. `string` has no subtype). `$` must be the first character of the JSON string for this conversion to be applied.
+
+If you want to use `.` in the key of your configuration variables, your should escape them using a backslash since the module uses `.` as the delimiter when specifying nested configuration values. If you want to escape the `$` to prevent expanding an environment variable, you can precede it with a backslash. 
 
 > :warning: If your configuration file references an invalid environment variable, an `UndefinedEnvVarError` will be thrown. If you attempt to convert an environment variable referenced in your configuration file to a non-supported type (not a type mentioned), an `UnsupportedTypeError` will be thrown. If you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type, a `TypeConversionError` will be thrown. 
 
-If you want to use `.` in the key of your configuration variables, your should escape them using a backslash since the module uses `.` as the delimiter when specifying nested configuration values. The supported conversion types are the following which are non-case-sensitive:
+The supported conversion types are the following which are non-case-sensitive:
 - string
 - number
 - boolean
@@ -97,11 +100,11 @@ Below is an example of how to reference environment variables in your JSON confi
 **JSON Configuration File**
 ```JSON
 {
-  "STRING": "$STRING",
+  "STRING": "$STRING::STRING",
   "STRING_EXPANSION": "Hello. ${STRING}",
   "ESCAPED\\.DOT": "This is escaped",
   "NUMBER": "$NUMBER::number",
-  "BOOLEAN": "$BOOLEAN::boolean",
+  "BOOLEAN": "$BOOLEAN::BOOLEAN",
   "DATE": "$DATE::date",
   "REGEXP": "$REGEXP::regexp",
   "OBJECT": "$OBJECT::object",
@@ -127,7 +130,7 @@ SET = '["one", "two", "three"]'
 MAP = '{"dog": "3", "cat": "4"}'
 ```
 
-See the [API](#api) section for how to retrieve values from the configuration files.
+See the [API](#api-reference) section for how to retrieve values from the configuration files.
 
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
@@ -210,11 +213,13 @@ The `ENV_PATH` environment variable can be set to specify a custom path to the `
 
 If the path specified by `environment variable` is invalid, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
-## API
+# API Reference
 
-### Config.configure(configOptions?: ConfigOptions): void
+## Config
+
+### configure(configOptions?: ConfigOptions): void
 Sets up the module, which involves the following steps :
-1. Sets custom environment names if the command line argument `--env-names` or environment variable `ENV_NAMES`.
+1. Sets custom environment names if specified.
 2. Determines the environment of the application.
 3. Sets the target directory for the `.env` files and `/config` directory.
 4. Determines the possible paths to the `.env` and configuration files for each environment.
@@ -223,17 +228,19 @@ Sets up the module, which involves the following steps :
 7. Attempts to find and load a configuration file into an in-memory map structure.
 8. Loads the default configuration file if it exists.
 
+See the [command line arguments](#command-line-arguments) and [environment variables](#special-environment-variables) to see how to customize your configuration setup.
+
 #### Parameters
 - `configOptions?`: An optional configuration object
   - `force?`: optional `boolean` indicating whether or not to force simple-app-config to re-configure
 
 #### Return Value
-This function does not return a value
+None.
 
 #### Errors Thrown
 - `UndefinedEnvVarError`: Thrown if your configuration file references an invalid environment variable.
 - `UnsupportedTypeError`: Thrown if you attempt to convert an environment variable referenced in your configuration file to a non-supported type.
-- `TypeConversionError`: Thrown if if you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type.
+- `TypeConversionError`: Thrown if you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type.
 
 #### Example
 ```typescript
@@ -248,8 +255,8 @@ Config.configure({ force: true });
 
 > :warning: This function will only run a single time upon importing the dependency when running the application, and if called again will not re-configure unless the `force` flag is set to `true` when calling it again.
 
-### Config.get\<T\>(key: string): T
-Retrieves a value loaded from the configuration file and returns it as the desired type that it was set to.
+### get\<T\>(key: string): T
+Retrieves a value loaded from the configuration file and returns it as the desired type that it was set to within the configuration file.
 
 #### Parameters
 - `key`: The key of the configuration variable to retrieve
@@ -301,7 +308,303 @@ const mapString: string = Config.get('var1.var2.mapString');
 const set: Set<number> = Config.get('escaped\\\.field.inside');
 ```
 
-### EnvParser.getString(key: string): string
-...
+## EnvParser
+
+### refreshCache(): void
+Clears the environment variable cache and updates the cache with the most up-to-date environment variables.
+
+#### Parameters
+None.
+
+#### Return Value
+None.
+
+#### Errors Thrown
+None.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+EnvParser.refreshCache();    
+```
+
+### clearCache(): void
+Clears the environment variable cache.
+
+#### Parameters
+None.
+
+#### Return Value
+None.
+
+#### Errors Thrown
+None.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+EnvParser.clearCache();    
+```
+
+### setValue(key: string, value: string): void
+Updates the value of an environment variable and writes-through the value to the cache.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+- `value` The new `string` value to set the environment variable to.
+
+#### Return Value
+None.
+
+#### Errors Thrown
+None.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+EnvParser.setValue('KEY', 'VALUE');    
+```
+
+### delete(key: string): void
+Deletes an environment variable and removes the value from the cache.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+None.
+
+#### Errors Thrown
+None.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+EnvParser.deleteValue('KEY');    
+```
+
+### getString(key: string): string
+Gets an environment variable and returns it as a `string`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+The value of the environment variable as a `string`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const str: string = EnvParser.getString('KEY');    
+```
+
+### getNumber(key: string): number
+Gets an environment variable and returns it as a `number`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+The value of the environment variable as a `number`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to a `number`.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const val: number = EnvParser.getNumber('KEY');    
+```
+
+### getBoolean(key: string): boolean
+Gets an environment variable and returns it as a `boolean`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+The value of the environment variable as a `boolean`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to a `boolean`.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const val: boolean = EnvParser.getBoolean('KEY');    
+```
+
+### getDate(key: string): Date
+Gets an environment variable and returns it as a `Date`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+The value of the environment variable as a `Date`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to a `Date`.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const val: Date = EnvParser.getDate('KEY');    
+```
+
+### getRegExp(key: string): RegExp
+Gets an environment variable and returns it as a `RegExp`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable.
+
+#### Return Value
+The value of the environment variable as a `RegExp`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to a `RegExp`.
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const val: RegExp = EnvParser.getRegExp('KEY');    
+```
+
+### getObject(key: string): RegExp
+Gets an environment variable and returns it as an `object`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
+
+#### Return Value
+The value of the environment variable as a `object`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to an `object`.
+
+
+#### Example
+```typescript
+import { EnvParser } from 'simple-app-config'; 
+
+const val: object = EnvParser.getObject('KEY');    
+```
+
+### getArray<T>(key: string, type?: string): Array<T>
+Gets an environment variable and returns it as an `Array<T>`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
+- `type`: The type to convert each element of environment variable array to. If unspecified, it defaults to `string`. 
+
+You can get the valid nestable data types using the `DataTypes` enum:
+  - `DataTypes.String`
+  - `DataTypes.Number`
+  - `DataTypes.Boolean`
+  - `DataTypes.Date`
+  - `DataTypes.RegExp`
+  - `DataTypes.Object`
+
+#### Return Value
+The value of the environment variable as a `Array<T>`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `type` field, and it is not supported.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
+
+#### Example
+```typescript
+import { EnvParser, DataTypes } from 'simple-app-config'; 
+
+const val: Array<number> = EnvParser.getArray('KEY', DataTypes.Number);    
+```
+
+### getSet<T>(key: string, type?: string): Set<T>
+Gets an environment variable and returns it as a `Set<T>`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
+- `type`: The type to convert each element of environment variable set to. If unspecified, it defaults to `string`.
+
+You can get the valid nestable data types using the `DataTypes` enum:
+  - `DataTypes.String`
+  - `DataTypes.Number`
+  - `DataTypes.Boolean`
+  - `DataTypes.Date`
+  - `DataTypes.RegExp`
+  - `DataTypes.Object`
+
+#### Return Value
+The value of the environment variable as a `Set<T>`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `type` field, and it is not supported.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
+
+#### Example
+```typescript
+import { EnvParser, DataTypes } from 'simple-app-config'; 
+
+const val: Set<boolean> = EnvParser.getArray('KEY', DataTypes.Boolean);    
+```
+
+### getMap<K, V>(key: string, keyType?: string, valueType?: string): Map<K, V>
+Gets an environment variable and returns it as a `Map<K, V>`.
+
+#### Parameters
+- `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
+- `keyType`: The type to convert each key of environment variable map to. If unspecified, it defaults to `string`.
+- `valueType`: The type to convert each value of environment variable map to. If unspecified, it defaults to `string`. You can get the valid nestable data types using the `DataTypes` enum.
+
+ You can get the valid nestable data types using the `DataTypes` enum:
+  - `DataTypes.String`
+  - `DataTypes.Number`
+  - `DataTypes.Boolean`
+  - `DataTypes.Date`
+  - `DataTypes.RegExp`
+  - `DataTypes.Object`
+
+#### Return Value
+The value of the environment variable as a `Map<K, V>`. 
+
+#### Errors Thrown
+- `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
+- `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `keyType` or `valueType` fields, and it is not supported.
+- `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
+
+#### Example
+```typescript
+import { EnvParser, DataTypes } from 'simple-app-config'; 
+
+const val: Map<string, boolean> = EnvParser.getArray('KEY', DataTypes.String, DataTypes.Boolean);    
+```
+
+## FAQ
+Nothing here currently...
+
+## Changelog
+See [Changelog](./CHANGELOG.md) for the changelog.
+
+## Contributing
+See [Contributing](./CONTRIBUTING.md) if you're interested in contributing!
 
 
