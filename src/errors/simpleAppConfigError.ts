@@ -1,5 +1,5 @@
 /**
- * A generic error when using using the simple-app-config.
+ * A generic error when using using simple-app-config.
  */
 export class SimpleAppConfigError extends Error {
   /**
