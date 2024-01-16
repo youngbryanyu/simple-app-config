@@ -8,7 +8,8 @@ A simple configuration manager for Node.js applications. I created this libary s
 * [Usage](#usage)
 * [Command Line Arguments](#command-line-arguments)
 * [Special Environment Variables](#special-environment-variables)
-* [API Reference](#api-reference)
+* [Config API](#config-API)
+* [EnvParser API](#Envparser-API)
 * [FAQ](#faq)
 * [Changelog](./CHANGELOG.md)
 * [Contributing](./CONTRIBUTING.md)
@@ -213,9 +214,7 @@ The `ENV_PATH` environment variable can be set to specify a custom path to the `
 
 If the path specified by `environment variable` is invalid, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
-# API Reference
-
-## Config
+## Config API
 
 ### configure(configOptions?: ConfigOptions): void
 Sets up the module, which involves the following steps :
@@ -308,7 +307,7 @@ const mapString: string = Config.get('var1.var2.mapString');
 const set: Set<number> = Config.get('escaped\\\.field.inside');
 ```
 
-## EnvParser
+## EnvParser API
 
 ### refreshCache(): void
 Clears the environment variable cache and updates the cache with the most up-to-date environment variables.
