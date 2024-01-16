@@ -181,7 +181,7 @@ If the path specified by `--env-path` is invalid, the module will try to load an
 node dist/index.js --env-path=test/.env.development
 ```
 
-## Special environment Variables
+## Special Environment Variables
 These special environment variables are optional and can be specified to override and set custom settings, similar to command line arguments.
 
 > :warning: Special environment variables take precedence over defaults set by the module, but will be overriden if the corresponding command line argument that affects the same field is set.
