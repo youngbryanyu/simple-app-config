@@ -5,13 +5,13 @@ on:
   push:
     branches: [ "main" ]
     paths-ignore: 
-      - '**/*.md'          # Ignore all markdown files
+      - '**/*.md'                         # Ignore changes on all markdown files
       - '.github/workflows/pipeline.yml'  # Ignore changes in this specific workflow file
   pull_request: 
     branches: [ "main" ]
     paths-ignore:
-      - '**/*.md'          # Ignore all markdown files
-      - '.github/workflows/pipeline.yml'  # Ignore changes in this specific workflow file
+      - '**/*.md'                           # Ignore changes on all markdown files
+      - '.github/workflows/pipeline.yml'    # Ignore changes in this specific workflow file
   # Schedule pipeline to run monday midnight after sunday ends
   schedule:
     - cron: 0 0 * * MON
