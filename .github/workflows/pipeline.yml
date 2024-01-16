@@ -18,6 +18,9 @@ jobs:
   lint:
     name: Lint Checks
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js 20.x
@@ -36,6 +39,9 @@ jobs:
     name: Unit Tests
     needs: lint
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js 20.x
@@ -54,6 +60,9 @@ jobs:
     name: Build Application
     needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js 20.x
