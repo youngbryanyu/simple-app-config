@@ -255,6 +255,9 @@ describe('simple-app-config Tests', () => {
       console.log(Config.envPaths);
       console.log(Config.configPaths);
       console.log(process.cwd())
+      console.log(Config.environment)
+      console.log(Config.configMap)
+      console.log(process.env)
       Config.configure({ force: true });
       expect(Config.get('ENV')).toBe('PRODUCTION');
     });

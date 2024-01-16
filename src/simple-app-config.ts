@@ -35,7 +35,7 @@ export class Config {
    * The current environment. Defaults to development.
    * Set when {@link Config.determineEnvironment} is called.
    */
-  private static environment: string = Environments.Development;
+  public static environment: string = Environments.Development;
 
   /**
    * The environments of the application.
@@ -78,7 +78,7 @@ export class Config {
    * Map containing converted and expanded values from the loaded config file.
    * Populated when {@link Config.parseConfigIntoMap} is called.
    */
-  private static configMap: Map<string, unknown> = new Map();
+  public static configMap: Map<string, unknown> = new Map();
 
   /**
    * Flag indicating whether configuration has already been performed.
