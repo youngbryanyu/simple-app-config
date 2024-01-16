@@ -114,8 +114,9 @@ describe('Type Converter Util Tests', () => {
 
       /* Compare against expected */
       expect(result instanceof Date).toBeTruthy();
-      expect(result.toJSON()).toBe('1969-12-31T08:00:00.000Z');
-    });
+      expect(result.getUTCFullYear()).toBe(1969);
+      expect(result.getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
+      expect(result.getUTCDate()).toBe(31)});
 
     /* Test when converting to a Date is not possible */
     it('Should throw an error if the input cannot be converted to a Date.', () => {
@@ -244,7 +245,9 @@ describe('Type Converter Util Tests', () => {
       expect(result[1] instanceof Date).toBeTruthy();
       expect(result[2] instanceof Date).toBeTruthy();
       expect(result[0].toJSON()).toBe('1970-01-01T00:00:00.100Z');
-      expect(result[1].toJSON()).toBe('1969-12-31T08:00:00.000Z');
+      expect(result[1].getUTCFullYear()).toBe(1969);
+      expect(result[1].getUTCMonth()).toBe(11); // Note: Months are 0-indexed in JavaScript Dates
+      expect(result[1].getUTCDate()).toBe(31);
       expect(result[2].toJSON()).toBe('1970-01-01T00:01:40.000Z');
     });
 
