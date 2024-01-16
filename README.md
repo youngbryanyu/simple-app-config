@@ -237,7 +237,7 @@ This function does not return a value
 
 #### Example
 ```typescript
-import Config from 'simple-app-config';   // will automatically perfor all configuration setup upon the first import
+import Config from 'simple-app-config';   // will automatically perform all configuration setup upon the first import
 
 /* Does nothing since .configure() was already called upon import */
 Config.configure();
