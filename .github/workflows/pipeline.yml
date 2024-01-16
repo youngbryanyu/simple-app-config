@@ -5,13 +5,9 @@ on:
   push:
     branches: [ "main" ]
     paths-ignore: 
-      - '**/*.md'                         # Ignore changes on all markdown files
-      - '.github/workflows/pipeline.yml'  # Ignore changes in this specific workflow file
   pull_request: 
     branches: [ "main" ]
     paths-ignore:
-      - '**/*.md'                           # Ignore changes on all markdown files
-      - '.github/workflows/pipeline.yml'    # Ignore changes in this specific workflow file
   # Schedule pipeline to run monday midnight after sunday ends
   schedule:
     - cron: 0 0 * * MON
@@ -82,11 +78,30 @@ jobs:
     - name: Compile TypeScript into JavaScript
       run: pnpm run build
 
-  # verify new NPM version is updated
-  verify-npm-version:
-    name: Verify NPM Version Number is Updated
-    if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
+  # detect if there were code changes:
+  detect-code-changes:
+    name: Detect Code Changes
     needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      code_changes: ${{ steps.files.outputs.code_changes }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Determine Changed Files
+        id: files
+        run: |
+          if git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} | grep -qvE '(\.md$|\.github/workflows/)'
+          then
+            echo "::set-output name=code_changes::true"
+          else
+            echo "::set-output name=code_changes::false"
+          fi
+
+  # verify new NPM version is updated during push and PR. Skips version number check step if there were code changes
+  verify-npm-version:
+    name: Verify Updated NPM version
+    if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
+    needs: detect-code-changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -100,6 +115,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Check if version number is updated
+        if: needs.build-and-test.outputs.code_changes == 'true' # only make check for code changes
         id: check_version
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
@@ -109,10 +125,12 @@ jobs:
             exit 1
           fi
 
-  # publish to NPM
+  # publish to NPM if:
+  #   - It was a push
+  #   - There were code changes
   publish-npm:
     name: Publish to NPM
-    if: github.event_name == 'push' # only run this on push, not PR
+    if: github.event_name == 'push' && needs.build-and-test.outputs.code_changes == 'true' 
     needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
@@ -138,10 +156,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # Create Release on GitHub
+  # Create Release on GitHub if:
+  #   - It was a push
+  #   - There were code changes
   release:
     name: Create Release
-    if: github.event_name == 'push' # only run this on push, not PR
+    if: github.event_name == 'push' && needs.build-and-test.outputs.code_changes == 'true' 
     needs: verify-npm-version
     runs-on: ubuntu-latest
     steps:
