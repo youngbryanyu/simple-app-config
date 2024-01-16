@@ -572,7 +572,7 @@ Gets an environment variable and returns it as a `Map<K, V>`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
 - `keyType`: The type to convert each key of environment variable map to. If unspecified, it defaults to `string`.
-- `valueType`: The type to convert each value of environment variable map to. If unspecified, it defaults to `string`. You can get the valid nestable data types using the `DataTypes` enum.
+- `valueType`: The type to convert each value of environment variable map to. If unspecified, it defaults to `string`.
 
  You can get the valid nestable data types using the `DataTypes` enum:
   - `DataTypes.String`
