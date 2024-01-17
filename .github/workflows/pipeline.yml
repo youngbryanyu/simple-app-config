@@ -101,6 +101,7 @@ jobs:
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           fi
           echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES"
 
       - name: Check for non-Markdown and non-pipeline changes
         run: |
