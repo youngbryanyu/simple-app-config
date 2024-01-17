@@ -96,7 +96,7 @@ jobs:
         id: changed-files
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            CHANGED_FILES=$(git diff --name-only -r HEAD^1 HEAD)
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           else
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           fi
