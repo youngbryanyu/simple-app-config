@@ -96,15 +96,10 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v14.6
       - name: List all changed files2
+        env: 
+          TEST_ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          CHANGED_FILES=${{ steps.changed-files2.outputs.all_changed_files }}
-          echo "$CHANGED_FILES"
-          NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
-          if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
-            echo "TRUE"
-          else
-            echo "FALSE"
-          fi
+          echo "List all the files that have changed: $TEST_ALL_CHANGED_FILES"
 
           
       - name: Get changed files2
