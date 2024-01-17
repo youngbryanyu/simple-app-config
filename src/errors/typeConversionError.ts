@@ -1,7 +1,8 @@
 import { SimpleAppConfigError } from './simpleAppConfigError';
 
 /**
- * An error extending {@link SimpleAppConfigError} that should be thrown when type conversion failed.
+ * An error extending {@link SimpleAppConfigError} that should be thrown when type conversion failed to the target
+ * type.
  */
 export class TypeConversionError extends SimpleAppConfigError {
   /**
