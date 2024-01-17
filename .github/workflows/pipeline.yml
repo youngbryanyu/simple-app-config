@@ -96,9 +96,9 @@ jobs:
         id: changed-files
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-              CHANGED_FILES=$(git diff --name-only -r HEAD^1 HEAD)
+            CHANGED_FILES=$(git diff --name-only -r HEAD^1 HEAD)
           else
-              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           fi
           echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
 
@@ -106,9 +106,11 @@ jobs:
         run: |
           NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
           if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
-              echo "true" > code_changes.txt
+            echo "TRUE"
+            echo "true" > code_changes.txt
           else
-              echo "false" > code_changes.txt
+            echo "FALSE"
+            echo "false" > code_changes.txt
           fi
       
       - name: Upload code_changes.txt as an artifact
