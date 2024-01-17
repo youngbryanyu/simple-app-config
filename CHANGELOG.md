@@ -1,6 +1,9 @@
 # Changelog
 
 ## 1.0.3 - 1/16/24
+Minor fixes to code comments and markdown files.
+
+## 1.0.3 - 1/16/24
 Minor fixes to code comments.
 
 ## 1.0.2 - 1/16/24
