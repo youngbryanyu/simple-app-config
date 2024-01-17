@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.7 - 1/17/24
+Fix pipeline issue preventing proper publishing of artifact to npm.
+
 ## 1.0.6 - 1/17/24
 Update the license in package.json to MIT.
 

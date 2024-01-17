@@ -1,6 +1,6 @@
 {
   "name": "simple-app-config",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A simple configuration manager for different environments",
   "license": "MIT",
   "repository": {
