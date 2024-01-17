@@ -89,20 +89,17 @@ jobs:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v14.6
+        uses: tj-actions/changed-files@v41.1.1
       - name: Set CHANGED_FILES as environment variable
         env: 
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: echo "CHANGED_FILES=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_ENV
       - name: Check for non-Markdown and non-pipeline changes
         run: |
-          echo "changed: $CHANGED_FILES"
           NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
           if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
-            echo "TRUE"
             echo "true" > code_changes.txt
           else
-            echo "FALSE"
             echo "false" > code_changes.txt
           fi
       - name: Upload code_changes.txt as an artifact
