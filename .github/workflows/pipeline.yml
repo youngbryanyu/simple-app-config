@@ -113,7 +113,6 @@ jobs:
             # Other types of files have changed as well
             echo "true" > code_changes.txt
           fi
-
       - name: Upload code_changes.txt as an artifact
         uses: actions/upload-artifact@v4
         with:
