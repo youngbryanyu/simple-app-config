@@ -95,29 +95,14 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v14.6
-      - name: List all changed files2
+      - name: Set CHANGED_FILES as environment variable
         env: 
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: |
-          echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "changed_files=$CHANGED_FILES"
-          echo "$CHANGED_FILES"
-          echo 
-
-          
-      - name: Get changed files2
-        id: changed-files2
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-          else
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-          fi
-          echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "$CHANGED_FILES"
+        run: echo "CHANGED_FILES=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_ENV
 
       - name: Check for non-Markdown and non-pipeline changes
         run: |
+          echo "changed: $CHANGED_FILES"
           NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
           if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
             echo "TRUE"
