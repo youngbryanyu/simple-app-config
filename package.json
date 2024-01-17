@@ -1,11 +1,11 @@
 {
   "name": "simple-app-config",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A simple configuration manager for different environments",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/youngbryanyu/simple-app-config"
+    "url": "git+https://github.com/youngbryanyu/simple-app-config.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
