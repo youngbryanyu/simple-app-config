@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.6 - 1/17/24
+Update the license in package.json to MIT.
+
 ## 1.0.5 - 1/17/24
 Minor fixes to CONTRIBUTING.md to address new pipeline rule changes.
 
