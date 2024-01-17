@@ -16,6 +16,7 @@ on:
     - cron: 0 0 * * MON
   # Enable manual runs of workflow
   workflow_dispatch:
+  
 
 # Workflow stages
 jobs:      
@@ -85,47 +86,39 @@ jobs:
   #   - File artifact
   #   - Environment variable (only available within the scope of this job, thus need artifact to pass to other jobs)
   detect-code-changes:
-    name: Detect Code Changes
-    needs: build
     runs-on: ubuntu-latest
-    outputs:
-      code_changes: ${{ steps.files.outputs.code_changes }}
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # everything
-    - name: Fetch branches
-      if: github.event_name == 'pull_request'
-      run: |
-        git fetch origin ${{ github.base_ref }}
-        git fetch origin ${{ github.head_ref }}
-    - name: Determine Changed Files and Create Artifact
-      id: files
-      run: |
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          # For pull_request event
-          CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }})
-        else
-          # For push event
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
-        fi
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetches all history
+      - name: Get all changed files
+        id: all-changed-files
+        uses: tj-actions/changed-files@v41.1.1
+      - name: Get Markdown and pipeline file changes
+        id: specific-changed-files
+        uses: tj-actions/changed-files@v41.1.1
+        with:
+          files: |
+            **/*.md
+            .github/workflows/*
+      - name: Determine code change status
+        id: code-change-status
+        run: |
+          ALL_CHANGED_FILES="${{ steps.all-changed-files.outputs.all_changed_files }}"
+          SPECIFIC_CHANGED_FILES="${{ steps.specific-changed-files.outputs.all_changed_files }}"
+          if [[ "$ALL_CHANGED_FILES" == "$SPECIFIC_CHANGED_FILES" ]]; then
+            # Only Markdown and pipeline files have changed
+            echo "false" > code_changes.txt
+          else
+            # Other types of files have changed as well
+            echo "true" > code_changes.txt
+          fi
 
-        if echo "$CHANGED_FILES" | grep -qvE '(\.md$|\.github/workflows/)'; then
-          echo "true" > code_changes.txt
-          echo "CODE_CHANGES=true" >> $GITHUB_ENV
-        else
-          echo "false" > code_changes.txt
-          echo "CODE_CHANGES=false" >> $GITHUB_ENV
-        fi
-    - uses: actions/upload-artifact@v4
-      with:
-        name: code-changes-artifact
-        path: code_changes.txt
-    - name: Debug info
-      run: |
-        echo "Base ref: ${{ github.base_ref }}"
-        echo "Head ref: ${{ github.head_ref }}"
-        echo "Changed Files: $CHANGED_FILES"
+      - name: Upload code_changes.txt as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-changes-artifact
+          path: code_changes.txt
 
   # Verify new NPM version is updated during push and PR. 
   # Skips version number check step if there were code changes
