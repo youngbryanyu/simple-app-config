@@ -48,7 +48,7 @@ import Config from 'simple-app-config';
 
 If you're using CommonJS module instead of ES modules, you can import use the `require` keyword:
 ```javascript
-const Config = require('simple-app-config`);
+const Config = require('simple-app-config');
 ```
 
 See the [Config API](#config-api) and [EnvParser API](#envparser-api) sections for how to use the APIs.
@@ -169,9 +169,9 @@ node dist/index.js --env-names='alpha,beta,gamma,prod'
 ```
 
 ### ---env-dir
-The `--env-dir` command line argument can be set to specify a custom path to the `.env` file. This will override any custom path set by the `ENV_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
+The `--env-dir` command line argument can be set to specify a custom directory for the `.env` files. This will override any path set by the `ENV_DIR` environment variable. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
 
-If the path specified by `--env-path` is invalid, the module will try to load any path set by `ENV_PATH`. If the path specified by `ENV_PATH` is invalid or isn't set then the default path to the directory containing the .env files will remain the current working directory.
+If the path specified by `--env-dir` is invalid, the module will try to load any path set by `ENV_DIR`. If the path specified by `ENV_DIR` is invalid or isn't set then the default path to the directory containing the .env files will remain the current working directory.
 
 ```bash
 node dist/index.js --env-dir=test/envFiles
@@ -205,7 +205,7 @@ The `NODE_ENV` environment variable is standard and used to set the current envi
 The `ENV_NAMES` environment variable can be used to specify custom environment names that your application uses for different environments (e.g. alpha, beta, etc). If you specify custom environment names, your  `.env` files must follow the following naming convention of `.env.<custom-environment-name>`, and your configuration files must follow the naming convention of `<custom-environment-name>.json`.  Environment names are non-case-sensitive, so `DEVELOPMENT` and `development` are treated as the same environment.
 
 ### ENV_DIR
-The `ENV_DIR` environment variable can be set to specify a custom path to the `.env` file. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
+The `ENV_DIR` environment variable can be set to specify a custom directory for the `.env` file. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory.
 
 If the path specified by `ENV_DIR` is invalid, then the default path to the directory containing the .env files will remain the current working directory.
 
@@ -234,10 +234,10 @@ See the [command line arguments](#command-line-arguments) and [environment varia
 - `configOptions?`: An optional configuration object
   - `force?`: Optional `boolean` indicating whether or not to force simple-app-config to re-configure
 
-#### Return Value
+#### Returns
 None.
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if your configuration file references an invalid environment variable.
 - `UnsupportedTypeError`: Thrown if you attempt to convert an environment variable referenced in your configuration file to a non-supported type.
 - `TypeConversionError`: Thrown if you attempt converting an environment variable that is formatted badly and/or cannot be converted to the desired target type.
@@ -261,10 +261,10 @@ Retrieves a value loaded from the configuration file and returns it as the desir
 #### Parameters
 - `key`: The key of the configuration variable to retrieve
 
-#### Return Value
+#### Returns
 Returns a value of generic type `T` that is determined by what type the value was converted to when the configuration file was loaded.
 
-#### Errors Thrown
+#### Throws
 - `UndefinedConfigValueError`: Thrown if the input `key` is invalid (the configuration value doesn't exist).
 
 #### Example
@@ -317,10 +317,10 @@ Clears the environment variable cache and updates the cache with the most up-to-
 #### Parameters
 None.
 
-#### Return Value
+#### Returns
 None.
 
-#### Errors Thrown
+#### Throws
 None.
 
 #### Example
@@ -336,10 +336,10 @@ Clears the environment variable cache.
 #### Parameters
 None.
 
-#### Return Value
+#### Returns
 None.
 
-#### Errors Thrown
+#### Throws
 None.
 
 #### Example
@@ -356,10 +356,10 @@ Updates the value of an environment variable and writes-through the value to the
 - `key`: A `string` representing the name of the environment variable.
 - `value` The new `string` value to set the environment variable to.
 
-#### Return Value
+#### Returns
 None.
 
-#### Errors Thrown
+#### Throws
 None.
 
 #### Example
@@ -375,10 +375,10 @@ Deletes an environment variable and removes the value from the cache.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 None.
 
-#### Errors Thrown
+#### Throws
 None.
 
 #### Example
@@ -394,10 +394,10 @@ Gets an environment variable and returns it as a `string`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `string`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 
 #### Example
@@ -413,10 +413,10 @@ Gets an environment variable and returns it as a `number`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `number`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to a `number`.
 
@@ -433,10 +433,10 @@ Gets an environment variable and returns it as a `boolean`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `boolean`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to a `boolean`.
 
@@ -453,10 +453,10 @@ Gets an environment variable and returns it as a `Date`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `Date`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to a `Date`.
 
@@ -473,10 +473,10 @@ Gets an environment variable and returns it as a `RegExp`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `RegExp`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to a `RegExp`.
 
@@ -493,10 +493,10 @@ Gets an environment variable and returns it as an `object`.
 #### Parameters
 - `key`: A `string` representing the name of the environment variable. This should be a valid JSON string.
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `object`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to an `object`.
 
@@ -523,10 +523,10 @@ You can get the valid nestable data types using the `DataTypes` enum:
   - `DataTypes.RegExp`
   - `DataTypes.Object`
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `Array<T>`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `type` field, and it is not supported.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
@@ -553,10 +553,10 @@ You can get the valid nestable data types using the `DataTypes` enum:
   - `DataTypes.RegExp`
   - `DataTypes.Object`
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `Set<T>`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `type` field, and it is not supported.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
@@ -584,10 +584,10 @@ Gets an environment variable and returns it as a `Map<K, V>`.
   - `DataTypes.RegExp`
   - `DataTypes.Object`
 
-#### Return Value
+#### Returns
 The value of the environment variable as a `Map<K, V>`. 
 
-#### Errors Thrown
+#### Throws
 - `UndefinedEnvVarError`: Thrown if the environment variable is undefined.
 - `UnsupportedTypeError`: Thrown if you pass in a `string` instead of using one of the `DataType` enums into the `keyType` or `valueType` fields, and it is not supported.
 - `TypeConversionError`: Thrown if the environment variable cannot be converted to the target type.
