@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.8 - 1/17/24
+Fix package.json
+
 ## 1.0.7 - 1/17/24
 Fix pipeline issue preventing proper publishing of artifact to npm.
 
