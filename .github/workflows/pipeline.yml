@@ -1,10 +1,5 @@
 name: CI/CD Pipeline
 
-# Currenlty used environment variables:
-# - CODE_CHANGES: whether there were code changes --> this is written into an artifact to share between jobs
-# - PACKAGE_VERSION: version of the package --> local in publish to NPM job
-# - RELEASE_VERSION: release version and tag. Should be same as PACKAGE_VERSION. --> local in create release job
-
 # Workflow triggers
 on:
   push:
@@ -16,7 +11,6 @@ on:
     - cron: 0 0 * * MON
   # Enable manual runs of workflow
   workflow_dispatch:
-  
 
 # Workflow stages
 jobs:      
@@ -99,7 +93,6 @@ jobs:
         env: 
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: echo "CHANGED_FILES=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_ENV
-
       - name: Check for non-Markdown and non-pipeline changes
         run: |
           echo "changed: $CHANGED_FILES"
@@ -111,7 +104,6 @@ jobs:
             echo "FALSE"
             echo "false" > code_changes.txt
           fi
-      
       - name: Upload code_changes.txt as an artifact
         uses: actions/upload-artifact@v4
         with:
