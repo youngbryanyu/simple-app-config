@@ -232,7 +232,7 @@ See the [command line arguments](#command-line-arguments) and [environment varia
 
 #### Parameters
 - `configOptions?`: An optional configuration object
-  - `force?`: optional `boolean` indicating whether or not to force simple-app-config to re-configure
+  - `force?`: Optional `boolean` indicating whether or not to force simple-app-config to re-configure
 
 #### Return Value
 None.
