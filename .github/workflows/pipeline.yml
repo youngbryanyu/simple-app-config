@@ -163,7 +163,7 @@ jobs:
           name: changelog-changes-artifact
       - name: Read Code Changes Flag From Artifact
         run: |
-          echo "CHANGELOG_CHANGES=$(cat changelog_updated.txt)" >> $GITHUB_ENV
+          echo "CHANGELOG_UPDATED=$(cat changelog_updated.txt)" >> $GITHUB_ENV
       - name: Check if changelog is updated
         if: env.CODE_CHANGES == 'true' && env.CHANGELOG_UPDATED != 'true'
         run: |
