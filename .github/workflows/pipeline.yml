@@ -87,6 +87,7 @@ jobs:
   #   - Environment variable (only available within the scope of this job, thus need artifact to pass to other jobs)
   detect-code-changes:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v4
         with:
