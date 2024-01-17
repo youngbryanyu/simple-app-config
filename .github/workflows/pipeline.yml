@@ -84,6 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # Get changed files
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -94,6 +95,7 @@ jobs:
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: echo "CHANGED_FILES=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_ENV
+      # Get non .md and non-pipeline changes
       - name: Check for non-Markdown and non-pipeline changes
         run: |
           NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | tr ' ' '\n' | grep -vE '(\.md$|\.github/workflows/)' || echo '')
@@ -107,6 +109,19 @@ jobs:
         with:
           name: code-changes-artifact
           path: code_changes.txt
+      # Check if CHANGELOG.md is updated and push to artifact
+      - name: Check if CHANGELOG.md is updated
+        run: |
+          if echo "$CHANGED_FILES" | tr ' ' '\n' | grep -q 'CHANGELOG.md'; then
+            echo "true" > changelog_updated.txt
+          else
+            echo "false" > changelog_updated.txt
+          fi
+      - name: Upload changelog_updated.txt as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog-changes-artifact
+          path: changelog_updated.txt
 
   # Verify new NPM version is updated during push and PR.
   # Skips version number check step if there were code changes
@@ -124,17 +139,17 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org/'
+      - name: Install dependencies
+        run: npm install
+      # Check if there were version number updates if code changed
       - uses: actions/download-artifact@v4
         with:
-          name: code-changes-artifact # get artifact containing whether there were code changes
+          name: code-changes-artifact 
       - name: Read Code Changes Flag From Artifact
         run: |
           echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
-      - name: Install dependencies
-        run: npm install
-      - name: Check if version number is updated  # only run if there were code changes
+      - name: Check if version number is updated  
         if: env.CODE_CHANGES == 'true'
-        id: check_version
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
@@ -142,7 +157,19 @@ jobs:
             echo "Version in package.json is already published. Exiting..."
             exit 1
           fi
-
+      # Check if there were changelog changes if code changed
+      - uses: actions/download-artifact@v4
+        with:
+          name: changelog-changes-artifact
+      - name: Read Code Changes Flag From Artifact
+        run: |
+          echo "CHANGELOG_CHANGES=$(cat changelog_updated.txt)" >> $GITHUB_ENV
+      - name: Check if changelog is updated
+        if: env.CODE_CHANGES == 'true' && env.CHANGELOG_UPDATED != 'true'
+        run: |
+          echo "Failure: Changelog must be updated for new releases."
+          exit 1
+      
   # Publish to NPM if the event was 'push'.
   # Runs the publish to NPM step only if there were code changes
   publish-npm:
