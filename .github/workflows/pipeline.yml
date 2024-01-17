@@ -91,37 +91,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetches all history
-      - name: Get all changed files
-        id: all-changed-files
-        uses: tj-actions/changed-files@v41.1.1
-      - name: Get Markdown and pipeline file changes
-        id: specific-changed-files
-        uses: tj-actions/changed-files@v41.1.1
-        with:
-          files: |
-            **/*.md
-            .github/workflows/*
-        
-      - name: Determine code change status
-        id: code-change-status
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }} # only fetch depth of 2 on PR
+      - name: Get changed files
+        id: changed-files
         run: |
-          ALL_CHANGED_FILES="${{ steps.all-changed-files.outputs.all_changed_files }}"
-          SPECIFIC_CHANGED_FILES="${{ steps.specific-changed-files.outputs.all_changed_files }}"
-          if [[ "$ALL_CHANGED_FILES" == "$SPECIFIC_CHANGED_FILES" ]]; then
-            # Only Markdown and pipeline files have changed
-            echo "false" > code_changes.txt
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+              CHANGED_FILES=$(git diff --name-only -r HEAD^1 HEAD)
           else
-            # Other types of files have changed as well
-            echo "true" > code_changes.txt
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
           fi
-      - name: test
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all-changed-files }}
-          SPECIFIC_CHANGED_FILES: ${{ steps.changed-files.outputs.specific-changed-files }}
+          echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+
+      - name: Check for non-Markdown and non-pipeline changes
         run: |
-          echo "$ALL_CHANGED_FILES"
-          echo "$SPECIFIC_CHANGED_FILES"
+          NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
+          if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
+              echo "true" > code_changes.txt
+          else
+              echo "false" > code_changes.txt
+          fi
+      
       - name: Upload code_changes.txt as an artifact
         uses: actions/upload-artifact@v4
         with:
