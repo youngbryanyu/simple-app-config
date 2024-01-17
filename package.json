@@ -1,6 +1,6 @@
 {
   "name": "simple-app-config",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple configuration manager for different environments",
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
     "javascript",
     "nodejs",
     "typescript",
+    "type conversion",
     "JSON"
   ],
   "author": "Young Yu",
