@@ -131,7 +131,7 @@ SET = '["one", "two", "three"]'
 MAP = '{"dog": "3", "cat": "4"}'
 ```
 
-See the [Config API](#config) for how to retrieve values from the configuration files.
+See the [Config API](#config-api) for how to retrieve values from the configuration files.
 
 ## Command Line Arguments
 Command line arguments are optional and can be specified to override and set custom settings.
