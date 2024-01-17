@@ -34,7 +34,7 @@ We are using GitHub Actions' Workflow pipelines for automation. The following ch
 - Style and Lint checks
 - Unit Tests
 - Successful build
-- Updated NPM Version Number (this will automatically pass if only markdown or workflow files were changed)
+- Updated NPM Version Number and Updated Changelog (this will automatically pass if only markdown or workflow files were changed)
 
 Upon pushing your code the following all above checks will run again in addition to the actions below:
 - Publish new package version to NPM
@@ -44,8 +44,8 @@ The overall pipeline workflow is:
 1. Style and lint checks
 2. Unit tests
 3. Perform a build
-4. Detect if there were code changes (only on push and pull).
-5. Check if the NPM version number was updated (only on push and pull). The actual step within the workflow that performs this is only run if there were code changes detected.
+4. Detect if there were code changes, and if the changelog was updated (only on push and pull).
+5. Check if the NPM version number was updated and if the changelog was updated (only on push and pull). The actual step within the workflow that performs this is only run if there were code changes detected.
 6. Publish new package version to NPM (only on push). The actual step within the workflow that performs this is only run if there were code changes detected.
 7. Create release and tag on GitHub (only on push). The actual step within the workflow that performs this is only run if there were code changes detected.
 
