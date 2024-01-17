@@ -1,6 +1,9 @@
 # Changelog
 
-## 1.0.4 - 1/16/24
+## 1.0.5 - 1/17/24
+Minor fixes to CONTRIBUTING.md to address new pipeline rule changes.
+
+## 1.0.4 - 1/17/24
 Minor fixes to code comments and markdown files.
 
 ## 1.0.3 - 1/16/24
