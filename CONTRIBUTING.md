@@ -6,8 +6,9 @@
 3. Create a new local feature branch using `git checkout -b <your-feature-branch-name>`
 4. Commit your changes using `git commit -m '<commit message>'`
 5. Test your changes by running the test script in `package.json` using `pnpm run test`
-6. Push to a new feature branch using `git push origin <your-feature-branch-name>`
-7. [Create a pull request](https://help.github.com/articles/creating-a-pull-request). Your PR will need to pass all checks in the CI/CD pipeline to be able to merge.
+6. If you are making code changes, make sure to update the [changelog](#./CHANGELOG.md), and to update the package version number in [package.json](#./package.json)
+7. Push to a new feature branch using `git push origin <your-feature-branch-name>`
+8. [Create a pull request](https://help.github.com/articles/creating-a-pull-request). Your PR will need to pass all checks in the CI/CD pipeline to be able to merge.
 
 ## Testing
 We are using [jest](https://jestjs.io/) to run unit tests. Run the test script using
