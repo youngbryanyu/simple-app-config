@@ -167,8 +167,11 @@ jobs:
       - name: Check if changelog is updated
         if: env.CODE_CHANGES == 'true' && env.CHANGELOG_UPDATED != 'true'
         run: |
-          echo "Failure: Changelog must be updated for new releases."
-          exit 1
+          if [ "$CHANGELOG_UPDATED" != "true" ]; then
+            echo "Failure: Changelog must be updated for new releases."
+            exit 1
+          fi
+
       
   # Publish to NPM if the event was 'push'.
   # Runs the publish to NPM step only if there were code changes
