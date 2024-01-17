@@ -97,9 +97,12 @@ jobs:
         uses: tj-actions/changed-files@v14.6
       - name: List all changed files2
         env: 
-          TEST_ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
-          echo "List all the files that have changed: $TEST_ALL_CHANGED_FILES"
+          echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "changed_files=$CHANGED_FILES"
+          echo "$CHANGED_FILES"
+          echo 
 
           
       - name: Get changed files2
