@@ -126,7 +126,7 @@ jobs:
   # Verify new NPM version is updated during push and PR.
   # Skips version number check step if there were code changes
   verify-npm-version:
-    name: Verify Updated NPM version (if code changed)
+    name: Verify Updated Version and Changelog (if code changed)
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     needs: detect-code-changes
     runs-on: ubuntu-latest
