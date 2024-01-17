@@ -40,7 +40,7 @@ export enum Environments {
 }
 
 /**
- * Command line arguments that can be specified when the application starts
+ * Command line arguments that can be specified when starting your application
  */
 export enum CommandLineArgs {
   Env = '--env=' /* The environment */,
