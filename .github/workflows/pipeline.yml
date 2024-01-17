@@ -80,6 +80,7 @@ jobs:
   #   - File artifact
   #   - Environment variable (only available within the scope of this job, thus need artifact to pass to other jobs)
   detect-code-changes:
+    name: Detect Code Changes
     runs-on: ubuntu-latest
     needs: build
     steps:
