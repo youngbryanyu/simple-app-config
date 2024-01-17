@@ -76,11 +76,12 @@ jobs:
     - name: Compile TypeScript into JavaScript
       run: pnpm run build
 
-  # Detect if there were code changes and save the result to:
+  # Detect if there were code changes on PR and push and save the result to:
   #   - File artifact
   #   - Environment variable (only available within the scope of this job, thus need artifact to pass to other jobs)
   detect-code-changes:
     name: Detect Code Changes
+    if: github.event_name == 'push' || github.event_name == 'pull_request' 
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -112,7 +113,7 @@ jobs:
   # Skips version number check step if there were code changes
   verify-npm-version:
     name: Verify Updated NPM version (if code changed)
-    if: github.event_name == 'push' || github.event_name == 'pull_request' # run version checks only on PR and push
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     needs: detect-code-changes
     runs-on: ubuntu-latest
     steps:
