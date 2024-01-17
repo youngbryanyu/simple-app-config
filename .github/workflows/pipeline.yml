@@ -96,7 +96,7 @@ jobs:
         run: echo "CHANGED_FILES=${{ steps.changed-files.outputs.all_changed_files }}" >> $GITHUB_ENV
       - name: Check for non-Markdown and non-pipeline changes
         run: |
-          NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | grep -vE '(\.md$|\.github/workflows/)' || echo '')
+          NON_MD_PIPELINE_CHANGES=$(echo "$CHANGED_FILES" | tr ' ' '\n' | grep -vE '(\.md$|\.github/workflows/)' || echo '')
           if [ -n "$NON_MD_PIPELINE_CHANGES" ]; then
             echo "true" > code_changes.txt
           else
