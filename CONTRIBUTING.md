@@ -49,4 +49,4 @@ The overall pipeline workflow is:
 6. Publish new package version to NPM (only on push). The actual step within the workflow that performs this is only run if there were code changes detected.
 7. Create release and tag on GitHub (only on push). The actual step within the workflow that performs this is only run if there were code changes detected.
 
-> :warning: Thus, markdown file changes will need to be manually published to NPM. The release and tags for such changes on GitHub will need to be manually created as well. 
+> :warning: Thus, markdown file changes will need to be manually published to NPM. The release and tags for such changes on GitHub will need to be manually created as well. Code changes means there was a change in a non `.md` file and not in the `./github/` directory.
