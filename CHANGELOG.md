@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0 - 1/17/24
+Create input validation check for paths, where the input must not be outside the root dir of the project.
+
 ## 1.0.8 - 1/17/24
 Fix package.json
 

@@ -179,6 +179,29 @@ describe('simple-app-config Tests', () => {
       expect(numberVal).toBe(3);
     });
 
+    /* Test unsafe .env path */
+    it('should not load the .env file if the path is unsafe', () => {
+      /* Set up */
+      process.env[EnvArgs.ConfigPath] = `${__dirname}/config/default.json`;
+      process.env[EnvArgs.EnvPath] = `../../../..`;
+      Config.configure({ force: true });
+
+      /* Compare against expected */
+      const env = Config.get('ENV');
+      expect(env).toBe('default');
+    });
+
+    /* Test unsafe config path */
+    it('should not load the .env file if the path is unsafe', () => {
+      /* Set up */
+      process.env[EnvArgs.ConfigPath] = `../../../..`;
+      process.env[EnvArgs.EnvPath] = `${__dirname}/config/.env.testing`;
+      Config.configure({ force: true });
+
+      /* Compare against expected */
+      expect(Config.get('ENV')).toBe('default');
+    });
+
     /* Test configuring twice without forcing */
     it('should do nothing if configure is called a second time.', () => {
       /* Set up spies */
