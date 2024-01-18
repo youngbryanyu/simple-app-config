@@ -1,4 +1,9 @@
 # simple-app-config
+![CI/CD Pipeline](https://github.com/youngbryanyu/simple-app-config/actions/workflows/pipeline.yml/badge.svg)
+![Node.js Version](https://img.shields.io/npm/v/simple-app-config.svg)
+![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg)
+![JavaScript compatible](https://img.shields.io/badge/javascript-compatible-brightgreen.svg)
+
 A simple configuration manager for Node.js applications. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
 ## Navigation
