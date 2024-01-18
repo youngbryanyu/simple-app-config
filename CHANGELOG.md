@@ -1,6 +1,9 @@
 # Changelog
 
-## 1.1.1 - 1/17/24
+## 1.1.3 - 1/17/24
+Update README.md to notify users about input path validation.
+
+## 1.1.2 - 1/17/24
 Update pipeline with fixed tag and release naming.
 
 ## 1.1.1 - 1/17/24
