@@ -1,4 +1,8 @@
 # Changelog
+
+## 1.1.1 - 1/17/24
+Update pipeline with fixed tag and release naming.
+
 ## 1.1.1 - 1/17/24
 Update pipeline to not use deprecated release action.
 

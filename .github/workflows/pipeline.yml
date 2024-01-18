@@ -236,9 +236,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$RELEASE_VERSION" \
+          gh release create "v$RELEASE_VERSION" \
           --repo="$GITHUB_REPOSITORY" \
-          --title="${GITHUB_REPOSITORY#*/} ${RELEASE_VERSION#v}" \
+          --title="v${RELEASE_VERSION#v}" \
           --generate-notes
 
 
