@@ -148,11 +148,11 @@ jobs:
       # Check if there were version number updates if code changed
       - uses: actions/download-artifact@v4
         with:
-          name: code-changes-artifact 
+          name: code-changes-artifact
       - name: Read Code Changes Flag From Artifact
         run: |
           echo "CODE_CHANGES=$(cat code_changes.txt)" >> $GITHUB_ENV
-      - name: Check if version number is updated  
+      - name: Check if version number is updated
         if: env.CODE_CHANGES == 'true'
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0)
@@ -176,7 +176,7 @@ jobs:
             exit 1
           fi
 
-      
+
   # Publish to NPM if the event was 'push'.
   # Runs the publish to NPM step only if there were code changes
   publish-npm:
@@ -233,12 +233,12 @@ jobs:
         run: echo "RELEASE_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Release # only run if there were code changes
         if: env.CODE_CHANGES == 'true'
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: Release ${{ env.RELEASE_VERSION }}
-          draft: false
-          prerelease: false
+        run: |
+          gh release create "$RELEASE_VERSION" \
+          --repo="$GITHUB_REPOSITORY" \
+          --title="${GITHUB_REPOSITORY#*/} ${RELEASE_VERSION#v}" \
+          --generate-notes
+
 

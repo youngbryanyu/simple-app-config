@@ -1,4 +1,6 @@
 # Changelog
+## 1.1.1 - 1/17/24
+Update pipeline to not use deprecated release action.
 
 ## 1.1.0 - 1/17/24
 Create input validation check for paths, where the input must not be outside the root dir of the project.
