@@ -3,7 +3,7 @@
 ![Node.js Version](https://img.shields.io/npm/v/simple-app-config.svg)
 ![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg)
 ![JavaScript compatible](https://img.shields.io/badge/javascript-compatible-brightgreen.svg)
-![codecov.io](https://codecov.io/github/youngbryanyu/simple-app-config/coverage.svg?branch=main)]
+![codecov.io](https://codecov.io/github/youngbryanyu/simple-app-config/coverage.svg?branch=main)
 
 A simple configuration manager for Node.js applications. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
