@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.4 - 1/17/24
+Minor change to where resetting dotenv fields is called.
+
 ## 1.1.3 - 1/17/24
 Update README.md to notify users about input path validation.
 

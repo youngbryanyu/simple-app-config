@@ -290,13 +290,9 @@ export class Config {
    * - Environment variables
    * - The path corresponding to the environment
    *
-   * If the path specified in each of the above doesn't exist, it will try the next highest priority value. Clears previously
-   * loaded values from a .env file
+   * If the path specified in each of the above doesn't exist, it will try the next highest priority value.
    */
   private static findEnvFile(): string | undefined {
-    /* Reset previously set dotenv values */
-    Config.resetDotEnv();
-
     /* Load path specified by command line argument if it exists */
     for (const arg of process.argv) {
       if (arg.startsWith(CommandLineArgs.EnvPath)) {
@@ -332,9 +328,12 @@ export class Config {
   }
 
   /**
-   * Loads the .env file if it has been found and set.
+   * Loads the .env file if it has been found and set. Clears previously loaded values from a .env file
    */
   private static loadEnvFile(path: string | undefined): void {
+    /* Reset previously set dotenv values */
+    Config.resetDotEnv();
+
     if (path !== undefined) {
       dotenv.config({ path: path });
       Config.prevDotenvValues = dotenv.parse(fs.readFileSync(path)); /* Set prev dotenv values */
