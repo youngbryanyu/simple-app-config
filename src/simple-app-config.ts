@@ -14,6 +14,7 @@ import { UnsupportedTypeError } from './errors/unsupportedTypeError';
 import { UndefinedConfigValueError } from './errors/undefinedConfigValueError';
 import EnvParser from './utils/envParser';
 import StringUtil from './utils/stringUtil';
+import appRootPath from 'app-root-path';
 
 /**
  * Customization options when running {@link Config.configure}
@@ -342,12 +343,30 @@ export class Config {
 
   /**
    * Checks if a .env file is valid. A .env file is valid if all the below are true:
+   * - It is a safe path, meaning its prefix is the root of the project
    * - It exists
    * @param path The path of the .env file to check.
    * @returns A boolean indicating whether the .env file is valid.
    */
   private static isValidEnvFile(path: string): boolean {
+    /* Return false if path is safe */
+    if (!Config.isSafePath(path)) {
+      return false;
+    }
+
+    /* Return whether the path exists */
     return fs.existsSync(path);
+  }
+
+  /**
+   * Returns whether the path is safe. A path is safe if:
+   * - Its prefix begins with the absolute path to the root of the project
+   * @param path
+   */
+  private static isSafePath(filePath: string): boolean {
+    const root = appRootPath.path;
+    const resolvedPath = path.resolve(filePath);
+    return resolvedPath.startsWith(root);
   }
 
   /**
@@ -418,6 +437,7 @@ export class Config {
 
   /**
    * Checks if a config file is valid. A config file is valid if all the below are true:
+   * - It is a safe path, meaning its prefix is the root of the project
    * - It exists
    * - It isn't a directory
    * - It matches a valid file extension
@@ -425,6 +445,11 @@ export class Config {
    * @returns A boolean indicating whether the config file is valid.
    */
   private static isValidConfigFile(filePath: string): boolean {
+    /* Check if path is safe */
+    if (!Config.isSafePath(filePath)) {
+      return false;
+    }
+
     /* Return false if the path doesn't exist */
     if (!fs.existsSync(filePath)) {
       return false;

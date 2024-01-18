@@ -1,6 +1,6 @@
 {
   "name": "simple-app-config",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "A simple configuration manager for different environments",
   "license": "MIT",
   "repository": {
@@ -54,6 +54,7 @@
   ],
   "author": "Young Yu",
   "dependencies": {
+    "app-root-path": "^3.1.0",
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
