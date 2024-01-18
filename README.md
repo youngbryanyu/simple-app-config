@@ -57,13 +57,13 @@ If you're using CommonJS module instead of ES modules, you can import use the `r
 const Config = require('simple-app-config');
 ```
 
-See the [Config API](#config-api) and [EnvParser API](#envparser-api) sections for how to use the APIs.
+See the [Usage](#usage) for how to set up your `.env` and configuration files. See [Config API](#config-api) and [EnvParser API](#envparser-api) sections for how to use the APIs.
 
 > :warning: The naming of the files and directories matter, so make sure you name them like specified in the setup instructions. If you need more flexibility with the setup, see the [command line arguments](#command-line-arguments) and [environment variables](#special-environment-variables) that can be set to customize your setup. You don't need to have all of the environments above, and thus won't necessarily need to create files for all of the environments, but we highly recommend it. You don't necessarily need a .env file for the configuration file of the same environment, but if you reference any environment variables in your configuration file, you will need to set them elsewhere (e.g. through your Docker container).
 
 ## Usage
 ### Environment Variables and .env Files
-All environment variables will be loaded into an in-memory cache immediately when the module is loaded. Environment variables from `.env` files using the [dotenv](https://www.npmjs.com/package/dotenv) library. Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes directly into your configuration files, or in your code through the [EnvParser API](#envparser) if you prefer working directly with environment variables. You should be aware of how to represent common data types within your environment variables:
+All environment variables will be loaded into an in-memory cache immediately when the module is loaded. Environment variables from `.env` files using the [dotenv](https://www.npmjs.com/package/dotenv) library. Within environment variables, everything is represented as a string. However, this module provides the ability to convert those strings directly to common datatypes directly into your configuration files, or in your code through the [EnvParser API](#envparser-api) if you prefer working directly with environment variables. You should be aware of how to represent common data types within your environment variables:
 - The datatypes `string`, `number`, `boolean`, `Date`, and `RegExp` should be represented normally as strings. 
 - Nested datatypes like `object`, `Array`, `Set`, and `Map`  should be represented as JSON strings. Maps and JSON objects are both represented the same way with curly braces as nested JSON structures, but distinction between the two is specified during type conversion. Square brackets are used to represent both sets and arrays, but the distinction is specified during type conversion.
 
