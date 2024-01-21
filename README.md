@@ -149,7 +149,7 @@ The `--config-dir` command line argument can be set to specify a custom path to 
 
 If the path specified by `--config-dir` is invalid, the module will try to load any path set by `CONFIG_DIR`. If the path specified by `CONFIG_DIR` doesn't or isn't set then the default path to the directory containing the `/config` directory will remain the current working directory.
 
-If the target config file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target config file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ```bash
 node dist/index.js --config-dir=test/configFiles
@@ -160,7 +160,7 @@ The `--config-path` command line argument can be set to specify a custom path to
 
 If the path specified by `--config-path` is invalid, the module will try to load any path set by `CONFIG_PATH`. If `CONFIG_PATH` is invalid or isn't set, the module will attempt to search the config directory to find the config file matching the environment.
 
-If the target config file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target config file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ```bash
 node dist/index.js --config-path=test/config.json
@@ -184,7 +184,7 @@ The `--env-dir` command line argument can be set to specify a custom directory f
 
 If the path specified by `--env-dir` is invalid, the module will try to load any path set by `ENV_DIR`. If the path specified by `ENV_DIR` is invalid or isn't set then the default path to the directory containing the .env files will remain the current working directory.
 
-If the target `.env` file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target `.env` file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ```bash
 node dist/index.js --env-dir=test/envFiles
@@ -195,7 +195,7 @@ The `--env-path` command line argument can be set to specify a custom path to th
 
 If the path specified by `--env-path` is invalid, the module will try to load any path set by `ENV_PATH`. If `ENV_PATH` is invalid or isn't set, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
-If the target `.env` file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target `.env` file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ```bash
 node dist/index.js --env-path=test/.env.development
@@ -209,14 +209,14 @@ These special environment variables are optional and can be specified to overrid
 ### CONFIG_DIR
 The `CONFIG_DIR` environment variable can be set to specify a custom path to the `/config` directory. This can be either an absolute path or a relative path. If it is a relative path, it will be relative to the current working directory. If the path specified by `CONFIG_DIR` is invalid, then the default path to the directory containing the `/config` directory will remain the current working directory.
 
-If the target config file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target config file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ### CONFIG_PATH
 The `CONFIG_PATH` environment variable can be set to specify a custom path to the configuration file to use. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--config-dir` command line argument or `CONFIG_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
 If the path specified by `CONFIG_PATH` is invalid, the module will attempt to search the `/config` directory to find the configuration file matching the environment.
 
-If the target config file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target config file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ### NODE_ENV
 The `NODE_ENV` environment variable is standard and used to set the current environment of the application. This will override the default environment which is set to `development`.
@@ -229,14 +229,14 @@ The `ENV_DIR` environment variable can be set to specify a custom directory for 
 
 If the path specified by `ENV_DIR` is invalid, then the default path to the directory containing the .env files will remain the current working directory.
 
-If the target `.env` file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target `.env` file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ### ENV_PATH
 The `ENV_PATH` environment variable can be set to specify a custom path to the `.env` file to use. This can be either an absolute path or a relative path. This path is not affected by a directory set by the `--env-dir` command line argument or `ENV_DIR` environment variable, so any relative path will always be relative to the current working directory.
 
 If the path specified by `environment variable` is invalid, the module will attempt to search the `.env` directory to find the `.env` file matching the environment.
 
-If the target `.env` file is determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
+If the target `.env` file determined during runtime is outside of the root of your project, it will be ignored for security reasons. The root is determined using the [app-root-path](https://www.npmjs.com/package/app-root-path) library.
 
 ## Config API
 API reference for the `Config` which is used to retrieve values from the configuration files and convert them to the target type.

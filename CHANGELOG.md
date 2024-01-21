@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.5 - 1/20/24
+Fix grammar issues in documentation
+
 ## 1.1.4 - 1/17/24
 Minor change to where resetting dotenv fields is called.
 
