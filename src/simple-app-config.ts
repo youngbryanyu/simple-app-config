@@ -129,6 +129,9 @@ export class Config {
     Config.loadDefaultConfigFile(); /* Load default config file */
     Config.alreadyConfigured = true; /* Set the alrady configured flag to true */
 
+    /* Set the NODE_ENV environment var */
+    EnvParser.setValue(EnvArgs.Env, Config.environment);
+
     /* Initialize singleton instance */
     if (Config.instance === undefined) {
       Config.instance = new Config();
