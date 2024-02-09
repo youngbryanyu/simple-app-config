@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0 - 2/9/24
+Environment override in command line args no sets NODE_ENV environment variable
+
 ## 1.1.5 - 1/20/24
 Fix grammar issues in documentation
 

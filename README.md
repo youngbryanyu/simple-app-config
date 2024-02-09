@@ -167,7 +167,7 @@ node dist/index.js --config-path=test/config.json
 ```
 
 ### --env
-The `--env` command line argument can be set to override the environment determined by the module. This will override the environment set by the `NODE_ENV` environment variable.
+The `--env` command line argument can be set to override the environment determined by the module. This will override the environment set by the `NODE_ENV` environment variable. This will also set the `NODE_ENV` environment variable.
 
 ```bash
 node dist/index.js --env=production
