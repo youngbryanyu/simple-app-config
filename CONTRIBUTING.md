@@ -10,6 +10,8 @@
 7. Push to a new feature branch using `git push origin <your-feature-branch-name>`
 8. [Create a pull request](https://help.github.com/articles/creating-a-pull-request). Your PR will need to pass all checks in the CI/CD pipeline to be able to merge.
 
+Contact `youngyu2002@gmail.com` for any questions.
+
 ## Testing
 We are using [jest](https://jestjs.io/) to run unit tests. Run the test script using
 ```
