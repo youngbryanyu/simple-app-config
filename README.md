@@ -2,7 +2,7 @@
 ![CI/CD Pipeline](https://github.com/youngbryanyu/simple-app-config/actions/workflows/pipeline.yml/badge.svg)
 ![codecov.io](https://codecov.io/github/youngbryanyu/simple-app-config/coverage.svg?branch=main)
 ![Node.js Version](https://img.shields.io/npm/v/simple-app-config.svg)
-![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg)
+![TypeScript compatible](https://img.shields.io/badge/typescript-compatible-brightgreen.svg) 
 
 A simple easy-to-use configuration manager package for Node.js applications. I created this libary so that you can just import it anywhere in your application code and have it ✨JUST WORK✨.
 
