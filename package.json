@@ -55,7 +55,7 @@
   "author": "Young Yu",
   "dependencies": {
     "app-root-path": "^3.1.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
